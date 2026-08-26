@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "schemas/**"
+      - "contracts/**"
+      - "deployment/**"
+      - "reference-labs/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "Makefile"
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  phase0:
+    name: Phase 0 / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: uv sync --locked --extra dev
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest -q
+      - run: uv run harness-contracts validate
+      - run: uv run harness-contracts phase0-gate --output phase0-report.json
+      - run: uv build
+      - name: Verify isolated wheel and embedded offline resources
+        run: >-
+          uv run --no-project --isolated
+          --with ./dist/orchestra_data_source_harness-0.1.0-py3-none-any.whl
+          python -c 'from importlib.resources import files; import data_source_harness as h;
+          assert h.__version__ == "0.1.0";
+          assert (files("data_source_harness") /
+          "resources/schemas/v1/data-batch.schema.json").is_file()'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phase0-python-${{ matrix.python-version }}
+          path: |
+            phase0-report.json
+            dist/*
