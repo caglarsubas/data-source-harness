@@ -3,6 +3,16 @@ name: CI
 on:
   push:
     branches: [main]
+    paths:
+      - "src/**"
+      - "schemas/**"
+      - "contracts/**"
+      - "deployment/**"
+      - "reference-labs/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "Makefile"
   pull_request:
 
 permissions:
