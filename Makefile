@@ -1,0 +1,18 @@
+.PHONY: lint test contracts phase0 build
+
+lint:
+	uv run ruff check .
+	uv run ruff format --check .
+
+test:
+	uv run pytest -q
+
+contracts:
+	uv run harness-contracts validate
+
+build:
+	uv build
+	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.1.0-py3-none-any.whl python -c 'from importlib.resources import files; import data_source_harness as h; assert h.__version__ == "0.1.0"; assert (files("data_source_harness") / "resources/schemas/v1/data-batch.schema.json").is_file()'
+
+phase0: lint test contracts build
+	uv run harness-contracts phase0-gate --output phase0-report.json

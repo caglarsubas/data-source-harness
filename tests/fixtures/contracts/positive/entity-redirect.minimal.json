@@ -1,0 +1,3 @@
+{
+  "schemaVersion": "data.harness/v1", "kind": "EntityRedirect", "redirectId": "r-1", "fromEntityId": "crm:7", "toEntityId": "canonical:42", "reason": "steward-approved merge", "assertedAt": "2026-08-27T00:00:00Z", "lineage": [{"sourceId": "crm", "assetId": "customers", "recordId": "7"}]
+}

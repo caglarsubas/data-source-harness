@@ -1,0 +1,3 @@
+{
+  "schemaVersion": "data.harness/v1", "kind": "SemanticAssertion", "assertionId": "a-1", "subjectId": "crm:customer:7", "predicate": "same_as", "objectId": "erp:account:42", "confidence": 0.98, "assertedAt": "2026-08-27T00:00:00Z", "validFrom": "2026-08-27T00:00:00Z", "validTo": null, "policyDigest": "sha256:policy", "lineage": [{"sourceId": "crm", "assetId": "customers", "recordId": "7"}]
+}

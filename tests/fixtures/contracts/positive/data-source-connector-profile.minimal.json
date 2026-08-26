@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "kind": "DataSourceConnectorProfile",
+  "connectorId": "lab.postgresql",
+  "version": "0.1.0",
+  "sdkApi": "harness.connector/v1",
+  "runtimeMode": "container",
+  "dataModels": ["tabular"],
+  "capabilities": ["discover", "describe", "query", "predicate_pushdown"],
+  "authMethods": ["credential_reference"],
+  "limits": {"maxParallelism": 4, "maxResultBytes": 10485760, "supportsCancellation": true},
+  "consistency": {"readIsolation": ["read_committed"], "supportsTransactions": false, "supportsCheckpoint": false, "supportsCdc": false}
+}

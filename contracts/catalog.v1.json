@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "data.harness.catalog/v1",
+  "scope": "phase-0",
+  "ownershipRule": "reuse upstream contracts; introduce only data-plane-specific contracts here",
+  "reusedContracts": [
+    {"owner": "ADLC", "names": ["IntegrationManifest", "CredentialReference", "EgressPolicy", "CapabilityProfile", "HealthObservation", "ConformanceResult", "SupportProfile", "RetrievalRequest", "ProvenancePackage", "MemoryCandidate", "MemoryRecord", "PromotionDecision"]},
+    {"owner": "Python-SDK", "names": ["WorkflowOntologyV3", "McpBrokerPolicy", "ExecutionReceipt", "GuardrailDecision", "TelemetryEnvelope"]},
+    {"owner": "model-plane", "names": ["ChatCompletion", "Embedding", "Rerank", "StructuredOutput", "GuardrailEvaluation"]},
+    {"owner": "OCP-reference-lab", "names": ["DeploymentOverlay", "ReferenceProfileVerification"]}
+  ],
+  "ownedContracts": [
+    {"name": "DataSourceConnectorProfile", "schema": "schemas/v1/data-source-connector-profile.schema.json"},
+    {"name": "DataBatch", "schema": "schemas/v1/data-batch.schema.json"},
+    {"name": "SemanticAssertion", "schema": "schemas/v1/semantic-assertion.schema.json"},
+    {"name": "EntityRedirect", "schema": "schemas/v1/entity-redirect.schema.json"},
+    {"name": "CoverageStatement", "schema": "schemas/v1/coverage-statement.schema.json"},
+    {"name": "CheckpointToken", "schema": "schemas/v1/checkpoint-token.schema.json"},
+    {"name": "DeploymentProfile", "schema": "schemas/v1/deployment-profile.schema.json"},
+    {"name": "ReferenceLabManifest", "schema": "schemas/v1/reference-lab-manifest.schema.json"},
+    {"name": "IndustryDomainPackManifest", "schema": "schemas/v1/industry-domain-pack-manifest.schema.json"}
+  ]
+}

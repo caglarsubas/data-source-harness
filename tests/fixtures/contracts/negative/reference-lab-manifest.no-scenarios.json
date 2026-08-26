@@ -1,0 +1,3 @@
+{
+  "schemaVersion": "data.harness/v1", "kind": "ReferenceLabManifest", "labId": "bad-lab", "industry": "x", "domain": "y", "datasets": ["data"], "connectors": ["connector"], "deploymentProfiles": ["air-gapped"], "acceptanceScenarios": []
+}

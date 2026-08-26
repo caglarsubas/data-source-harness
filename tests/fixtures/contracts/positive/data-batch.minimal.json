@@ -1,0 +1,3 @@
+{
+  "schemaVersion": "data.harness/v1", "kind": "DataBatch", "batchKind": "arrow", "payload": [{"orderId": "o-1"}], "sourceVersions": [{"sourceId": "erp", "version": "42", "observedAt": "2026-08-27T00:00:00Z", "effectiveAt": null}], "lineage": [{"sourceId": "erp", "assetId": "orders", "recordId": "o-1", "fieldPath": null}], "rowCount": 1, "byteCount": 128
+}

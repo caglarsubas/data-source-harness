@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "kind": "DeploymentProfile",
+  "profileId": "airgap-default",
+  "mode": "air-gapped",
+  "allowedHosts": ["postgres.data.svc", "object-store.data.svc", "model-plane.ai.svc", "otel-collector.observability.svc"],
+  "dnsEnabled": false,
+  "externalTelemetry": false,
+  "artifactMirrorRequired": true
+}

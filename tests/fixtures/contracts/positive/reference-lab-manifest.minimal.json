@@ -1,0 +1,3 @@
+{
+  "schemaVersion": "data.harness/v1", "kind": "ReferenceLabManifest", "labId": "industry-domain-lab", "industry": "replace-in-phase-1", "domain": "representative-process", "datasets": ["mock-master-data-v1"], "connectors": ["lab.postgresql"], "deploymentProfiles": ["self-hosted", "air-gapped"], "acceptanceScenarios": ["discover-describe-query-with-lineage"]
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/deployment-profile.schema.json",
+  "title": "Deployment Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "profileId", "mode", "allowedHosts", "dnsEnabled", "externalTelemetry", "artifactMirrorRequired"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "kind": {"const": "DeploymentProfile"},
+    "profileId": {"type": "string", "minLength": 1},
+    "mode": {"enum": ["connected", "self-hosted", "air-gapped"]},
+    "allowedHosts": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "dnsEnabled": {"type": "boolean"},
+    "externalTelemetry": {"type": "boolean"},
+    "artifactMirrorRequired": {"type": "boolean"}
+  },
+  "allOf": [{"if": {"properties": {"mode": {"const": "air-gapped"}}, "required": ["mode"]}, "then": {"properties": {"dnsEnabled": {"const": false}, "externalTelemetry": {"const": false}, "artifactMirrorRequired": {"const": true}}}}]
+}

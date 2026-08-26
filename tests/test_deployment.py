@@ -1,0 +1,27 @@
+import pytest
+
+from data_source_harness.deployment import (
+    DeploymentMode,
+    DeploymentProfile,
+    EgressDenied,
+    EgressGuard,
+)
+
+
+def airgap() -> DeploymentProfile:
+    return DeploymentProfile(
+        "airgap", DeploymentMode.AIR_GAPPED, frozenset({"model-plane.ai.svc"}), False, False, True
+    )
+
+
+def test_airgap_profile_rejects_external_telemetry() -> None:
+    with pytest.raises(ValueError, match="external telemetry"):
+        DeploymentProfile("bad", DeploymentMode.AIR_GAPPED, frozenset(), False, True, True)
+
+
+def test_airgap_egress_is_allowlist_only() -> None:
+    guard = EgressGuard(airgap())
+    guard.authorize("http://model-plane.ai.svc/v1/embeddings")
+    guard.authorize("http://127.0.0.1:8080/health")
+    with pytest.raises(EgressDenied, match="not permitted"):
+        guard.authorize("https://api.external.example/v1")

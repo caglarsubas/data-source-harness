@@ -1,0 +1,3 @@
+{
+  "schemaVersion": "data.harness/v1", "kind": "DeploymentProfile", "profileId": "airgap-default", "mode": "air-gapped", "allowedHosts": ["postgres.data.svc", "model-plane.ai.svc"], "dnsEnabled": false, "externalTelemetry": false, "artifactMirrorRequired": true
+}
