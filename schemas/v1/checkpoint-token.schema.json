@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/checkpoint-token.schema.json",
+  "title": "Checkpoint Token",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "sourceId", "streamId", "position", "observedAt", "connectorVersion"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "kind": {"const": "CheckpointToken"},
+    "sourceId": {"type": "string", "minLength": 1},
+    "streamId": {"type": "string", "minLength": 1},
+    "position": {"type": "string", "minLength": 1},
+    "observedAt": {"type": "string", "format": "date-time"},
+    "connectorVersion": {"type": "string", "minLength": 1}
+  }
+}

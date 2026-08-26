@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "kind": "ReferenceLabManifest",
+  "labId": "industry-domain-lab",
+  "industry": "replace-in-phase-1",
+  "domain": "representative-process",
+  "datasets": ["mock-master-data-v1", "mock-events-v1", "mock-documents-v1"],
+  "connectors": ["lab.postgresql", "lab.object-store", "lab.event-stream"],
+  "deploymentProfiles": ["self-hosted", "air-gapped"],
+  "acceptanceScenarios": ["discover-describe-query-with-lineage", "deny-unauthorized-record", "replay-from-checkpoint", "operate-with-zero-internet-egress"]
+}

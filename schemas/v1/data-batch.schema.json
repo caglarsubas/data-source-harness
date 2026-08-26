@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/data-batch.schema.json",
+  "title": "Data Batch",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "batchKind", "payload", "sourceVersions", "lineage"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "kind": {"const": "DataBatch"},
+    "batchKind": {"enum": ["arrow", "document", "graph", "event", "binary"]},
+    "payload": {},
+    "sourceVersions": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["sourceId", "version", "observedAt"], "properties": {"sourceId": {"type": "string", "minLength": 1}, "version": {"type": "string", "minLength": 1}, "observedAt": {"type": "string", "format": "date-time"}, "effectiveAt": {"type": ["string", "null"], "format": "date-time"}}}},
+    "lineage": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["sourceId", "assetId"], "properties": {"sourceId": {"type": "string", "minLength": 1}, "assetId": {"type": "string", "minLength": 1}, "recordId": {"type": ["string", "null"]}, "fieldPath": {"type": ["string", "null"]}}}},
+    "rowCount": {"type": ["integer", "null"], "minimum": 0},
+    "byteCount": {"type": ["integer", "null"], "minimum": 0}
+  }
+}

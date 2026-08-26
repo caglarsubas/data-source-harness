@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/reference-lab-manifest.schema.json",
+  "title": "Reference Lab Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "labId", "industry", "domain", "datasets", "connectors", "deploymentProfiles", "acceptanceScenarios"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "kind": {"const": "ReferenceLabManifest"},
+    "labId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$"},
+    "industry": {"type": "string", "minLength": 1},
+    "domain": {"type": "string", "minLength": 1},
+    "datasets": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "connectors": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "deploymentProfiles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "acceptanceScenarios": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

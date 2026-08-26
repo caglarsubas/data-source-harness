@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "data.harness.compatibility/v1",
+  "generatedAt": "2026-08-27T00:00:00Z",
+  "releaseSet": "phase-0-baseline",
+  "components": [
+    {"name": "ADLC", "repository": "https://github.com/caglarsubas/agent-hook-v2.git", "revision": "7ee0cb75dffcf1715bcb4d625011b6bc83815803", "version": null, "role": "asynchronous control, governance and evidence plane", "verification": "exact-main CI and CodeQL observed green during Phase-0 planning"},
+    {"name": "Python-SDK", "repository": "https://github.com/caglarsubas/planeon-orchestra-python-sdk.git", "revision": "3a4012d809e6ed00a3f05be940c5278eac20a166", "version": "0.20.2", "role": "tenant execution and MCP plane", "verification": "tests and CI definitions inspected; no GitHub Actions runs observed in fork"},
+    {"name": "OCP-reference-lab", "repository": "https://github.com/caglarsubas/orchestra-openshift-reference-lab.git", "revision": "4b7bce1265e2eb9435b5dae76ea323269fcf0fc5", "version": null, "role": "deployment and certification plane", "verification": "foundation CI observed green; referenceProfileVerified was false"},
+    {"name": "model-plane", "repository": "https://github.com/caglarsubas/llm_inference_engine.git", "revision": "e820728e14a6121c0549f4ef6d51baacd1fec573", "version": "0.1.12", "role": "model, embedding, rerank and guardrail plane", "verification": "CI observed green during Phase-0 planning"}
+  ],
+  "compatibilityStatus": "contract-baseline-pinned",
+  "runtimeCertification": "not-yet-executed",
+  "notes": "Pins are integration inputs, not proof that the combined runtime has passed a deployment lab. That proof belongs to Phase 1 reference-lab certification."
+}

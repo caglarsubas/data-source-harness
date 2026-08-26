@@ -1,0 +1,3 @@
+{
+  "schemaVersion": "data.harness/v1", "kind": "DeploymentProfile", "profileId": "bad-airgap", "mode": "air-gapped", "allowedHosts": [], "dnsEnabled": false, "externalTelemetry": true, "artifactMirrorRequired": true
+}

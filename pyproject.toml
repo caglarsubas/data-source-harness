@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "orchestra-data-source-harness"
+version = "0.1.0"
+description = "Tenant-local data context and execution plane for governed agent systems"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "jsonschema>=4.23,<5",
+  "pytest>=8.3,<9",
+  "pytest-asyncio>=0.24,<1",
+  "ruff>=0.16,<0.17",
+]
+
+[project.scripts]
+harness-contracts = "data_source_harness.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/data_source_harness"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"schemas/v1" = "data_source_harness/resources/schemas/v1"
+"contracts/catalog.v1.json" = "data_source_harness/resources/contracts/catalog.v1.json"
+"deployment/profiles" = "data_source_harness/resources/deployment/profiles"
+"reference-labs/reference-lab-manifest.example.json" = "data_source_harness/resources/reference-labs/reference-lab-manifest.example.json"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

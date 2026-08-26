@@ -1,0 +1,3 @@
+{
+  "schemaVersion": "data.harness/v1", "kind": "CheckpointToken", "sourceId": "events", "streamId": "orders", "position": "", "observedAt": "2026-08-27T00:00:00Z", "connectorVersion": "0.1.0"
+}

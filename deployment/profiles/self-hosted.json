@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "kind": "DeploymentProfile",
+  "profileId": "self-hosted-default",
+  "mode": "self-hosted",
+  "allowedHosts": ["postgres.data.svc", "model-plane.ai.svc"],
+  "dnsEnabled": true,
+  "externalTelemetry": false,
+  "artifactMirrorRequired": false
+}

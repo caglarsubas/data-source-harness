@@ -1,0 +1,3 @@
+{
+  "schemaVersion": "data.harness/v1", "kind": "IndustryDomainPackManifest", "packId": "pilot-industry", "version": "0.1.0", "industry": "selected-in-phase-1", "domains": ["service"], "mockDatasets": ["service-orders-v1"], "technologyExamples": ["postgresql"], "acceptanceScenarios": ["trace-service-history"]
+}
