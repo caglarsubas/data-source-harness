@@ -2,7 +2,13 @@ from datetime import UTC, datetime
 
 import pytest
 
-from data_source_harness.models import BatchKind, CheckpointToken, DataBatch
+from data_source_harness.models import (
+    BatchKind,
+    ChangeEvent,
+    CheckpointToken,
+    DataBatch,
+    LineageRef,
+)
 
 
 def test_batch_requires_lineage_and_source_version() -> None:
@@ -20,3 +26,13 @@ def test_source_timestamps_cannot_be_naive() -> None:
 def test_checkpoint_binds_position_to_connector_version() -> None:
     checkpoint = CheckpointToken("events", "orders", "partition-0:42", datetime.now(UTC), "0.1.0")
     assert checkpoint.position == "partition-0:42"
+
+
+def test_lineage_identity_is_not_optional() -> None:
+    with pytest.raises(ValueError, match="lineage requires"):
+        LineageRef("", "orders")
+
+
+def test_change_event_timestamp_must_be_timezone_aware() -> None:
+    with pytest.raises(ValueError, match="timezone-aware"):
+        ChangeEvent("e-1", "events", "orders", "upsert", datetime(2026, 8, 27), {})

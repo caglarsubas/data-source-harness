@@ -16,7 +16,7 @@ The data path fails locally if its policy evaluator, connector capability, linea
 
 ## Public contracts
 
-`contracts/catalog.v1.json` is the ownership ledger. Existing ADLC, SDK, model-plane and OCP contracts remain owned upstream. This repository owns only connector profiles, semantic assertions, coverage statements, deployment profiles and reference-lab manifests. All owned wire contracts use strict JSON Schema and carry explicit schema versions.
+`contracts/catalog.v1.json` is the ownership ledger. Existing ADLC, SDK, model-plane and OCP contracts remain owned upstream. This repository owns only connector profiles, data batches, semantic assertions, entity redirects, coverage statements, checkpoint tokens, deployment profiles, reference-lab manifests and industry/domain-pack manifests. All owned wire contracts use strict JSON Schema and carry explicit schema versions.
 
 The Python API mirrors those invariants:
 

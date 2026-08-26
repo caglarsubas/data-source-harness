@@ -59,7 +59,7 @@ profiles, and neutral reference-lab manifest under
   connector and policy both declare it.
 - Credentials are references resolved inside the tenant perimeter and never
   enter manifests, telemetry, or evidence.
-- `airgapped` mode denies every undeclared or non-perimeter route.
+- `air-gapped` mode denies every undeclared or non-perimeter route.
 - Retrieved content is untrusted data, not executable instruction.
 - Missing, partial, stale, ambiguous, and unauthorized evidence remain visible
   in coverage statements rather than being converted into success.

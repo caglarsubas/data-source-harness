@@ -104,6 +104,8 @@ class ConnectorProfile:
             raise ValueError("all connectors must support schema description")
         if not self.data_models:
             raise ValueError("at least one data model is required")
+        if not self.auth_methods:
+            raise ValueError("at least one credential-reference authentication method is required")
         if (
             Capability.TRANSACTION in self.capabilities
             and not self.consistency.supports_transactions
