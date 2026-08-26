@@ -46,11 +46,19 @@ class LineageRef:
     record_id: str | None = None
     field_path: str | None = None
 
+    def __post_init__(self) -> None:
+        if not self.source_id or not self.asset_id:
+            raise ValueError("lineage requires source_id and asset_id")
+
 
 @dataclass(frozen=True)
 class AssetRef:
     source_id: str
     asset_id: str
+
+    def __post_init__(self) -> None:
+        if not self.source_id or not self.asset_id:
+            raise ValueError("asset reference requires source_id and asset_id")
 
 
 @dataclass(frozen=True)
@@ -61,6 +69,10 @@ class Asset:
     description: str | None = None
     metadata: Mapping[str, Scalar] = field(default_factory=dict)
 
+    def __post_init__(self) -> None:
+        if not self.name or not self.kind:
+            raise ValueError("asset name and kind are required")
+
 
 @dataclass(frozen=True)
 class FieldSchema:
@@ -69,6 +81,10 @@ class FieldSchema:
     nullable: bool = True
     description: str | None = None
     metadata: Mapping[str, Scalar] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if not self.name or not self.logical_type:
+            raise ValueError("field name and logical type are required")
 
 
 @dataclass(frozen=True)
@@ -118,6 +134,14 @@ class ChangeEvent:
     checkpoint: str | None = None
     tombstone: bool = False
 
+    def __post_init__(self) -> None:
+        if any(
+            not value for value in (self.event_id, self.source_id, self.asset_id, self.operation)
+        ):
+            raise ValueError("change event identity, source, asset and operation are required")
+        if self.observed_at.tzinfo is None:
+            raise ValueError("change event observed_at must be timezone-aware")
+
 
 @dataclass(frozen=True)
 class DataBatch:
@@ -147,6 +171,8 @@ class QueryRequest:
     purpose: str
 
     def __post_init__(self) -> None:
+        if not self.source_id or not self.asset_ids or any(not item for item in self.asset_ids):
+            raise ValueError("query source and asset_ids are required")
         if self.limit <= 0:
             raise ValueError("query limit must be positive")
         if self.deadline_ms <= 0:
@@ -163,8 +189,8 @@ class SearchRequest:
     filters: Mapping[str, Scalar] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        if not self.query.strip() or self.top_k <= 0:
-            raise ValueError("search query and positive top_k are required")
+        if not self.source_id or not self.query.strip() or self.top_k <= 0:
+            raise ValueError("search source, query and positive top_k are required")
 
 
 @dataclass(frozen=True)
@@ -180,6 +206,12 @@ class SearchHit:
     sparse_score: float | None = None
     reranker_score: float | None = None
     acl_decision_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if any(not value for value in (self.source_id, self.asset_id, self.record_id)):
+            raise ValueError("search hit source, asset and record identity are required")
+        if not self.lineage:
+            raise ValueError("search hits require lineage")
 
 
 @dataclass(frozen=True)
