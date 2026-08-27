@@ -1,0 +1,4 @@
+{"incident_id":"incident-0001","severity":"high","shipment_id":"ship-0001","status":"resolved"}
+{"incident_id":"incident-0002","severity":"high","shipment_id":"ship-0002","status":"resolved"}
+{"incident_id":"incident-0003","severity":"low","shipment_id":"ship-0003","status":"open"}
+{"incident_id":"incident-0004","severity":"high","shipment_id":"ship-0004","status":"open"}

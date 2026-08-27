@@ -1,0 +1,12 @@
+{"container_id":"container-0001","observed_at":"2026-05-13T17:23:00+00:00","reading_id":"reading-0001","temperature_celsius":-1}
+{"container_id":"container-0002","observed_at":"2026-09-19T15:51:00+00:00","reading_id":"reading-0002","temperature_celsius":5}
+{"container_id":"container-0003","observed_at":"2026-11-06T18:20:00+00:00","reading_id":"reading-0003","temperature_celsius":12}
+{"container_id":"container-0004","observed_at":"2026-09-09T01:57:00+00:00","reading_id":"reading-0004","temperature_celsius":3}
+{"container_id":"container-0001","observed_at":"2026-12-03T01:21:00+00:00","reading_id":"reading-0005","temperature_celsius":7}
+{"container_id":"container-0002","observed_at":"2026-03-07T02:00:00+00:00","reading_id":"reading-0006","temperature_celsius":10}
+{"container_id":"container-0003","observed_at":"2026-06-18T20:20:00+00:00","reading_id":"reading-0007","temperature_celsius":2}
+{"container_id":"container-0004","observed_at":"2026-10-03T20:13:00+00:00","reading_id":"reading-0008","temperature_celsius":4}
+{"container_id":"container-0001","observed_at":"2026-05-20T05:57:00+00:00","reading_id":"reading-0009","temperature_celsius":13}
+{"container_id":"container-0002","observed_at":"2026-07-29T16:01:00+00:00","reading_id":"reading-0010","temperature_celsius":-1}
+{"container_id":"container-0003","observed_at":"2026-11-15T23:37:00+00:00","reading_id":"reading-0011","temperature_celsius":3}
+{"container_id":"container-0004","observed_at":"2026-04-09T05:57:00+00:00","reading_id":"reading-0012","temperature_celsius":8}

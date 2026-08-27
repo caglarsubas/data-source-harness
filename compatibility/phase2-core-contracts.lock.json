@@ -1,0 +1,20 @@
+{
+  "baseline": "phase-2",
+  "schemaVersion": "data.harness.contract-lock/v1",
+  "schemas": {
+    "bounded-query-plan.schema.json": "17bb6c09a7d4522c676f3614553517c03932948a4b7d6191095a3b4285779b37",
+    "checkpoint-token.schema.json": "1b4ee5e02cc4c9dcf36a7f0cde84aa146e18054383081d414aef1b99eb775536",
+    "coverage-statement.schema.json": "bda8aa83b7dc53ff7eccff99f63d2751f8e974d51f756a28aeea9368e52a2b57",
+    "data-batch.schema.json": "d6effa86bf676a9fc630cf6b27c72373e19160947aaf827a8f88bbfa6177af62",
+    "data-source-connector-profile.schema.json": "7de0463d00af04389267a722d55cb25efbb2d79ceb8ac289af1d5a0bd348f898",
+    "deployment-profile.schema.json": "94047eddb4d24285decbea9df0293ec41cd7612b87ed48fa28ec5638d7b939d3",
+    "entity-redirect.schema.json": "a42f53b998f12916006a1c0c4c5e26e7574dc552f6423b464128fd4236217465",
+    "freshness-observation.schema.json": "788282fcb2eeda3a6a31e8fb524cdeac634bfea4acb7d153924ed7f8133e94fa",
+    "industry-domain-pack-manifest.schema.json": "73281bf15fc5b74ac622bd5cb2c24cd8bc429ac31e474ef2cca04ca523654bf3",
+    "promotion-readiness.schema.json": "cd5200917080759204e7657bb5fc087312f631866de6d2c15170268c1ec56f4d",
+    "reference-lab-manifest.schema.json": "6a1bb8fd780f324c45b1c632769e0dd790413a2d99870e78b26a36363472ceda",
+    "route-decision.schema.json": "24710d344acbbd055702c1185e91ceea787cca4231315d078714e1f5a9f974d9",
+    "semantic-assertion.schema.json": "7c09fa5b8b804149ab8813ba23057831df5992c4b710e945e71bbb87abdae2a8",
+    "semantic-mapping-candidate.schema.json": "6f07d66cb35690bbce7483d07c905c59d21c422ae13e7d69b594c3d44f80ad80"
+  }
+}

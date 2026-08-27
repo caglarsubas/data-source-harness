@@ -1,0 +1,9 @@
+{
+  "openapi": "3.1.0",
+  "info": {"title": "Synthetic Carrier API", "version": "1.0.0"},
+  "paths": {
+    "/shipments": {"get": {"operationId": "listShipments", "responses": {"200": {"description": "Shipment list"}}}},
+    "/shipments/{shipmentId}": {"get": {"operationId": "getShipment", "responses": {"200": {"description": "Shipment"}}}},
+    "/shipments/{shipmentId}/milestones": {"get": {"operationId": "listMilestones", "responses": {"200": {"description": "Milestones"}}}}
+  }
+}

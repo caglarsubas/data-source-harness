@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "coldchain.lab.gqm/v1",
+  "goals": [
+    {"goalId": "G1", "goal": "Create repeatable, relationship-safe industry packs", "metricIds": ["M1", "M2"]},
+    {"goalId": "G2", "goal": "Generate useful connector starters from source metadata", "metricIds": ["M3", "M4"]},
+    {"goalId": "G3", "goal": "Distribute auditable packages in disconnected environments", "metricIds": ["M5", "M6", "M7"]},
+    {"goalId": "G4", "goal": "Prove portability beyond the first pilot", "metricIds": ["M8", "M9", "M10"]}
+  ],
+  "metrics": [
+    {"metricId": "M1", "name": "deterministic generation", "operator": "==", "threshold": 1.0},
+    {"metricId": "M2", "name": "referential integrity", "operator": "==", "threshold": 1.0},
+    {"metricId": "M3", "name": "OpenAPI operation coverage", "operator": "==", "threshold": 1.0},
+    {"metricId": "M4", "name": "generated source compile rate", "operator": "==", "threshold": 1.0},
+    {"metricId": "M5", "name": "valid package signature", "operator": "==", "threshold": 1.0},
+    {"metricId": "M6", "name": "SBOM payload coverage", "operator": "==", "threshold": 1.0},
+    {"metricId": "M7", "name": "tampered or wrong-key package denial", "operator": "==", "threshold": 1.0},
+    {"metricId": "M8", "name": "Phase-2 schema digest reuse", "operator": "==", "threshold": 1.0},
+    {"metricId": "M9", "name": "white-goods tokens in public core", "operator": "==", "threshold": 0.0},
+    {"metricId": "M10", "name": "cold-chain scenario correctness", "operator": ">=", "threshold": 1.0}
+  ]
+}

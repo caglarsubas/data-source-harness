@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "kind": "IndustryDomainPackManifest",
+  "packId": "cold-chain-excursion-response",
+  "version": "1.0.0",
+  "industry": "cold-chain logistics",
+  "domains": ["shipment-visibility", "condition-monitoring", "incident-response"],
+  "mockDatasets": ["shipments-v1", "containers-v1", "sensor-readings-v1", "incidents-v1"],
+  "technologyExamples": ["PostgreSQL", "MQTT", "REST/OpenAPI", "S3/MinIO"],
+  "acceptanceScenarios": ["temperature-excursion-detection", "cross-source-shipment-grounding", "carrier-api-scaffolding", "offline-package-verification", "tamper-rejection", "phase2-contract-reuse"]
+}

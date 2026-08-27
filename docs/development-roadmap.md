@@ -48,12 +48,27 @@ Apply Goal–Question–Metric design to every scenario. Example: goal “reduce
 
 ## Phase 3 — reusable industry/domain pack factory
 
+**Implementation status:** implemented in core version `0.4.0` with the
+cold-chain excursion-response pack `1.0.0`. Completion is revision-specific:
+`make phase3`, Python 3.11/3.12 CI and CodeQL must be green for the referenced
+revision.
+
 - versioned `IndustryDomainPackManifest` and reusable mock-data generators;
 - additional pilots selected by capability diversity and buyer value;
 - automated connector scaffolding from OpenAPI/schema metadata;
 - signed connector packages, SBOMs and certification evidence.
 
 **Exit:** a second industry pack uses the unchanged core contracts and demonstrates that no white-goods assumptions leaked into public APIs.
+
+**Repository exit:** the deterministic generator reproduces every committed
+cold-chain fixture with valid relationships; the OpenAPI scaffold is contract
+valid and compilable; the disconnected connector archive verifies its checksum,
+signature and complete SBOM; wrong signer identities are refused; and all 14
+Phase-2 schema digests remain exact.
+
+**Evidence boundary:** HMAC signing is a replaceable offline lab verifier, not
+production publisher identity. Production connectivity, asymmetric/HSM-backed
+signing, deployed runtime proof and stakeholder acceptance remain separate.
 
 ## Phase 4 — governed actions and adaptive semantics
 
