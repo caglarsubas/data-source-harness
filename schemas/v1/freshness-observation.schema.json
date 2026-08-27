@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orchestra.local/schemas/data-harness/v1/freshness-observation.schema.json",
+  "title": "FreshnessObservation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "sourceId", "assetId", "observedAt", "sourceEventTime", "watermark", "assessment"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "sourceId": {"type": "string", "minLength": 1},
+    "assetId": {"type": "string", "minLength": 1},
+    "observedAt": {"type": "string", "format": "date-time"},
+    "sourceEventTime": {"type": "string", "format": "date-time"},
+    "watermark": {"type": "string", "minLength": 1},
+    "assessment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["fresh", "ageMs"],
+      "properties": {
+        "fresh": {"type": "boolean"},
+        "ageMs": {"type": "integer", "minimum": 0},
+        "breachAction": {"type": ["string", "null"], "enum": ["exclude", "degrade", "refuse", null]}
+      }
+    }
+  }
+}

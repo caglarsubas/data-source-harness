@@ -1,6 +1,6 @@
 {
   "schemaVersion": "data.harness.catalog/v1",
-  "scope": "phase-0",
+  "scope": "phase-2",
   "ownershipRule": "reuse upstream contracts; introduce only data-plane-specific contracts here",
   "reusedContracts": [
     {"owner": "ADLC", "names": ["IntegrationManifest", "CredentialReference", "EgressPolicy", "CapabilityProfile", "HealthObservation", "ConformanceResult", "SupportProfile", "RetrievalRequest", "ProvenancePackage", "MemoryCandidate", "MemoryRecord", "PromotionDecision"]},
@@ -17,6 +17,11 @@
     {"name": "CheckpointToken", "schema": "schemas/v1/checkpoint-token.schema.json"},
     {"name": "DeploymentProfile", "schema": "schemas/v1/deployment-profile.schema.json"},
     {"name": "ReferenceLabManifest", "schema": "schemas/v1/reference-lab-manifest.schema.json"},
-    {"name": "IndustryDomainPackManifest", "schema": "schemas/v1/industry-domain-pack-manifest.schema.json"}
+    {"name": "IndustryDomainPackManifest", "schema": "schemas/v1/industry-domain-pack-manifest.schema.json"},
+    {"name": "SemanticMappingCandidate", "schema": "schemas/v1/semantic-mapping-candidate.schema.json"},
+    {"name": "FreshnessObservation", "schema": "schemas/v1/freshness-observation.schema.json"},
+    {"name": "RouteDecision", "schema": "schemas/v1/route-decision.schema.json"},
+    {"name": "BoundedQueryPlan", "schema": "schemas/v1/bounded-query-plan.schema.json"},
+    {"name": "PromotionReadiness", "schema": "schemas/v1/promotion-readiness.schema.json"}
   ]
 }

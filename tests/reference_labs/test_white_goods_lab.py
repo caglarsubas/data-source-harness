@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import zipfile
 from pathlib import Path
 
 import pytest
@@ -28,12 +29,17 @@ def test_seed_is_deterministic_and_manifested() -> None:
 def test_offline_bundle_is_reproducible_and_self_verifying(tmp_path: Path) -> None:
     first = tmp_path / "first.zip"
     second = tmp_path / "second.zip"
-    wheel = tmp_path / "orchestra_data_source_harness-0.2.0-py3-none-any.whl"
+    wheel = tmp_path / "orchestra_data_source_harness-0.3.0-py3-none-any.whl"
     wheel.write_bytes(b"deterministic wheel fixture")
     first_digest = build_bundle(first, wheel)
     second_digest = build_bundle(second, wheel)
     assert first_digest == second_digest
     assert verify_bundle(first) == first_digest
+    with zipfile.ZipFile(first) as bundle:
+        names = set(bundle.namelist())
+    assert "compatibility/phase2-compatibility-matrix.json" in names
+    assert "schemas/v1/promotion-readiness.schema.json" in names
+    assert "reference_labs/white_goods/phase2-gqm-plan.json" in names
 
 
 @pytest.mark.asyncio

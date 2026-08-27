@@ -13,7 +13,7 @@ from data_source_harness import __version__ as harness_version
 
 LAB_ROOT = Path(__file__).resolve().parent
 REPOSITORY_ROOT = LAB_ROOT.parents[1]
-DEFAULT_OUTPUT = REPOSITORY_ROOT / "dist/white-goods-reference-lab-1.0.0.zip"
+DEFAULT_OUTPUT = REPOSITORY_ROOT / "dist/white-goods-reference-lab-1.1.0.zip"
 FIXED_ZIP_TIME = (2020, 1, 1, 0, 0, 0)
 
 
@@ -22,7 +22,11 @@ def _inputs(wheel: Path | None = None) -> tuple[tuple[str, Path], ...]:
     roots = (
         ("reference_labs/white_goods", LAB_ROOT),
         ("schemas/v1", REPOSITORY_ROOT / "schemas/v1"),
+        ("compatibility", REPOSITORY_ROOT / "compatibility"),
+        ("contracts", REPOSITORY_ROOT / "contracts"),
         ("deployment/profiles", REPOSITORY_ROOT / "deployment/profiles"),
+        ("docs/architecture", REPOSITORY_ROOT / "docs/architecture"),
+        ("docs/testing", REPOSITORY_ROOT / "docs/testing"),
     )
     for archive_root, source_root in roots:
         for path in source_root.rglob("*"):

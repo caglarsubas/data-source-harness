@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "whitegoods.freshness/v1",
+  "defaultMaxAgeSeconds": 300,
+  "onBreach": "exclude",
+  "observations": [
+    {"sourceId":"whitegoods.erp","assetId":"service_orders","ageSeconds":60,"watermark":"service:SO1006"},
+    {"sourceId":"whitegoods.telemetry","assetId":"telemetry_events","ageSeconds":20,"watermark":"event:9"},
+    {"sourceId":"whitegoods.search","assetId":"technical_document_index","ageSeconds":120,"watermark":"docs:4"},
+    {"sourceId":"whitegoods.service-api","assetId":"appointments","ageSeconds":30,"watermark":"appointment:AP003"}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "data.harness.compatibility-matrix/v1",
+  "releaseSet": "phase-2-trustworthy-context-baseline",
+  "evidenceBoundary": "Contract compatibility only; this matrix is not deployed-runtime or stakeholder acceptance evidence.",
+  "components": [
+    {"component":"ADLC","revision":"7ee0cb75dffcf1715bcb4d625011b6bc83815803","contractCompatible":true,"evidenceId":"contract-pin:7ee0cb75dffcf1715bcb4d625011b6bc83815803"},
+    {"component":"Python-SDK","revision":"3a4012d809e6ed00a3f05be940c5278eac20a166","contractCompatible":true,"evidenceId":"contract-pin:3a4012d809e6ed00a3f05be940c5278eac20a166"},
+    {"component":"OCP-reference-lab","revision":"4b7bce1265e2eb9435b5dae76ea323269fcf0fc5","contractCompatible":true,"evidenceId":"contract-pin:4b7bce1265e2eb9435b5dae76ea323269fcf0fc5"},
+    {"component":"model-plane","revision":"e820728e14a6121c0549f4ef6d51baacd1fec573","contractCompatible":true,"evidenceId":"contract-pin:e820728e14a6121c0549f4ef6d51baacd1fec573"}
+  ]
+}

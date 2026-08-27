@@ -12,5 +12,10 @@
 | Incorrect entity merge | append-only assertions, explicit contradictions and redirects | steward workflow and semantic benchmark |
 | Connector compromise/failure | process/container runtime modes are declared | worker isolation, replacement and supply-chain certification |
 | Control-plane outage | no synchronous ADLC call in the execution gateway | disconnected control-plane failure injection |
+| Stale source evidence | per-asset freshness observations, watermarks and breach action | live-source SLO calibration and alerting |
+| Semantic schema drift | approved mappings are digest-bound and quarantined on change | steward review against production schema changes |
+| Ambiguous source mapping | equal plausible mappings escalate without answer content | unseen production ambiguity/refusal benchmark |
+| Unauthorized join or field inference | bounded planner plus gateway field/relationship re-authorization | real connector query-plan inspection |
+| Evidence-state collapse | source, CI, runtime and stakeholder states remain distinct; ADLC owns promotion | combined-platform promotion campaign |
 
 Phase 0 defines and unit-tests the enforcement seams. It does not claim that a deployment, connector image or upstream product is certified against every threat.

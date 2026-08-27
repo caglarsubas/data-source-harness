@@ -1,0 +1,1 @@
+{"schemaVersion":"data.harness/v1","sourceId":"erp","assetIds":["orders"],"fields":{"orders":["order_id","error_code"]},"filters":{"orders":{"error_code":"E21"}},"relationships":[],"limit":20,"deadlineMs":1000,"purpose":"covered E21 analysis","estimatedRows":20}

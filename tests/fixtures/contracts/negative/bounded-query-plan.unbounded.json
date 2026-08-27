@@ -1,0 +1,1 @@
+{"schemaVersion":"data.harness/v1","sourceId":"erp","assetIds":["orders"],"fields":{"orders":["order_id"]},"filters":{"orders":{}},"relationships":[],"limit":0,"deadlineMs":1000,"purpose":"analysis","estimatedRows":0}
