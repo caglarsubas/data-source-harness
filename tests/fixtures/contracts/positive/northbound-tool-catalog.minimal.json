@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "protocolVersion": "data.harness.northbound/v1",
+  "catalogDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "tools": [{
+    "name": "cases.close",
+    "description": "Close an approved case",
+    "sourceId": "lab.actions",
+    "assetId": "cases",
+    "operation": "close-case",
+    "risk": "high",
+    "approvalMode": "human",
+    "purpose": "close a verified case",
+    "allowedAgents": ["agent.case-worker"]
+  }]
+}

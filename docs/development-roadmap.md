@@ -95,3 +95,58 @@ connector registry.
 **Evidence boundary:** the in-memory labs prove deterministic application
 semantics, not durable crash recovery, production connector behavior, live A2A
 interoperability, deployed runtime evidence or stakeholder acceptance.
+
+## Phase 5 — durable recovery and protocol-edge certification
+
+**Implementation status:** implemented in core version `0.6.0` and certified
+against the white-goods and cold-chain synthetic labs. Completion is
+revision-specific: `make phase5`, Python 3.11/3.12 CI and CodeQL must be green
+for the referenced revision.
+
+- SQLite write-ahead action records with `FULL` synchronization, WAL mode and a
+  metadata-only SHA-256 journal chain;
+- a fail-closed uncertain-outcome state that forbids automatic replay after a
+  dispatched mutation;
+- restart reconciliation against source-owned idempotency/postcondition
+  evidence, producing a durable recovered receipt without a second source
+  effect;
+- a stateless, versioned JSON-RPC `tools/list` and `tools/call` boundary that
+  exposes only agent-scoped tools and pins calls to the exact tool-catalog
+  digest;
+- two-lab crash-window, tool-poisoning, payload-privacy and zero-egress GQM
+  certification.
+
+**Repository exit:** both labs persist the uncertain action across a journal
+reopen, reject blind execution retry, reconcile to a successful receipt and
+retain exactly one source effect; durable journal chains validate and contain no
+raw mutation values; unauthorized tool discovery returns no tools; changed tool
+metadata invalidates the caller's pin; and protocol vocabulary remains outside
+the connector ABI.
+
+**Evidence boundary:** this phase proves a single-node local durable reference
+implementation and an internal protocol adapter shape. It does not prove abrupt
+OS/power-loss behavior, multi-replica coordination, production database HA,
+official MCP/A2A conformance, live OpenShift execution or stakeholder
+acceptance.
+
+## Phase 6 — production-source and combined-platform reference runtime
+
+**Status:** planned; no completion claim.
+
+- replace lab mutation sources with containerized, production-representative
+  PostgreSQL, S3-compatible, event-stream and REST connector workers while
+  preserving the connector ABI;
+- certify process isolation, cancellation, saturation, credential references,
+  schema upgrades and source-specific idempotency/reconciliation under fault;
+- host the northbound adapter behind officially versioned MCP/A2A adapters and
+  run their upstream conformance suites without leaking those protocols into the
+  connector core;
+- integrate SDK telemetry/receipts, ADLC evidence and promotion inputs,
+  model-plane embedding/reranking and the OCP reference-lab deployment overlay;
+- execute the white-goods reference runtime in disconnected/air-gapped mode
+  from a mirrored, signed artifact set.
+
+**Exit:** source, pull-request CI, exact-main CI, signed supply chain,
+deployed-runtime behavior, protocol conformance and stakeholder acceptance are
+captured as separate evidence states. A local container or mock certificate
+cannot substitute for live OpenShift and production-source certification.

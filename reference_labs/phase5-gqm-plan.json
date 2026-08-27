@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "data.harness.phase5.gqm/v1",
+  "goals": [
+    {"goalId": "G1", "goal": "Recover uncertain source actions without duplicate effects", "metricIds": ["P5-M1", "P5-M2", "P5-M3", "P5-M4"]},
+    {"goalId": "G2", "goal": "Preserve durable and privacy-safe recovery evidence", "metricIds": ["P5-M5", "P5-M6"]},
+    {"goalId": "G3", "goal": "Expose bounded, pinned and connector-neutral protocol tools", "metricIds": ["P5-M7", "P5-M8", "P5-M9"]},
+    {"goalId": "G4", "goal": "Certify the runtime with network egress denied", "metricIds": ["P5-M10"]}
+  ],
+  "metrics": [
+    {"metricId": "P5-M1", "name": "two-lab recovery success", "operator": "==", "threshold": 1.0},
+    {"metricId": "P5-M2", "name": "blind replay allowed rate", "operator": "==", "threshold": 0.0},
+    {"metricId": "P5-M3", "name": "duplicate source effect rate", "operator": "==", "threshold": 0.0},
+    {"metricId": "P5-M4", "name": "unresolved actions after reconciliation", "operator": "==", "threshold": 0.0},
+    {"metricId": "P5-M5", "name": "journal chain validity", "operator": "==", "threshold": 1.0},
+    {"metricId": "P5-M6", "name": "raw payload exposure rate", "operator": "==", "threshold": 0.0},
+    {"metricId": "P5-M7", "name": "tool scope correctness", "operator": "==", "threshold": 1.0},
+    {"metricId": "P5-M8", "name": "stale tool catalog acceptance rate", "operator": "==", "threshold": 0.0},
+    {"metricId": "P5-M9", "name": "connector protocol coupling tokens", "operator": "==", "threshold": 0.0},
+    {"metricId": "P5-M10", "name": "network egress attempts", "operator": "==", "threshold": 0.0}
+  ]
+}

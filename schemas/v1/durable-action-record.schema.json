@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orchestra.local/schemas/data-harness/v1/durable-action-record.schema.json",
+  "title": "DurableActionRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "sourceId", "idempotencyKey", "actionId", "actionDigest", "state", "policyDecisionId", "startedAt", "updatedAt", "attempts", "sourceVersion", "receiptId", "journalDigest"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "sourceId": {"type": "string", "minLength": 1},
+    "idempotencyKey": {"type": "string", "minLength": 1},
+    "actionId": {"type": "string", "minLength": 1},
+    "actionDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "state": {"enum": ["prepared", "executing", "executed", "failed", "reconciliation-required"]},
+    "policyDecisionId": {"type": "string", "minLength": 1},
+    "startedAt": {"type": "string", "format": "date-time"},
+    "updatedAt": {"type": "string", "format": "date-time"},
+    "attempts": {"type": "integer", "minimum": 0},
+    "sourceVersion": {"type": ["string", "null"]},
+    "receiptId": {"type": ["string", "null"]},
+    "journalDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

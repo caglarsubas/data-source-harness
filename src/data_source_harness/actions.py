@@ -43,6 +43,7 @@ class ApprovalMode(StrEnum):
 
 class ActionState(StrEnum):
     EXECUTED = "executed"
+    RECOVERED = "recovered"
     ALREADY_EXECUTED = "already-executed"
     COMPENSATED = "compensated"
     FAILED = "failed"
@@ -506,7 +507,11 @@ class ActionGateway:
             raise ValueError("source action has no declared compensation")
         if receipt.action_digest != original.digest:
             raise ValueError("receipt is not bound to the source action being compensated")
-        if receipt.state not in {ActionState.EXECUTED, ActionState.ALREADY_EXECUTED}:
+        if receipt.state not in {
+            ActionState.EXECUTED,
+            ActionState.RECOVERED,
+            ActionState.ALREADY_EXECUTED,
+        }:
             raise ValueError("only a successful source action can be compensated")
         self._validate_approval(original, approval, identity, self.now(), compensation=True)
         derived = SourceActionPlan(
