@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orchestra.local/schemas/data-harness/v1/source-action-plan.schema.json",
+  "title": "SourceActionPlan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "actionId", "sourceId", "assetId", "operation", "parametersDigest", "preconditionsDigest", "preconditionFields", "idempotencyKey", "risk", "approvalMode", "purpose", "compensation"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "actionId": {"type": "string", "minLength": 1},
+    "sourceId": {"type": "string", "minLength": 1},
+    "assetId": {"type": "string", "minLength": 1},
+    "operation": {"type": "string", "minLength": 1},
+    "parametersDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "preconditionsDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "preconditionFields": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "idempotencyKey": {"type": "string", "minLength": 1},
+    "risk": {"enum": ["low", "medium", "high"]},
+    "approvalMode": {"enum": ["none", "human"]},
+    "purpose": {"type": "string", "minLength": 1},
+    "compensation": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operation", "parametersDigest", "preconditionsDigest", "preconditionFields"],
+          "properties": {
+            "operation": {"type": "string", "minLength": 1},
+            "parametersDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+            "preconditionsDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+            "preconditionFields": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+          }
+        }
+      ]
+    }
+  }
+}

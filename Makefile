@@ -1,4 +1,4 @@
-.PHONY: lint test contracts phase0 phase1 phase2 phase3 build
+.PHONY: lint test contracts phase0 phase1 phase2 phase3 phase4 build
 
 lint:
 	uv run ruff check .
@@ -12,7 +12,7 @@ contracts:
 
 build:
 	uv build
-	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.4.0-py3-none-any.whl python -c 'from importlib.resources import files; import data_source_harness as h; root = files("data_source_harness"); assert h.__version__ == "0.4.0"; assert (root / "resources/schemas/v1/data-batch.schema.json").is_file(); assert (root / "resources/schemas/v1/promotion-readiness.schema.json").is_file()'
+	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.5.0-py3-none-any.whl python -c 'from importlib.resources import files; import data_source_harness as h; root = files("data_source_harness"); assert h.__version__ == "0.5.0"; assert (root / "resources/schemas/v1/data-batch.schema.json").is_file(); assert (root / "resources/schemas/v1/source-action-plan.schema.json").is_file()'
 
 phase0: lint test contracts build
 	uv run harness-contracts phase0-gate --output phase0-report.json
@@ -29,5 +29,12 @@ phase2: phase1
 
 phase3: phase2
 	uv run python -m reference_labs.cold_chain.certify --output phase3-report.json
+	uv run python -m reference_labs.cold_chain.bundle build
+	uv run python -m reference_labs.cold_chain.bundle verify
+
+phase4: phase3
+	uv run python -m reference_labs.certify_phase4 --output phase4-report.json
+	uv run python -m reference_labs.white_goods.bundle build
+	uv run python -m reference_labs.white_goods.bundle verify
 	uv run python -m reference_labs.cold_chain.bundle build
 	uv run python -m reference_labs.cold_chain.bundle verify

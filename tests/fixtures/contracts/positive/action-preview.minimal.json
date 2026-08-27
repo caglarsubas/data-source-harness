@@ -1,0 +1,1 @@
+{"schemaVersion":"data.harness/v1","previewId":"preview-1","actionId":"act-1","actionDigest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","policyDigest":"policy:v1","policyDecisionId":"decision-1","createdAt":"2026-08-27T00:00:00Z","expiresAt":"2026-08-27T00:05:00Z","allowed":true,"approvalRequired":true,"effects":["orders.status"]}

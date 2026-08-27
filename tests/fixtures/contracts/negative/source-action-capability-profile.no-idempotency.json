@@ -1,0 +1,1 @@
+{"schemaVersion":"data.harness/v1","kind":"SourceActionCapabilityProfile","sourceId":"lab.erp","connectorVersion":"1.0.0","operations":[{"operation":"update-status","risk":"high","approvalMode":"human","supportsIdempotencyKey":false,"supportsVersionPrecondition":true,"compensationOperation":"restore-status"}]}

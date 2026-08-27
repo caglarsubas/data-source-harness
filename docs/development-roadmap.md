@@ -72,9 +72,26 @@ signing, deployed runtime proof and stakeholder acceptance remain separate.
 
 ## Phase 4 — governed actions and adaptive semantics
 
+**Implementation status:** implemented in core version `0.5.0` and certified
+against the white-goods and cold-chain synthetic labs. Completion is
+revision-specific: `make phase4`, Python 3.11/3.12 CI and CodeQL must be green
+for the referenced revision.
+
 - previewable, idempotent and conditionally authorized source actions;
 - approval and compensation workflows;
 - governed shared memory promotion and cross-agent semantics;
 - A2A-facing delegation adapters without coupling the connector ABI to A2A or MCP.
 
 **Exit:** action safety, rollback/compensation, policy and audit thresholds pass in at least two independent industry labs.
+
+**Repository exit:** every source mutation is preview-bound, conditionally
+authorized again at execution, idempotency-keyed and postcondition-checked;
+high-risk actions require a digest-bound human approval; declared compensation
+restores both lab states; audits are hash-chained and exclude raw mutation
+values; semantic candidates require human review before scoped cross-agent
+promotion; and over-broad delegation envelopes are rejected before reaching the
+connector registry.
+
+**Evidence boundary:** the in-memory labs prove deterministic application
+semantics, not durable crash recovery, production connector behavior, live A2A
+interoperability, deployed runtime evidence or stakeholder acceptance.

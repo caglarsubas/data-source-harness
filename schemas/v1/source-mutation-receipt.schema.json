@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orchestra.local/schemas/data-harness/v1/source-mutation-receipt.schema.json",
+  "title": "SourceMutationReceipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "receiptId", "actionId", "actionDigest", "idempotencyKey", "state", "startedAt", "completedAt", "sourceVersion", "policyDecisionId", "auditDigest", "compensationOf"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "receiptId": {"type": "string", "minLength": 1},
+    "actionId": {"type": "string", "minLength": 1},
+    "actionDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "idempotencyKey": {"type": "string", "minLength": 1},
+    "state": {"enum": ["executed", "already-executed", "compensated", "failed"]},
+    "startedAt": {"type": "string", "format": "date-time"},
+    "completedAt": {"type": "string", "format": "date-time"},
+    "sourceVersion": {"type": "string", "minLength": 1},
+    "policyDecisionId": {"type": "string", "minLength": 1},
+    "auditDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "compensationOf": {"type": ["string", "null"]}
+  }
+}
