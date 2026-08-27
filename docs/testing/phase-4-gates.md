@@ -23,4 +23,7 @@ make phase4
 | Delegation | exact A2A-facing mapping succeeds; extra fields fail; connector ABI has zero protocol tokens |
 | Regression | all Phase-0 through Phase-3 gates rerun first |
 
-These gates do not establish durable crash recovery, live A2A interoperability, production connector behavior, deployment runtime proof or stakeholder acceptance.
+These gates do not establish durable crash recovery, live A2A interoperability,
+production connector behavior, deployment runtime proof or stakeholder
+acceptance. Phase 5 adds a separate local restart-reconciliation certificate;
+it does not retroactively broaden Phase-4 evidence.

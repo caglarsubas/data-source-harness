@@ -28,6 +28,13 @@ from .coverage import CoverageStatement
 from .decoder import ContentTrust, Decoder, DecodeRequest, DecodeResult, DecoderRegistry
 from .delegation import A2AActionDelegationAdapter, DelegationRejected
 from .deployment import DeploymentMode, DeploymentProfile, EgressGuard
+from .durability import (
+    ActionOutcomeUnknown,
+    DurableActionGateway,
+    DurableActionRecord,
+    DurableActionState,
+    SQLiteActionJournal,
+)
 from .models import CheckpointToken
 from .pack_factory import (
     DatasetBlueprint,
@@ -37,6 +44,13 @@ from .pack_factory import (
     MockDatasetGenerator,
 )
 from .packaging import ArtifactSigner, HmacSha256Signer, build_signed_package, verify_signed_package
+from .protocol import (
+    PROTOCOL_VERSION,
+    NorthboundActionAdapter,
+    NorthboundTool,
+    NorthboundToolCatalog,
+    ProtocolRequestRejected,
+)
 from .scaffolding import ConnectorScaffold, ConnectorScaffolder
 from .semantic import AssertionGraph, AssertionPredicate, EntityRedirect, SemanticAssertion
 from .semantic_memory import (
@@ -52,6 +66,7 @@ __all__ = [
     "ActionApproval",
     "ActionAuditLedger",
     "ActionGateway",
+    "ActionOutcomeUnknown",
     "ActionPreview",
     "ActionRisk",
     "ActionSagaCoordinator",
@@ -81,6 +96,9 @@ __all__ = [
     "DelegationRejected",
     "DeploymentMode",
     "DeploymentProfile",
+    "DurableActionGateway",
+    "DurableActionRecord",
+    "DurableActionState",
     "EgressGuard",
     "EntityRedirect",
     "FieldBlueprint",
@@ -91,15 +109,21 @@ __all__ = [
     "MemoryCandidateStatus",
     "MemoryScope",
     "MockDatasetGenerator",
+    "NorthboundActionAdapter",
+    "NorthboundTool",
+    "NorthboundToolCatalog",
+    "PROTOCOL_VERSION",
+    "ProtocolRequestRejected",
     "PromotedSemanticMemory",
     "SagaState",
     "SemanticAssertion",
     "SemanticMemoryCandidate",
     "SourceActionPlan",
     "SourceMutationReceipt",
+    "SQLiteActionJournal",
     "UnsupportedCapability",
     "build_signed_package",
     "verify_signed_package",
 ]
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"

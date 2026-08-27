@@ -1,6 +1,6 @@
 {
   "schemaVersion": "data.harness.catalog/v1",
-  "scope": "phase-4",
+  "scope": "phase-5",
   "ownershipRule": "reuse upstream contracts; introduce only data-plane-specific contracts here",
   "reusedContracts": [
     {"owner": "ADLC", "names": ["IntegrationManifest", "CredentialReference", "EgressPolicy", "CapabilityProfile", "HealthObservation", "ConformanceResult", "SupportProfile", "RetrievalRequest", "ProvenancePackage", "MemoryCandidate", "MemoryRecord", "PromotionDecision"]},
@@ -26,6 +26,8 @@
     {"name": "SourceActionCapabilityProfile", "schema": "schemas/v1/source-action-capability-profile.schema.json"},
     {"name": "SourceActionPlan", "schema": "schemas/v1/source-action-plan.schema.json"},
     {"name": "ActionPreview", "schema": "schemas/v1/action-preview.schema.json"},
-    {"name": "SourceMutationReceipt", "schema": "schemas/v1/source-mutation-receipt.schema.json"}
+    {"name": "SourceMutationReceipt", "schema": "schemas/v1/source-mutation-receipt.schema.json"},
+    {"name": "DurableActionRecord", "schema": "schemas/v1/durable-action-record.schema.json"},
+    {"name": "NorthboundToolCatalog", "schema": "schemas/v1/northbound-tool-catalog.schema.json"}
   ]
 }

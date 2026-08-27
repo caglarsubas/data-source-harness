@@ -21,7 +21,7 @@ planes:
 The control plane is never required synchronously for a production source,
 retrieval, tool, or model request.
 
-## Implemented scope through Phase 4
+## Implemented scope through Phase 5
 
 Phase 0 establishes the reusable scaffold:
 
@@ -56,6 +56,14 @@ hash-chained audits, governed semantic-memory promotion, and a bounded A2A-facin
 adapter that remains outside the connector ABI. The safety gates run in both the
 white-goods and cold-chain labs.
 
+Phase 5 adds a SQLite `FULL`-sync/WAL action journal, restart reconciliation
+against source idempotency evidence, fail-closed handling of uncertain outcomes,
+and a stateless JSON-RPC northbound action boundary. Agent-visible tool subsets
+are scoped, and every call is pinned to the exact tool-catalog digest so a
+description change cannot silently alter a previously inspected tool. This is
+an adapter boundary for later MCP/A2A hosting, not a claim of official protocol
+conformance.
+
 ## Developer quick start
 
 ```bash
@@ -64,7 +72,7 @@ uv run ruff check .
 uv run pytest
 uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
-make phase4
+make phase5
 ```
 
 The built wheel embeds the versioned schemas, contract catalog, deployment
@@ -82,8 +90,8 @@ profiles, and neutral reference-lab manifest under
 - Missing, partial, stale, ambiguous, and unauthorized evidence remain visible
   in coverage statements rather than being converted into success.
 
-See [Phase 4 architecture](docs/architecture/phase-4-governed-actions.md) for
-the mutation, compensation, memory and delegation boundaries.
+See [Phase 5 architecture](docs/architecture/phase-5-durable-runtime.md) for
+the durable action and northbound protocol boundaries.
 
 The staged [development roadmap](docs/development-roadmap.md) defines the
 white-goods and cold-chain pilots without coupling the core to either industry.

@@ -18,8 +18,9 @@ successful idempotency state is recorded before non-critical telemetry emission.
 
 `ActionSagaCoordinator` applies the same gates to multi-step work and compensates
 completed predecessors in reverse order when a later controlled step fails. Its
-current ledger is process-local; durable recovery after process loss remains a
-deployment integration requirement.
+Phase-4 ledger is process-local. Phase 5 adds the optional SQLite-backed gateway
+and source reconciliation boundary; multi-replica workflow coordination remains
+a deployment integration requirement.
 
 ## Governed semantics and delegation
 
@@ -34,4 +35,8 @@ model plane. Phase-4 execution has no synchronous model-plane dependency.
 
 ## Evidence boundary
 
-Both reference labs execute, replay and compensate a synthetic action with zero network dependency. This establishes application semantics only. Production sources still require durable idempotency/reconciliation, crash-safe workflow storage, live protocol conformance, deployment evidence and stakeholder approval.
+Both reference labs execute, replay and compensate a synthetic action with zero
+network dependency. This establishes application semantics only. Phase 5
+separately certifies local durable restart reconciliation; production sources,
+abrupt host loss, live protocol conformance, deployment evidence and stakeholder
+approval remain open.

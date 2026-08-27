@@ -7,7 +7,9 @@
 | Prompt injection in source content | decoder output is always labelled `untrusted-source` | adversarial document retrieval suite |
 | SSRF or accidental internet egress | explicit egress allow-list; air-gap profile disables DNS/external telemetry | network-denied OCP execution evidence |
 | Unbounded query/resource use | positive query limit/deadline and connector result/parallelism limits | cancellation, timeout and saturation tests |
-| Unsupported or unsafe mutation | read/mutation capabilities are separate; preview, execute-time policy, human approval, conditional writes, idempotency and compensation are certified in two synthetic labs | durable crash recovery and production-source action certification |
+| Unsupported or unsafe mutation | read/mutation capabilities are separate; preview, execute-time policy, human approval, conditional writes, idempotency, compensation and local durable reconciliation are certified in two synthetic labs | production-source action and multi-replica runtime certification |
+| Unknown mutation outcome | write-ahead durable state; automatic replay is forbidden; source idempotency/postcondition reconciliation is mandatory | abrupt power-loss and production-source reconciliation campaign |
+| Tool metadata poisoning | immutable catalog digest, agent-scoped listing and digest-pinned calls | official MCP/A2A host conformance and signed remote catalog distribution |
 | Silent partial answers | required lineage/version data and explicit coverage/exclusions | answer-level coverage and refusal evaluation |
 | Incorrect entity merge | append-only assertions, explicit contradictions and redirects | steward workflow and semantic benchmark |
 | Connector compromise/failure | process/container runtime modes are declared | worker isolation, replacement and supply-chain certification |
@@ -23,3 +25,8 @@ Phase 0 defines and unit-tests the enforcement seams. It does not claim that a d
 Phase 4 closes the original application-level mutation proof gap in the two
 synthetic reference labs. It does not close production connector, durable
 workflow, deployment or stakeholder evidence gaps.
+
+Phase 5 closes deterministic single-node gateway-restart recovery and local
+tool-catalog poisoning gaps. Production connector workers, abrupt host failure,
+multi-replica coordination, official protocol hosting, OpenShift runtime and
+stakeholder acceptance remain open evidence states.

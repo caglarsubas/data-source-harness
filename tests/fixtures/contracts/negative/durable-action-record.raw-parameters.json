@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "sourceId": "lab.actions",
+  "idempotencyKey": "case-1:close",
+  "actionId": "close-case-1",
+  "actionDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "state": "executing",
+  "policyDecisionId": "decision-1",
+  "startedAt": "2026-08-27T12:00:00Z",
+  "updatedAt": "2026-08-27T12:00:01Z",
+  "attempts": 1,
+  "sourceVersion": null,
+  "receiptId": null,
+  "journalDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "parameters": {"status": "closed"}
+}

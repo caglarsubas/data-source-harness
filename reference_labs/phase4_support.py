@@ -24,6 +24,7 @@ class LabMutationConnector:
         self.value = initial_value
         self.version = version
         self.mutation_count = 0
+        self._idempotency: dict[str, tuple[str, Mapping[str, Any]]] = {}
         self.profile = ConnectorProfile(
             source_id,
             "1.0.0",
@@ -37,6 +38,17 @@ class LabMutationConnector:
         )
 
     async def mutate(self, request: Mapping[str, Any]) -> Mapping[str, Any]:
+        key = str(request["idempotency_key"])
+        existing = self._idempotency.get(key)
+        if existing is not None:
+            action_id, result = existing
+            if action_id != request["action_id"]:
+                return {
+                    "success": False,
+                    "postconditions_met": False,
+                    "source_version": str(self.version),
+                }
+            return {**result, "already_applied": True}
         preconditions = request["preconditions"]
         valid = (
             request["asset_id"] == self.asset_id
@@ -52,10 +64,27 @@ class LabMutationConnector:
         self.value = str(request["parameters"]["newValue"])
         self.version += 1
         self.mutation_count += 1
-        return {
+        result = {
             "success": True,
             "postconditions_met": self.value == request["parameters"]["newValue"],
             "source_version": str(self.version),
+        }
+        self._idempotency[key] = (str(request["action_id"]), result)
+        return result
+
+    async def reconcile(self, request: Mapping[str, Any]) -> Mapping[str, Any]:
+        existing = self._idempotency.get(str(request["idempotency_key"]))
+        if existing is None or existing[0] != request["action_id"]:
+            return {
+                "applied": False,
+                "postconditions_met": False,
+                "source_version": str(self.version),
+            }
+        result = existing[1]
+        return {
+            "applied": result["success"],
+            "postconditions_met": result["postconditions_met"],
+            "source_version": result["source_version"],
         }
 
 

@@ -11,7 +11,7 @@
     "actionId": {"type": "string", "minLength": 1},
     "actionDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "idempotencyKey": {"type": "string", "minLength": 1},
-    "state": {"enum": ["executed", "already-executed", "compensated", "failed"]},
+    "state": {"enum": ["executed", "recovered", "already-executed", "compensated", "failed"]},
     "startedAt": {"type": "string", "format": "date-time"},
     "completedAt": {"type": "string", "format": "date-time"},
     "sourceVersion": {"type": "string", "minLength": 1},
