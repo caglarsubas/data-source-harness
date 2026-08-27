@@ -21,7 +21,7 @@ planes:
 The control plane is never required synchronously for a production source,
 retrieval, tool, or model request.
 
-## Implemented scope through Phase 2
+## Implemented scope through Phase 3
 
 Phase 0 establishes the reusable scaffold:
 
@@ -44,6 +44,12 @@ semantic mappings, drift quarantine, freshness-aware routing, monotonic CDC
 checkpoints, bounded field/relationship planning, grounded answer envelopes and
 promotion-readiness evidence without duplicating ADLC's final release decision.
 
+Phase 3 adds a deterministic industry-pack factory, OpenAPI-driven connector
+scaffolding, signed connector archives with CycloneDX SBOMs, and a second
+cold-chain logistics pilot. A Phase-2 digest lock proves that all 14 wire
+contracts remain unchanged, while a core-source scan prevents first-pilot terms
+from leaking into the public package.
+
 ## Developer quick start
 
 ```bash
@@ -52,7 +58,7 @@ uv run ruff check .
 uv run pytest
 uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
-make phase2
+make phase3
 ```
 
 The built wheel embeds the versioned schemas, contract catalog, deployment
@@ -70,13 +76,15 @@ profiles, and neutral reference-lab manifest under
 - Missing, partial, stale, ambiguous, and unauthorized evidence remain visible
   in coverage statements rather than being converted into success.
 
-See [Phase 2 architecture](docs/architecture/phase-2-trustworthy-context.md)
-for routing, semantic governance, freshness, planning and promotion boundaries.
+See [Phase 3 architecture](docs/architecture/phase-3-pack-factory.md) for the
+factory, second-pilot and offline package boundary.
 
 The staged [development roadmap](docs/development-roadmap.md) defines the
-white-goods pilot and later industry-pack factory without coupling the core to
-that first pilot.
+white-goods and cold-chain pilots without coupling the core to either industry.
 
 See the [white-goods lab](reference_labs/white_goods/README.md) for its mock
 data, representative technology topology, GQM scorecard, and explicit runtime
 evidence boundary.
+
+See the [cold-chain lab](reference_labs/cold_chain/README.md) for the second-pilot
+fixtures, generated carrier connector and Phase-3 GQM certificate.

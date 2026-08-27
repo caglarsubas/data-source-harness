@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "kind": "ReferenceLabManifest",
+  "labId": "cold-chain-excursion-response-lab",
+  "industry": "cold-chain logistics",
+  "domain": "condition monitoring and incident response",
+  "datasets": ["shipments-v1", "containers-v1", "sensor-readings-v1", "incidents-v1"],
+  "connectors": ["coldchain.postgresql", "coldchain.telemetry", "coldchain.carrier-api", "coldchain.documents"],
+  "deploymentProfiles": ["self-hosted", "air-gapped"],
+  "acceptanceScenarios": ["deterministic-generation", "referential-integrity", "temperature-excursion-detection", "metadata-driven-scaffold", "signed-package-verification", "sbom-coverage", "unchanged-contracts", "industry-neutral-core"]
+}
