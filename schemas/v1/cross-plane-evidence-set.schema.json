@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orchestra.local/schemas/data-harness/v1/cross-plane-evidence-set.schema.json",
+  "title": "CrossPlaneEvidenceSet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "releaseSet", "generatedAt", "combinedRuntimeAccepted", "components"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "releaseSet": {"type": "string", "minLength": 1},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "combinedRuntimeAccepted": {"type": "boolean"},
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component", "repository", "revision", "evidence"],
+        "properties": {
+          "component": {"type": "string", "minLength": 1},
+          "repository": {"type": "string", "format": "uri"},
+          "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["contract", "ci", "published", "deployed", "runtimeVerified", "faultVerified", "stakeholderAccepted"],
+            "properties": {
+              "contract": {"$ref": "#/$defs/claim"},
+              "ci": {"$ref": "#/$defs/claim"},
+              "published": {"$ref": "#/$defs/claim"},
+              "deployed": {"$ref": "#/$defs/claim"},
+              "runtimeVerified": {"$ref": "#/$defs/claim"},
+              "faultVerified": {"$ref": "#/$defs/claim"},
+              "stakeholderAccepted": {"$ref": "#/$defs/claim"}
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "observedAt", "references"],
+      "properties": {
+        "status": {"enum": ["missing", "passed", "failed", "not-applicable"]},
+        "observedAt": {"type": ["string", "null"], "format": "date-time"},
+        "references": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"enum": ["passed", "failed"]}}}, "then": {"properties": {"observedAt": {"type": "string"}, "references": {"minItems": 1}}}},
+        {"if": {"properties": {"status": {"enum": ["missing", "not-applicable"]}}}, "then": {"properties": {"observedAt": {"type": "null"}, "references": {"maxItems": 0}}}}
+      ]
+    },
+    "passedClaim": {
+      "allOf": [
+        {"$ref": "#/$defs/claim"},
+        {"properties": {"status": {"const": "passed"}}}
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"combinedRuntimeAccepted": {"const": true}}},
+      "then": {
+        "properties": {
+          "components": {
+            "items": {
+              "properties": {
+                "evidence": {
+                  "properties": {
+                    "contract": {"$ref": "#/$defs/passedClaim"},
+                    "ci": {"$ref": "#/$defs/passedClaim"},
+                    "published": {"$ref": "#/$defs/passedClaim"},
+                    "deployed": {"$ref": "#/$defs/passedClaim"},
+                    "runtimeVerified": {"$ref": "#/$defs/passedClaim"},
+                    "faultVerified": {"$ref": "#/$defs/passedClaim"},
+                    "stakeholderAccepted": {"$ref": "#/$defs/passedClaim"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

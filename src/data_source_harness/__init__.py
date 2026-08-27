@@ -35,6 +35,12 @@ from .durability import (
     DurableActionState,
     SQLiteActionJournal,
 )
+from .evidence import (
+    CrossPlaneEvidenceSet,
+    EvidenceClaim,
+    EvidenceStatus,
+    PlaneEvidence,
+)
 from .models import CheckpointToken
 from .pack_factory import (
     DatasetBlueprint,
@@ -51,6 +57,16 @@ from .protocol import (
     NorthboundToolCatalog,
     ProtocolRequestRejected,
 )
+from .protocol_profiles import (
+    A2A_PROTOCOL_VERSION,
+    MCP_PROTOCOL_VERSION,
+    A2A10ActionServer,
+    A2AAgentCard,
+    A2AAgentSkill,
+    HttpDispatchResult,
+    Mcp20260728ActionServer,
+    ProtocolProfileRejected,
+)
 from .scaffolding import ConnectorScaffold, ConnectorScaffolder
 from .semantic import AssertionGraph, AssertionPredicate, EntityRedirect, SemanticAssertion
 from .semantic_memory import (
@@ -60,9 +76,23 @@ from .semantic_memory import (
     PromotedSemanticMemory,
     SemanticMemoryCandidate,
 )
+from .worker import (
+    ConnectorWorkerClient,
+    ConnectorWorkerSpec,
+    WorkerCrashed,
+    WorkerError,
+    WorkerLimits,
+    WorkerProtocolViolation,
+    WorkerRemoteError,
+    WorkerTimeout,
+)
 
 __all__ = [
     "A2AActionDelegationAdapter",
+    "A2A_PROTOCOL_VERSION",
+    "A2A10ActionServer",
+    "A2AAgentCard",
+    "A2AAgentSkill",
     "ActionApproval",
     "ActionAuditLedger",
     "ActionGateway",
@@ -84,8 +114,11 @@ __all__ = [
     "ConnectorRegistry",
     "ConnectorScaffold",
     "ConnectorScaffolder",
+    "ConnectorWorkerClient",
+    "ConnectorWorkerSpec",
     "CompensationSpec",
     "CoverageStatement",
+    "CrossPlaneEvidenceSet",
     "ContentTrust",
     "DataModel",
     "DatasetBlueprint",
@@ -101,18 +134,25 @@ __all__ = [
     "DurableActionState",
     "EgressGuard",
     "EntityRedirect",
+    "EvidenceClaim",
+    "EvidenceStatus",
     "FieldBlueprint",
     "FieldKind",
     "GovernedSemanticMemory",
     "HmacSha256Signer",
+    "HttpDispatchResult",
     "IndustryPackDefinition",
     "MemoryCandidateStatus",
     "MemoryScope",
+    "MCP_PROTOCOL_VERSION",
+    "Mcp20260728ActionServer",
     "MockDatasetGenerator",
     "NorthboundActionAdapter",
     "NorthboundTool",
     "NorthboundToolCatalog",
     "PROTOCOL_VERSION",
+    "PlaneEvidence",
+    "ProtocolProfileRejected",
     "ProtocolRequestRejected",
     "PromotedSemanticMemory",
     "SagaState",
@@ -122,8 +162,14 @@ __all__ = [
     "SourceMutationReceipt",
     "SQLiteActionJournal",
     "UnsupportedCapability",
+    "WorkerCrashed",
+    "WorkerError",
+    "WorkerLimits",
+    "WorkerProtocolViolation",
+    "WorkerRemoteError",
+    "WorkerTimeout",
     "build_signed_package",
     "verify_signed_package",
 ]
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"

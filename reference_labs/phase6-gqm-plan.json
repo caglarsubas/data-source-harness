@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "data.harness.phase6.gqm/v1",
+  "goals": [
+    {"goalId": "G1", "goal": "Run production-shape source contracts behind replaceable worker isolation", "metricIds": ["P6-M1", "P6-M2", "P6-M3", "P6-M4"]},
+    {"goalId": "G2", "goal": "Keep MCP and A2A profiles versioned, bounded and connector-neutral", "metricIds": ["P6-M5", "P6-M6", "P6-M7"]},
+    {"goalId": "G3", "goal": "Preserve cross-plane and disconnected evidence truth", "metricIds": ["P6-M8", "P6-M9", "P6-M10"]}
+  ],
+  "metrics": [
+    {"metricId": "P6-M1", "name": "source-shape worker coverage", "operator": "==", "threshold": 1.0},
+    {"metricId": "P6-M2", "name": "worker fault containment", "operator": "==", "threshold": 1.0},
+    {"metricId": "P6-M3", "name": "observed worker parallelism", "operator": "<=", "threshold": 2.0},
+    {"metricId": "P6-M4", "name": "inherited sensitive environment variables", "operator": "==", "threshold": 0.0},
+    {"metricId": "P6-M5", "name": "MCP profile checks", "operator": "==", "threshold": 1.0},
+    {"metricId": "P6-M6", "name": "A2A profile checks", "operator": "==", "threshold": 1.0},
+    {"metricId": "P6-M7", "name": "connector protocol coupling tokens", "operator": "==", "threshold": 0.0},
+    {"metricId": "P6-M8", "name": "cross-plane evidence false acceptance", "operator": "==", "threshold": 0.0},
+    {"metricId": "P6-M9", "name": "runtime transfer bundle integrity", "operator": "==", "threshold": 1.0},
+    {"metricId": "P6-M10", "name": "false disconnected deployment acceptance", "operator": "==", "threshold": 0.0}
+  ]
+}

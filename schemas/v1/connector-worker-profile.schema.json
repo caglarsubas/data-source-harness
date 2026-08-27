@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orchestra.local/schemas/data-harness/v1/connector-worker-profile.schema.json",
+  "title": "ConnectorWorkerProfile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "workerId", "connectorId", "runtimeMode", "imageDigest", "entrypointDigest", "credentialReferences", "limits", "networkMode", "certificationStatus"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "workerId": {"type": "string", "minLength": 1},
+    "connectorId": {"type": "string", "minLength": 1},
+    "runtimeMode": {"enum": ["process", "container"]},
+    "imageDigest": {"type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$"},
+    "entrypointDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "credentialReferences": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operationTimeoutMs", "maxRequestBytes", "maxResponseBytes", "maxParallelism"],
+      "properties": {
+        "operationTimeoutMs": {"type": "integer", "minimum": 1},
+        "maxRequestBytes": {"type": "integer", "minimum": 1},
+        "maxResponseBytes": {"type": "integer", "minimum": 1},
+        "maxParallelism": {"type": "integer", "minimum": 1}
+      }
+    },
+    "networkMode": {"enum": ["host", "none", "allowlist"]},
+    "certificationStatus": {"enum": ["process-isolation-only", "image-pinned"]}
+  },
+  "allOf": [
+    {"if": {"properties": {"runtimeMode": {"const": "container"}}}, "then": {"properties": {"imageDigest": {"type": "string"}, "certificationStatus": {"const": "image-pinned"}}}},
+    {"if": {"properties": {"runtimeMode": {"const": "process"}}}, "then": {"properties": {"imageDigest": {"type": "null"}, "networkMode": {"const": "host"}, "certificationStatus": {"const": "process-isolation-only"}}}}
+  ]
+}

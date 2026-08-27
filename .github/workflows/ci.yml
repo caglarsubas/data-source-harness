@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   certification:
-    name: Phase 0+1+2+3+4+5 / Python ${{ matrix.python-version }}
+    name: Phase 0+1+2+3+4+5+6 / Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -48,13 +48,13 @@ jobs:
       - name: Verify isolated wheel and embedded offline resources
         run: >-
           uv run --no-project --isolated
-          --with ./dist/orchestra_data_source_harness-0.6.0-py3-none-any.whl
+          --with ./dist/orchestra_data_source_harness-0.7.0-py3-none-any.whl
           python -c 'from importlib.resources import files; import data_source_harness as h;
           root = files("data_source_harness");
-          assert h.__version__ == "0.6.0";
+          assert h.__version__ == "0.7.0";
           assert (root / "resources/schemas/v1/data-batch.schema.json").is_file();
-          assert (root / "resources/schemas/v1/durable-action-record.schema.json").is_file();
-          assert (root / "resources/schemas/v1/northbound-tool-catalog.schema.json").is_file()'
+          assert (root / "resources/schemas/v1/connector-worker-profile.schema.json").is_file();
+          assert (root / "resources/schemas/v1/cross-plane-evidence-set.schema.json").is_file()'
       - run: uv run python -m reference_labs.white_goods.certify --output phase1-report.json
       - run: uv run python -m reference_labs.white_goods.certify_phase2 --output phase2-report.json
       - run: uv run python -m reference_labs.white_goods.bundle build
@@ -64,9 +64,11 @@ jobs:
       - run: uv run python -m reference_labs.cold_chain.bundle verify
       - run: uv run python -m reference_labs.certify_phase4 --output phase4-report.json
       - run: uv run python -m reference_labs.certify_phase5 --output phase5-report.json
+      - run: uv run python -m reference_labs.certify_phase6 --output phase6-report.json
+      - run: uv run python -m reference_labs.white_goods.runtime_bundle verify
       - uses: actions/upload-artifact@v4
         with:
-          name: phase0-phase1-phase2-phase3-phase4-phase5-python-${{ matrix.python-version }}
+          name: phase0-phase1-phase2-phase3-phase4-phase5-phase6-python-${{ matrix.python-version }}
           path: |
             phase0-report.json
             phase1-report.json
@@ -74,4 +76,5 @@ jobs:
             phase3-report.json
             phase4-report.json
             phase5-report.json
+            phase6-report.json
             dist/*

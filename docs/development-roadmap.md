@@ -129,24 +129,59 @@ OS/power-loss behavior, multi-replica coordination, production database HA,
 official MCP/A2A conformance, live OpenShift execution or stakeholder
 acceptance.
 
-## Phase 6 — production-source and combined-platform reference runtime
+## Phase 6 — production-shaped runtime scaffold and acceptance packet
+
+**Implementation status:** the repository-scoped runtime scaffold is implemented
+in core version `0.7.0`. Completion is revision-specific: `make phase6`, Python
+3.11/3.12 CI and CodeQL must be green for the referenced revision. The
+combined-platform/live-source campaign is not complete and remains Phase 7.
+
+- production-shape PostgreSQL, S3-compatible, event-stream and REST contracts
+  execute behind replaceable OS-process workers while preserving the connector
+  ABI;
+- worker deadlines, cancellation, crash replacement, response-size bounds,
+  parallelism and credential-reference-only environment handling are certified;
+- the northbound adapter is exposed through version-pinned MCP `2026-07-28`
+  tools and A2A `1.0` SendMessage profiles without leaking either protocol into
+  the connector core;
+- integrate SDK telemetry/receipts, ADLC evidence and promotion inputs,
+  model-plane embedding/reranking and OCP deployment ownership through a
+  revision-pinned cross-plane evidence set;
+- produce a signed deterministic air-gap transfer packet with OpenShift
+  deployment/security templates and an explicit readiness record.
+
+**Repository exit:** four representative source shapes run through the worker
+boundary; timeout, crash, oversize-response and cancellation faults fail closed;
+MCP/A2A local profile checks pass; protocol vocabulary remains outside the
+connector ABI; the transfer packet verifies its checksum, signature and SBOM;
+and external-plane contract, CI, publication, deployment, runtime, fault and
+stakeholder evidence remain separately represented.
+
+**Evidence boundary:** the sources are deterministic production-shape fixtures,
+not live PostgreSQL/S3/Kafka/REST services. The MCP/A2A checks are local
+specification profiles, not their upstream conformance suites. The transfer
+packet is not mirrored, deployed or accepted; unresolved image digests and live
+runtime gates remain blockers. Process workers use host networking and do not
+claim container or zero-egress isolation.
+
+## Phase 7 — live combined-platform and disconnected-runtime acceptance
 
 **Status:** planned; no completion claim.
 
-- replace lab mutation sources with containerized, production-representative
-  PostgreSQL, S3-compatible, event-stream and REST connector workers while
-  preserving the connector ABI;
-- certify process isolation, cancellation, saturation, credential references,
-  schema upgrades and source-specific idempotency/reconciliation under fault;
-- host the northbound adapter behind officially versioned MCP/A2A adapters and
-  run their upstream conformance suites without leaking those protocols into the
-  connector core;
-- integrate SDK telemetry/receipts, ADLC evidence and promotion inputs,
-  model-plane embedding/reranking and the OCP reference-lab deployment overlay;
-- execute the white-goods reference runtime in disconnected/air-gapped mode
-  from a mirrored, signed artifact set.
+- replace each fixture transport with a digest-pinned connector image against
+  live PostgreSQL, S3-compatible object storage, Kafka-compatible streaming and
+  REST services;
+- run upstream MCP/A2A conformance tools against the tenant runtime host and
+  preserve exact suite versions/results;
+- verify Python-SDK receipts/telemetry, ADLC evidence ingestion and promotion
+  inputs, model-plane embedding/reranking and OCP deployment overlays at one
+  pinned cross-plane release set;
+- mirror images and signatures with the supported disconnected OpenShift flow,
+  deploy to a live cluster, deny public egress and execute dependency, restart,
+  node-loss and recovery drills;
+- capture soak/SLO results and named stakeholder acceptance separately.
 
-**Exit:** source, pull-request CI, exact-main CI, signed supply chain,
-deployed-runtime behavior, protocol conformance and stakeholder acceptance are
-captured as separate evidence states. A local container or mock certificate
-cannot substitute for live OpenShift and production-source certification.
+**Exit:** source, PR CI, exact-main CI, publication, mirror, deployment,
+runtime, fault, soak, protocol-conformance and stakeholder states all pass for
+the same revisions and artifact digests. Local process/container evidence cannot
+substitute for this campaign.

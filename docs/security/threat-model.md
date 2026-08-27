@@ -10,6 +10,9 @@
 | Unsupported or unsafe mutation | read/mutation capabilities are separate; preview, execute-time policy, human approval, conditional writes, idempotency, compensation and local durable reconciliation are certified in two synthetic labs | production-source action and multi-replica runtime certification |
 | Unknown mutation outcome | write-ahead durable state; automatic replay is forbidden; source idempotency/postcondition reconciliation is mandatory | abrupt power-loss and production-source reconciliation campaign |
 | Tool metadata poisoning | immutable catalog digest, agent-scoped listing and digest-pinned calls | official MCP/A2A host conformance and signed remote catalog distribution |
+| Connector worker escape or resource abuse | no shell, replaceable child process, bounded bytes/deadline/parallelism, cancellation kill and sanitized environment | container/seccomp/SELinux isolation and live saturation proof |
+| Protocol-version confusion | explicit MCP/A2A versions, per-request metadata, header/body binding and strict envelopes | upstream conformance suites and authenticated live transports |
+| Evidence-state collapse across planes | typed contract/CI/publish/deploy/runtime/fault/stakeholder claims; missing evidence cannot be promoted | combined release-set acceptance campaign |
 | Silent partial answers | required lineage/version data and explicit coverage/exclusions | answer-level coverage and refusal evaluation |
 | Incorrect entity merge | append-only assertions, explicit contradictions and redirects | steward workflow and semantic benchmark |
 | Connector compromise/failure | process/container runtime modes are declared | worker isolation, replacement and supply-chain certification |
@@ -30,3 +33,8 @@ Phase 5 closes deterministic single-node gateway-restart recovery and local
 tool-catalog poisoning gaps. Production connector workers, abrupt host failure,
 multi-replica coordination, official protocol hosting, OpenShift runtime and
 stakeholder acceptance remain open evidence states.
+
+Phase 6 closes the local connector-process and cross-plane evidence-model gaps.
+It does not close container isolation, real source connectivity, upstream
+protocol conformance, image mirroring, live OpenShift, dependency faults, soak or
+stakeholder acceptance.

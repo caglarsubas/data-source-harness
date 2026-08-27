@@ -22,9 +22,15 @@ The mock corpus includes repeat visits, product/serial/customer relationships, m
 ## Run
 
 ```bash
-make phase2
+make phase6
 ```
 
 `phase1-report.json` retains the source and zero-egress certificate. `phase2-report.json` adds ten GQM metrics for approved/fresh routing, exact provenance, ambiguity and stale refusal, drift quarantine, bounded planning, monotonic checkpoints, compatibility pins and promotion evidence separation.
 
 The perfect scores describe the bounded synthetic corpus and are not evidence of production generalization. They do not claim that a live OpenShift cluster, mirrored container estate or combined ADLC/SDK/model-plane runtime was deployed. ADLC retains the final promotion decision.
+
+Phase 6 adds replaceable process workers for the four primary source shapes,
+version-pinned MCP/A2A action profiles and a signed runtime transfer packet. Its
+readiness record intentionally remains blocked on immutable image digests,
+signature mirroring, live OpenShift deployment, runtime fault evidence and
+stakeholder acceptance.
