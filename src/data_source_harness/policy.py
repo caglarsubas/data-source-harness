@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Protocol
+from collections.abc import Mapping
+from dataclasses import dataclass, field
+from typing import Any, Protocol
 
 from .connector import Capability
+from .models import Scalar
 
 
 @dataclass(frozen=True)
@@ -29,6 +31,8 @@ class AuthorizationRequest:
     capability: Capability
     asset_ids: tuple[str, ...]
     purpose: str
+    attributes: Mapping[str, Scalar] = field(default_factory=dict)
+    parameters: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)

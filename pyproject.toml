@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "orchestra-data-source-harness"
-version = "0.1.0"
+version = "0.2.0"
 description = "Tenant-local data context and execution plane for governed agent systems"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -15,6 +15,7 @@ dev = [
   "jsonschema>=4.23,<5",
   "pytest>=8.3,<9",
   "pytest-asyncio>=0.24,<1",
+  "pyyaml>=6.0,<7",
   "ruff>=0.16,<0.17",
 ]
 

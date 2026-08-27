@@ -20,11 +20,15 @@ This roadmap builds an industry-neutral data-source harness first, then proves i
 
 **Outcome:** prove the abstraction with representative, legally safe mock data and heterogeneous technologies.
 
+**Implementation status:** implemented as the `white-goods-service-quality` industry pack. Completion is revision-specific: `make phase1`, Python 3.11/3.12 CI and CodeQL must be green for the referenced revision.
+
 Use a service-and-quality scenario spanning an ERP-style PostgreSQL database, a product/document S3-compatible store, a manufacturing/event stream, a service-management REST API and hybrid search. Build deterministic reset/seed tooling and intentionally include late events, duplicates, missing keys, conflicting identifiers, stale documents, ACL boundaries, schema evolution and outages.
 
 Apply Goal–Question–Metric design to every scenario. Example: goal “reduce repeat service visits”; questions test whether the system can identify failure patterns without crossing tenant or customer permissions; metrics include grounded answer accuracy, citation/lineage completeness, refusal precision, p95 latency, replay correctness and zero-egress violations.
 
-**Exit:** the published lab pack passes connector fidelity, authorization, failure-injection, replay, semantic, retrieval-quality, performance and air-gap suites. ADLC captures evidence asynchronously; Orchestra SDK executes the agent workflow; the model plane supplies local embeddings/reranking; OCP lab verifies the deployment profile.
+**Repository exit:** the published lab pack passes connector fidelity, authorization, failure-injection, replay, semantic, retrieval-quality, performance and zero-egress suites, and its deterministic offline bundle verifies against its embedded checksum manifest.
+
+**Combined-platform acceptance:** ADLC evidence ingestion, Orchestra SDK workflow execution, local model-plane embeddings/reranking and OCP deployment verification are a separate cross-plane campaign against the pinned release set. They are target consumers of the Phase-1 artifacts, not evidence this repository can manufacture or silently infer. Image mirroring, live-cluster policy enforcement, upstream CI and stakeholder acceptance remain distinct release states.
 
 ## Phase 2 — trustworthy cross-source context
 

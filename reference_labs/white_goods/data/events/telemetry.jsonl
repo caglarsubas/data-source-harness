@@ -1,0 +1,9 @@
+{"sequence":1,"event_id":"EV001","event_time":"2025-05-01T08:45:00Z","observed_at":"2025-05-01T08:45:02Z","serial_number":"SN-WM-001","event_type":"error","error_code":"E21","value":1}
+{"sequence":2,"event_id":"EV002","event_time":"2025-05-01T08:46:00Z","observed_at":"2025-05-01T08:46:01Z","serial_number":"SN-WM-001","event_type":"pump_current","value":0.2}
+{"sequence":3,"event_id":"EV003","event_time":"2025-05-18T08:10:00Z","observed_at":"2025-05-18T08:10:01Z","serial_number":"SN-WM-001","event_type":"error","error_code":"E21","value":1}
+{"sequence":4,"event_id":"EV004","event_time":"2025-06-02T11:40:00Z","observed_at":"2025-06-02T11:40:01Z","serial_number":"SN-RF-001","event_type":"temperature_c","value":11.8}
+{"sequence":5,"event_id":"EV004","event_time":"2025-06-02T11:40:00Z","observed_at":"2025-06-02T11:40:03Z","serial_number":"SN-RF-001","event_type":"temperature_c","value":11.8,"duplicate":true}
+{"sequence":6,"event_id":"EV005","event_time":"2025-06-07T07:30:00Z","observed_at":"2025-06-07T07:30:02Z","serial_number":"SN-WM-002","event_type":"error","error_code":"E10","value":1}
+{"sequence":7,"event_id":"EV006","event_time":"2025-06-09T13:45:00Z","observed_at":"2025-06-09T13:45:02Z","serial_number":"SN-DW-001","event_type":"leak_sensor","value":1}
+{"sequence":8,"event_id":"EV007","event_time":"2025-05-30T10:00:00Z","observed_at":"2025-06-10T10:00:00Z","serial_number":"SN-RF-001","event_type":"temperature_c","value":10.9,"late":true}
+{"sequence":9,"event_id":"EV008","event_time":"2025-06-10T10:05:00Z","observed_at":"2025-06-10T10:05:01Z","serial_number":null,"event_type":"heartbeat","value":1,"quarantine_reason":"missing_serial_number"}

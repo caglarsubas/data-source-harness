@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Mapping
 
 from .connector import Capability, ConnectorRegistry
-from .models import Asset, DataBatch, QueryRequest
+from .models import Asset, DataBatch, QueryRequest, Scalar, SearchHit, SearchRequest
 from .policy import AuthorizationRequest, PolicyDenied, PolicyEvaluator, RequestIdentity
 from .telemetry import TelemetryEvent, TelemetrySink
 
@@ -25,7 +25,9 @@ class HarnessGateway:
 
     async def discover(self, source_id: str, identity: RequestIdentity) -> tuple[Asset, ...]:
         connector = self.registry.get(source_id, Capability.DISCOVER)
-        await self._authorize(identity, source_id, Capability.DISCOVER, (), "asset discovery")
+        await self._authorize(
+            identity, source_id, Capability.DISCOVER, (), "asset discovery", {}, {}
+        )
         assets = await connector.discover()
         await self.telemetry.emit(
             TelemetryEvent(
@@ -46,6 +48,8 @@ class HarnessGateway:
             Capability.QUERY,
             request.asset_ids,
             request.purpose,
+            request.policy_attributes,
+            request.plan,
         )
         async for batch in connector.execute(request):
             await self.telemetry.emit(
@@ -61,6 +65,32 @@ class HarnessGateway:
             )
             yield batch
 
+    async def search(
+        self, request: SearchRequest, identity: RequestIdentity
+    ) -> tuple[SearchHit, ...]:
+        connector = self.registry.get(request.source_id, Capability.SEARCH)
+        await self._authorize(
+            identity,
+            request.source_id,
+            Capability.SEARCH,
+            (),
+            request.purpose,
+            request.policy_attributes,
+            request.filters,
+        )
+        hits = await connector.search(request)
+        await self.telemetry.emit(
+            TelemetryEvent(
+                "data.harness.search.completed",
+                identity,
+                attributes={
+                    "source_id": request.source_id,
+                    "candidate_count": len(hits),
+                },
+            )
+        )
+        return hits
+
     async def _authorize(
         self,
         identity: RequestIdentity,
@@ -68,9 +98,19 @@ class HarnessGateway:
         capability: Capability,
         asset_ids: tuple[str, ...],
         purpose: str,
+        attributes: Mapping[str, Scalar],
+        parameters: Mapping[str, object],
     ) -> None:
         decision = await self.policy.evaluate(
-            AuthorizationRequest(identity, source_id, capability, asset_ids, purpose)
+            AuthorizationRequest(
+                identity,
+                source_id,
+                capability,
+                asset_ids,
+                purpose,
+                attributes,
+                parameters,
+            )
         )
         await self.telemetry.emit(
             TelemetryEvent(

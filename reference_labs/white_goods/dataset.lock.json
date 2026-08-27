@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "whitegoods.lab.dataset/v1",
+  "datasetId": "white-goods-service-quality-mock-v1",
+  "sha256": "c6a51104c471c84ca3ea2f9f1dbcea2adc1dc31ae29a35ad4525323eb6e149a4",
+  "expected": {
+    "tables": {"products": 3, "customers": 3, "installed_products": 4, "service_orders": 6, "quality_inspections": 4},
+    "documents": 4,
+    "rawEvents": 9,
+    "logicalEvents": 7,
+    "duplicateEvents": 1,
+    "quarantinedEvents": 1,
+    "appointments": 3
+  }
+}
