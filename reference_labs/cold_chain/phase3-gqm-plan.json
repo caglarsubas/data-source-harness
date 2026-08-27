@@ -14,7 +14,7 @@
     {"metricId": "M5", "name": "valid package signature", "operator": "==", "threshold": 1.0},
     {"metricId": "M6", "name": "SBOM payload coverage", "operator": "==", "threshold": 1.0},
     {"metricId": "M7", "name": "tampered or wrong-key package denial", "operator": "==", "threshold": 1.0},
-    {"metricId": "M8", "name": "Phase-2 schema digest reuse", "operator": "==", "threshold": 1.0},
+    {"metricId": "M8", "name": "Phase-2 schema compatibility or approved evolution", "operator": "==", "threshold": 1.0},
     {"metricId": "M9", "name": "white-goods tokens in public core", "operator": "==", "threshold": 0.0},
     {"metricId": "M10", "name": "cold-chain scenario correctness", "operator": ">=", "threshold": 1.0}
   ]

@@ -1,1 +1,64 @@
-{"schemaVersion":"data.harness/v1","releaseSet":"phase-6","generatedAt":"2026-08-27T12:00:00Z","combinedRuntimeAccepted":false,"components":[{"component":"ADLC","repository":"https://github.com/caglarsubas/agent-hook-v2.git","revision":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","evidence":{"contract":{"status":"passed","observedAt":"2026-08-27T12:00:00Z","references":["compatibility/phase6"]},"ci":{"status":"missing","observedAt":null,"references":[]},"published":{"status":"missing","observedAt":null,"references":[]},"deployed":{"status":"missing","observedAt":null,"references":[]},"runtimeVerified":{"status":"missing","observedAt":null,"references":[]},"faultVerified":{"status":"missing","observedAt":null,"references":[]},"stakeholderAccepted":{"status":"missing","observedAt":null,"references":[]}}}]}
+{
+  "schemaVersion": "data.harness/v1",
+  "releaseSet": "phase-6",
+  "generatedAt": "2026-08-27T12:00:00Z",
+  "combinedRuntimeAccepted": false,
+  "components": [
+    {
+      "component": "ADLC",
+      "repository": "https://github.com/caglarsubas/agent-hook-v2.git",
+      "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidence": {
+        "contract": {"status": "passed", "observedAt": "2026-08-27T12:00:00Z", "references": ["compatibility/phase6/adlc"]},
+        "ci": {"status": "missing", "observedAt": null, "references": []},
+        "published": {"status": "missing", "observedAt": null, "references": []},
+        "deployed": {"status": "missing", "observedAt": null, "references": []},
+        "runtimeVerified": {"status": "missing", "observedAt": null, "references": []},
+        "faultVerified": {"status": "missing", "observedAt": null, "references": []},
+        "stakeholderAccepted": {"status": "missing", "observedAt": null, "references": []}
+      }
+    },
+    {
+      "component": "Python-SDK",
+      "repository": "https://github.com/caglarsubas/planeon-orchestra-python-sdk.git",
+      "revision": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "evidence": {
+        "contract": {"status": "passed", "observedAt": "2026-08-27T12:00:00Z", "references": ["compatibility/phase6/python-sdk"]},
+        "ci": {"status": "missing", "observedAt": null, "references": []},
+        "published": {"status": "missing", "observedAt": null, "references": []},
+        "deployed": {"status": "missing", "observedAt": null, "references": []},
+        "runtimeVerified": {"status": "missing", "observedAt": null, "references": []},
+        "faultVerified": {"status": "missing", "observedAt": null, "references": []},
+        "stakeholderAccepted": {"status": "missing", "observedAt": null, "references": []}
+      }
+    },
+    {
+      "component": "OCP-reference-lab",
+      "repository": "https://github.com/caglarsubas/orchestra-openshift-reference-lab.git",
+      "revision": "cccccccccccccccccccccccccccccccccccccccc",
+      "evidence": {
+        "contract": {"status": "passed", "observedAt": "2026-08-27T12:00:00Z", "references": ["compatibility/phase6/ocp"]},
+        "ci": {"status": "missing", "observedAt": null, "references": []},
+        "published": {"status": "missing", "observedAt": null, "references": []},
+        "deployed": {"status": "missing", "observedAt": null, "references": []},
+        "runtimeVerified": {"status": "missing", "observedAt": null, "references": []},
+        "faultVerified": {"status": "missing", "observedAt": null, "references": []},
+        "stakeholderAccepted": {"status": "missing", "observedAt": null, "references": []}
+      }
+    },
+    {
+      "component": "model-plane",
+      "repository": "https://github.com/caglarsubas/llm_inference_engine.git",
+      "revision": "dddddddddddddddddddddddddddddddddddddddd",
+      "evidence": {
+        "contract": {"status": "passed", "observedAt": "2026-08-27T12:00:00Z", "references": ["compatibility/phase6/model"]},
+        "ci": {"status": "missing", "observedAt": null, "references": []},
+        "published": {"status": "missing", "observedAt": null, "references": []},
+        "deployed": {"status": "missing", "observedAt": null, "references": []},
+        "runtimeVerified": {"status": "missing", "observedAt": null, "references": []},
+        "faultVerified": {"status": "missing", "observedAt": null, "references": []},
+        "stakeholderAccepted": {"status": "missing", "observedAt": null, "references": []}
+      }
+    }
+  ]
+}

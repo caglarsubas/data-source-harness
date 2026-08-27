@@ -4,23 +4,26 @@ build-backend = "hatchling.build"
 
 [project]
 name = "orchestra-data-source-harness"
-version = "0.7.0"
+version = "0.8.0"
 description = "Tenant-local data context and execution plane for governed agent systems"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+  "jsonschema>=4.23,<5",
+]
 
 [project.optional-dependencies]
 dev = [
-  "jsonschema>=4.23,<5",
   "pytest>=8.3,<9",
   "pytest-asyncio>=0.24,<1",
+  "pytest-cov>=6,<7",
   "pyyaml>=6.0,<7",
   "ruff>=0.16,<0.17",
 ]
 
 [project.scripts]
 harness-contracts = "data_source_harness.cli:main"
+harness-runtime = "data_source_harness.runtime_server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/data_source_harness"]
@@ -30,6 +33,7 @@ packages = ["src/data_source_harness"]
 "contracts/catalog.v1.json" = "data_source_harness/resources/contracts/catalog.v1.json"
 "deployment/profiles" = "data_source_harness/resources/deployment/profiles"
 "reference-labs/reference-lab-manifest.example.json" = "data_source_harness/resources/reference-labs/reference-lab-manifest.example.json"
+"tests/fixtures/contracts" = "data_source_harness/resources/contract-fixtures"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

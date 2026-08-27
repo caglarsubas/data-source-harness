@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "data.harness.contract-evolution/v1",
+  "baseline": "phase-2",
+  "approvedAt": "2026-08-27T16:00:00Z",
+  "entries": [
+    {
+      "schema": "bounded-query-plan.schema.json",
+      "baselineSha256": "17bb6c09a7d4522c676f3614553517c03932948a4b7d6191095a3b4285779b37",
+      "currentSha256": "cc91280adadb55efcd5c613c7c6acd3bfbf18925f0d853ceea6bf6963818893b",
+      "backwardCompatible": true,
+      "reason": "Canonical schema identifier namespace only; instance vocabulary is unchanged."
+    },
+    {
+      "schema": "coverage-statement.schema.json",
+      "baselineSha256": "bda8aa83b7dc53ff7eccff99f63d2751f8e974d51f756a28aeea9368e52a2b57",
+      "currentSha256": "27e41660bfe988ec984afa3bc271c835c62ec04c6b6dc08f018bf423469b75bb",
+      "backwardCompatible": true,
+      "reason": "Adds optional expectedSources universe; all Phase-2 instances remain valid."
+    },
+    {
+      "schema": "freshness-observation.schema.json",
+      "baselineSha256": "788282fcb2eeda3a6a31e8fb524cdeac634bfea4acb7d153924ed7f8133e94fa",
+      "currentSha256": "3852082f9370193a74ff557b5cccb53d151e84ec3901ca5d51b8346590496bb5",
+      "backwardCompatible": true,
+      "reason": "Canonical schema identifier namespace only; instance vocabulary is unchanged."
+    },
+    {
+      "schema": "promotion-readiness.schema.json",
+      "baselineSha256": "cd5200917080759204e7657bb5fc087312f631866de6d2c15170268c1ec56f4d",
+      "currentSha256": "1d74749b9af0f1bd6df699938eeb65a64ca69cfe96ffabd57b1c577adc2a635b",
+      "backwardCompatible": true,
+      "reason": "Canonical schema identifier namespace only; instance vocabulary is unchanged."
+    },
+    {
+      "schema": "route-decision.schema.json",
+      "baselineSha256": "24710d344acbbd055702c1185e91ceea787cca4231315d078714e1f5a9f974d9",
+      "currentSha256": "832b1f323bfabc3a219ffed30aa0a137eb7680d93d893d6c320386a9515910d3",
+      "backwardCompatible": true,
+      "reason": "Canonical schema identifier namespace only; instance vocabulary is unchanged."
+    },
+    {
+      "schema": "semantic-mapping-candidate.schema.json",
+      "baselineSha256": "6f07d66cb35690bbce7483d07c905c59d21c422ae13e7d69b594c3d44f80ad80",
+      "currentSha256": "06396c537a1a378f40d7641263ced091f62b714b157022423ed183756be26dcb",
+      "backwardCompatible": true,
+      "reason": "Canonical schema identifier namespace only; instance vocabulary is unchanged."
+    }
+  ]
+}

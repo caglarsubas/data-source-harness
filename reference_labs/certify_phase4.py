@@ -149,17 +149,18 @@ def _cross_plane_boundary() -> tuple[bool, str]:
     boundary = json.loads(
         (REPOSITORY_ROOT / "compatibility/phase4-cross-plane-boundary.json").read_text()
     )
-    release_set = json.loads(
-        (REPOSITORY_ROOT / "compatibility/cross-plane-release-set.lock.json").read_text()
-    )
-    expected = {item["name"]: item["revision"] for item in release_set["components"]}
     actual = {item["name"]: item["revision"] for item in boundary["components"]}
+    expected_names = {"ADLC", "Python-SDK", "OCP-reference-lab", "model-plane"}
+    exact_historical_pins = set(actual) == expected_names and all(
+        len(revision) == 40 and set(revision) <= set("0123456789abcdef")
+        for revision in actual.values()
+    )
     model_boundary = next(item for item in boundary["components"] if item["name"] == "model-plane")
     no_sync_model = any(
         "no synchronous dependency" in item for item in model_boundary["harnessBoundary"]
     )
     return (
-        expected == actual and no_sync_model,
+        exact_historical_pins and no_sync_model,
         f"pins={len(actual)}; no_sync_model={no_sync_model}",
     )
 

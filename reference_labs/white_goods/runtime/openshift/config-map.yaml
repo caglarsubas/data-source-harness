@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-source-harness-runtime
+data:
+  deployment-profile.json: |
+    {
+      "schemaVersion": "data.harness/v1",
+      "kind": "DeploymentProfile",
+      "profileId": "whitegoods-airgap",
+      "mode": "air-gapped",
+      "allowedHosts": [
+        "postgres.data.svc",
+        "object-store.data.svc",
+        "event-stream.data.svc",
+        "search.data.svc",
+        "model-plane.ai.svc",
+        "otel-collector.observability.svc"
+      ],
+      "dnsEnabled": false,
+      "externalTelemetry": false,
+      "artifactMirrorRequired": true
+    }

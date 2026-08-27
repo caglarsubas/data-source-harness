@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import StrEnum
 
 from .models import LineageRef
@@ -115,21 +115,26 @@ class AssertionGraph:
             raise ValueError("retraction cannot predate its assertion")
         self._retractions[retraction.assertion_id] = retraction
 
-    def active(self, at: datetime | None = None) -> tuple[SemanticAssertion, ...]:
+    def active(
+        self,
+        at: datetime | None = None,
+        *,
+        as_known_at: datetime | None = None,
+    ) -> tuple[SemanticAssertion, ...]:
+        """Return assertions valid at ``at`` and known by ``as_known_at``."""
+
+        valid_at = at or datetime.now(UTC)
+        known_at = as_known_at or datetime.now(UTC)
+        if valid_at.tzinfo is None or known_at.tzinfo is None:
+            raise ValueError("query timestamps must be timezone-aware")
         values = [
             item
             for key, item in self._assertions.items()
-            if key not in self._retractions
-            or (at is not None and at < self._retractions[key].retracted_at)
+            if item.asserted_at <= known_at
+            and (key not in self._retractions or known_at < self._retractions[key].retracted_at)
+            and item.valid_from <= valid_at
+            and (item.valid_to is None or valid_at < item.valid_to)
         ]
-        if at is not None:
-            if at.tzinfo is None:
-                raise ValueError("query timestamp must be timezone-aware")
-            values = [
-                item
-                for item in values
-                if item.valid_from <= at and (item.valid_to is None or at < item.valid_to)
-            ]
         return tuple(values)
 
     def equivalence_cluster(self, entity_id: str) -> frozenset[str]:

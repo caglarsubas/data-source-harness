@@ -13,6 +13,7 @@ from reference_labs.white_goods.phase2 import (
     ambiguous_context,
     bounded_e21_plan,
     covered_route,
+    execute_bounded_e21_plan,
     grounded_e21_context,
     promotion_readiness,
 )
@@ -59,6 +60,17 @@ def test_bounded_plan_and_promotion_boundary_are_explicit() -> None:
     assert not readiness.ready_for_adlc_decision
     assert set(readiness.missing_kinds) == set(EvidenceKind)
     assert promotion_readiness(simulate_all_evidence=True).ready_for_adlc_decision
+
+
+@pytest.mark.asyncio
+async def test_bounded_plan_executes_end_to_end_against_pilot_connector() -> None:
+    batches = await execute_bounded_e21_plan()
+    assert len(batches) == 2
+    assert {item.asset_id for batch in batches for item in batch.lineage} == {
+        "service_orders",
+        "installed_products",
+    }
+    assert {row["error_code"] for row in batches[0].payload} == {"E21"}
 
 
 @pytest.mark.asyncio

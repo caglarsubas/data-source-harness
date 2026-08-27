@@ -47,6 +47,8 @@ class EgressGuard:
         parsed = urlparse(endpoint)
         if parsed.scheme not in {"http", "https"} or not parsed.hostname:
             raise EgressDenied("endpoint must be an absolute HTTP(S) URL")
+        if parsed.username or parsed.password or parsed.fragment:
+            raise EgressDenied("endpoint must not contain credentials or fragments")
         host = parsed.hostname.lower()
         if host in {item.lower() for item in self.profile.allowed_hosts}:
             return

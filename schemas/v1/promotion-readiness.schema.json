@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://orchestra.local/schemas/data-harness/v1/promotion-readiness.schema.json",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/promotion-readiness.schema.json",
   "title": "PromotionReadiness",
   "description": "Data-plane readiness evidence; ADLC owns the authoritative PromotionDecision.",
   "type": "object",

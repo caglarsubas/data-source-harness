@@ -5,12 +5,34 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import asdict, dataclass
+from importlib.resources import files
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMA_DIR = ROOT / "schemas" / "v1"
-FIXTURE_DIR = ROOT / "tests" / "fixtures" / "contracts"
+
+
+class ResourcePath(Protocol):
+    name: str
+
+    def is_dir(self) -> bool: ...
+
+    def is_file(self) -> bool: ...
+
+    def iterdir(self) -> Any: ...
+
+    def joinpath(self, *descendants: str) -> ResourcePath: ...
+
+    def open(self, mode: str = "r", *args: Any, **kwargs: Any) -> Any: ...
+
+
+if (ROOT / "schemas/v1").is_dir():
+    SCHEMA_DIR: ResourcePath = ROOT / "schemas/v1"
+    FIXTURE_DIR: ResourcePath = ROOT / "tests/fixtures/contracts"
+else:  # Installed-wheel path; all validation inputs are embedded package resources.
+    package_resources = files("data_source_harness").joinpath("resources")
+    SCHEMA_DIR = package_resources.joinpath("schemas", "v1")
+    FIXTURE_DIR = package_resources.joinpath("contract-fixtures")
 
 
 @dataclass(frozen=True)
@@ -34,11 +56,13 @@ def _jsonschema() -> Any:
     try:
         import jsonschema
     except ImportError as exc:  # pragma: no cover - packaging guard
-        raise RuntimeError("contract validation requires the 'dev' extra") from exc
+        raise RuntimeError(
+            "contract validation requires the runtime jsonschema dependency"
+        ) from exc
     return jsonschema
 
 
-def load_json(path: Path) -> dict[str, Any]:
+def load_json(path: ResourcePath) -> dict[str, Any]:
     with path.open(encoding="utf-8") as handle:
         return json.load(handle)
 
@@ -46,15 +70,33 @@ def load_json(path: Path) -> dict[str, Any]:
 def validate_contract_fixtures() -> tuple[GateCheck, ...]:
     jsonschema = _jsonschema()
     checks: list[GateCheck] = []
-    for schema_path in sorted(SCHEMA_DIR.glob("*.schema.json")):
+    schema_paths = sorted(
+        (path for path in SCHEMA_DIR.iterdir() if path.name.endswith(".schema.json")),
+        key=lambda path: path.name,
+    )
+    for schema_path in schema_paths:
         schema_name = schema_path.name.removesuffix(".schema.json")
         schema = load_json(schema_path)
         jsonschema.Draft202012Validator.check_schema(schema)
         validator = jsonschema.Draft202012Validator(
             schema, format_checker=jsonschema.FormatChecker()
         )
-        positives = sorted((FIXTURE_DIR / "positive").glob(f"{schema_name}.*.json"))
-        negatives = sorted((FIXTURE_DIR / "negative").glob(f"{schema_name}.*.json"))
+        positives = sorted(
+            (
+                path
+                for path in FIXTURE_DIR.joinpath("positive").iterdir()
+                if path.name.startswith(f"{schema_name}.") and path.name.endswith(".json")
+            ),
+            key=lambda path: path.name,
+        )
+        negatives = sorted(
+            (
+                path
+                for path in FIXTURE_DIR.joinpath("negative").iterdir()
+                if path.name.startswith(f"{schema_name}.") and path.name.endswith(".json")
+            ),
+            key=lambda path: path.name,
+        )
         if not positives or not negatives:
             checks.append(
                 GateCheck(

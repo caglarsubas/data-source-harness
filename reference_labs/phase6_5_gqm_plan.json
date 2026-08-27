@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "data.harness.phase6.5.gqm/v1",
+  "goals": [
+    {"goalId": "G1", "goal": "Execute governed plans through the pilot and worker connector ABI", "metricIds": ["P65-M1", "P65-M2", "P65-M3"]},
+    {"goalId": "G2", "goal": "Reject forged trust and incomplete evidence claims", "metricIds": ["P65-M4", "P65-M5"]},
+    {"goalId": "G3", "goal": "Bind surrounding ADLC planes without claiming deployment", "metricIds": ["P65-M6", "P65-M7"]}
+  ],
+  "metrics": [
+    {"metricId": "P65-M1", "name": "bounded pilot plan execution", "operator": "==", "threshold": 1.0},
+    {"metricId": "P65-M2", "name": "complete four-source coverage with lineage", "operator": "==", "threshold": 1.0},
+    {"metricId": "P65-M3", "name": "canonical gateway to subprocess worker execution", "operator": "==", "threshold": 1.0},
+    {"metricId": "P65-M4", "name": "trust-boundary false accepts", "operator": "==", "threshold": 0.0},
+    {"metricId": "P65-M5", "name": "four-plane evidence contract validity", "operator": "==", "threshold": 1.0},
+    {"metricId": "P65-M6", "name": "tenant-neutral SDK, ADLC and model-plane seams", "operator": "==", "threshold": 1.0},
+    {"metricId": "P65-M7", "name": "false combined-runtime acceptance", "operator": "==", "threshold": 0.0}
+  ]
+}

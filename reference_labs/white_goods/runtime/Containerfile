@@ -1,0 +1,14 @@
+ARG BASE_IMAGE=PYTHON_BASE_IMAGE_DIGEST_REQUIRED
+FROM ${BASE_IMAGE}
+
+WORKDIR /opt/data-source-harness
+COPY wheels/ /opt/data-source-harness/wheels/
+RUN python -m pip install --no-cache-dir --no-index \
+      --find-links=/opt/data-source-harness/wheels \
+      orchestra-data-source-harness==0.8.0 \
+    && rm -rf /opt/data-source-harness/wheels
+
+USER 1001
+EXPOSE 8080
+ENTRYPOINT ["harness-runtime"]
+CMD ["--bind", "0.0.0.0", "--port", "8080"]

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://orchestra.local/schemas/data-harness/v1/durable-action-record.schema.json",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/durable-action-record.schema.json",
   "title": "DurableActionRecord",
   "type": "object",
   "additionalProperties": false,

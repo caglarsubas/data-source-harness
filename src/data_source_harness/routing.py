@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import StrEnum
 
-from .freshness import FreshnessRegistry, FreshnessSLO
+from .freshness import FreshnessBreachAction, FreshnessRegistry, FreshnessSLO
 from .governance import SemanticMappingCandidate, SemanticMappingRegistry
 from .models import LineageRef
 
@@ -67,6 +67,9 @@ class SemanticSourceRouter:
         uncovered: list[str] = []
         ambiguous: list[str] = []
         stale: list[str] = []
+        freshness_refused: list[str] = []
+        degraded: list[str] = []
+        degraded_candidates: set[str] = set()
         for concept_id in request.concept_ids:
             candidates = [
                 item
@@ -80,6 +83,11 @@ class SemanticSourceRouter:
                 )
                 if assessment.fresh:
                     eligible.append((candidate, assessment.watermark))
+                elif assessment.action is FreshnessBreachAction.DEGRADE:
+                    eligible.append((candidate, assessment.watermark))
+                    degraded_candidates.add(candidate.mapping_id)
+                elif assessment.action is FreshnessBreachAction.REFUSE:
+                    freshness_refused.append(concept_id)
                 else:
                     stale.append(concept_id)
             eligible.sort(key=lambda item: (-item[0].confidence, item[0].mapping_id))
@@ -88,12 +96,13 @@ class SemanticSourceRouter:
                 continue
             if (
                 len(eligible) > 1
-                and eligible[0][0].source_id != eligible[1][0].source_id
                 and eligible[0][0].confidence - eligible[1][0].confidence <= request.ambiguity_delta
             ):
                 ambiguous.append(concept_id)
                 continue
             winner, _ = eligible[0]
+            if winner.mapping_id in degraded_candidates:
+                degraded.append(concept_id)
             selected.setdefault((winner.source_id, winner.asset_id), []).append(winner)
         if ambiguous:
             return RouteDecision(
@@ -107,6 +116,10 @@ class SemanticSourceRouter:
             reasons = [f"uncovered:{item}" for item in sorted(set(uncovered))]
             if stale:
                 reasons.extend(f"stale:{item}" for item in sorted(set(stale)))
+            if freshness_refused:
+                reasons.extend(
+                    f"freshness_refused:{item}" for item in sorted(set(freshness_refused))
+                )
             if len(selected) > request.max_sources:
                 reasons.append("source_bound_exceeded")
             return RouteDecision(
@@ -130,4 +143,10 @@ class SemanticSourceRouter:
                     tuple(lineage for item in candidates for lineage in item.lineage),
                 )
             )
-        return RouteDecision(request.request_id, RouteStatus.SELECTED, tuple(routes), (), ())
+        return RouteDecision(
+            request.request_id,
+            RouteStatus.SELECTED,
+            tuple(routes),
+            (),
+            tuple(f"freshness_degraded:{item}" for item in sorted(set(degraded))),
+        )

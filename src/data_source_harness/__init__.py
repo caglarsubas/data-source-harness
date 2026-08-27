@@ -11,7 +11,9 @@ from .actions import (
     ActionSagaStep,
     ActionState,
     ApprovalMode,
+    ApprovalVerifier,
     CompensationSpec,
+    HmacApprovalAuthority,
     SagaState,
     SourceActionPlan,
     SourceMutationReceipt,
@@ -24,8 +26,33 @@ from .connector import (
     DataModel,
     UnsupportedCapability,
 )
+from .coordination import (
+    CoordinationResult,
+    CrossSourceCoordinator,
+    QueryStep,
+    SearchStep,
+    SourceExecutionPlan,
+    StepResult,
+)
 from .coverage import CoverageStatement
-from .decoder import ContentTrust, Decoder, DecodeRequest, DecodeResult, DecoderRegistry
+from .cross_plane import (
+    ADLCEvidenceSink,
+    CrossPlaneEvidenceBridge,
+    CrossPlaneReceipt,
+    GovernedModelPlane,
+    ModelPlaneClient,
+    SDKExecutionEvidenceSink,
+)
+from .decoder import (
+    ContentTrust,
+    Decoder,
+    DecodeRejected,
+    DecodeRequest,
+    DecodeResult,
+    DecoderLimits,
+    DecoderRegistry,
+    StandardDecoder,
+)
 from .delegation import A2AActionDelegationAdapter, DelegationRejected
 from .deployment import DeploymentMode, DeploymentProfile, EgressGuard
 from .durability import (
@@ -49,7 +76,13 @@ from .pack_factory import (
     IndustryPackDefinition,
     MockDatasetGenerator,
 )
-from .packaging import ArtifactSigner, HmacSha256Signer, build_signed_package, verify_signed_package
+from .packaging import (
+    ArchiveLimits,
+    ArtifactSigner,
+    HmacSha256Signer,
+    build_signed_package,
+    verify_signed_package,
+)
 from .protocol import (
     PROTOCOL_VERSION,
     NorthboundActionAdapter,
@@ -86,6 +119,7 @@ from .worker import (
     WorkerRemoteError,
     WorkerTimeout,
 )
+from .worker_connector import WorkerBackedConnector
 
 __all__ = [
     "A2AActionDelegationAdapter",
@@ -103,10 +137,13 @@ __all__ = [
     "ActionSagaOutcome",
     "ActionSagaStep",
     "ActionState",
+    "ADLCEvidenceSink",
     "ApprovalMode",
+    "ApprovalVerifier",
     "AssertionGraph",
     "AssertionPredicate",
     "ArtifactSigner",
+    "ArchiveLimits",
     "Capability",
     "CheckpointToken",
     "Connector",
@@ -118,13 +155,19 @@ __all__ = [
     "ConnectorWorkerSpec",
     "CompensationSpec",
     "CoverageStatement",
+    "CoordinationResult",
+    "CrossSourceCoordinator",
     "CrossPlaneEvidenceSet",
+    "CrossPlaneEvidenceBridge",
+    "CrossPlaneReceipt",
     "ContentTrust",
     "DataModel",
     "DatasetBlueprint",
     "DecodeRequest",
+    "DecodeRejected",
     "DecodeResult",
     "Decoder",
+    "DecoderLimits",
     "DecoderRegistry",
     "DelegationRejected",
     "DeploymentMode",
@@ -139,13 +182,16 @@ __all__ = [
     "FieldBlueprint",
     "FieldKind",
     "GovernedSemanticMemory",
+    "GovernedModelPlane",
     "HmacSha256Signer",
+    "HmacApprovalAuthority",
     "HttpDispatchResult",
     "IndustryPackDefinition",
     "MemoryCandidateStatus",
     "MemoryScope",
     "MCP_PROTOCOL_VERSION",
     "Mcp20260728ActionServer",
+    "ModelPlaneClient",
     "MockDatasetGenerator",
     "NorthboundActionAdapter",
     "NorthboundTool",
@@ -154,13 +200,19 @@ __all__ = [
     "PlaneEvidence",
     "ProtocolProfileRejected",
     "ProtocolRequestRejected",
+    "QueryStep",
     "PromotedSemanticMemory",
     "SagaState",
+    "SDKExecutionEvidenceSink",
+    "SearchStep",
     "SemanticAssertion",
     "SemanticMemoryCandidate",
     "SourceActionPlan",
+    "SourceExecutionPlan",
     "SourceMutationReceipt",
     "SQLiteActionJournal",
+    "StepResult",
+    "StandardDecoder",
     "UnsupportedCapability",
     "WorkerCrashed",
     "WorkerError",
@@ -168,8 +220,9 @@ __all__ = [
     "WorkerProtocolViolation",
     "WorkerRemoteError",
     "WorkerTimeout",
+    "WorkerBackedConnector",
     "build_signed_package",
     "verify_signed_package",
 ]
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"

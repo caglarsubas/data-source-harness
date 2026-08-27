@@ -7,7 +7,12 @@ from datetime import datetime
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from data_source_harness.actions import ActionApproval, ActionState, SourceActionPlan
+from data_source_harness.actions import (
+    ActionApproval,
+    ActionState,
+    ApprovalVerifier,
+    SourceActionPlan,
+)
 from data_source_harness.connector import ConnectorRegistry
 from data_source_harness.durability import (
     ActionOutcomeUnknown,
@@ -19,6 +24,8 @@ from data_source_harness.policy import PolicyEvaluator, RequestIdentity
 from data_source_harness.telemetry import MemoryTelemetrySink
 
 from .phase4_support import LabMutationConnector
+
+JOURNAL_INTEGRITY_KEY = b"phase5-lab-journal-integrity-key"
 
 
 @dataclass(frozen=True)
@@ -39,6 +46,7 @@ async def run_durable_recovery(
     connector: LabMutationConnector,
     policy: PolicyEvaluator,
     now: datetime,
+    approval_verifier: ApprovalVerifier,
 ) -> DurableRecoveryResult:
     registry = ConnectorRegistry()
     registry.register(connector)
@@ -48,7 +56,7 @@ async def run_durable_recovery(
 
     with TemporaryDirectory(prefix="data-harness-phase5-") as directory:
         journal_path = Path(directory) / "actions.sqlite3"
-        first_journal = SQLiteActionJournal(journal_path)
+        first_journal = SQLiteActionJournal(journal_path, integrity_key=JOURNAL_INTEGRITY_KEY)
         first_gateway = DurableActionGateway(
             registry,
             policy,
@@ -56,6 +64,7 @@ async def run_durable_recovery(
             first_journal,
             now=lambda: now,
             after_mutation=crash_after_source_effect,
+            approval_verifier=approval_verifier,
         )
         preview = await first_gateway.preview(action, identity)
         outcome_unknown = False
@@ -64,7 +73,7 @@ async def run_durable_recovery(
         except ActionOutcomeUnknown:
             outcome_unknown = True
 
-        second_journal = SQLiteActionJournal(journal_path)
+        second_journal = SQLiteActionJournal(journal_path, integrity_key=JOURNAL_INTEGRITY_KEY)
         pending = second_journal.pending()
         restart_persisted = (
             len(pending) == 1
@@ -77,6 +86,7 @@ async def run_durable_recovery(
             MemoryTelemetrySink(),
             second_journal,
             now=lambda: now,
+            approval_verifier=approval_verifier,
         )
         blind_replay_blocked = False
         try:

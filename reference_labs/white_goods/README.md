@@ -22,7 +22,7 @@ The mock corpus includes repeat visits, product/serial/customer relationships, m
 ## Run
 
 ```bash
-make phase6
+make phase6.5
 ```
 
 `phase1-report.json` retains the source and zero-egress certificate. `phase2-report.json` adds ten GQM metrics for approved/fresh routing, exact provenance, ambiguity and stale refusal, drift quarantine, bounded planning, monotonic checkpoints, compatibility pins and promotion evidence separation.
@@ -34,3 +34,9 @@ version-pinned MCP/A2A action profiles and a signed runtime transfer packet. Its
 readiness record intentionally remains blocked on immutable image digests,
 signature mirroring, live OpenShift deployment, runtime fault evidence and
 stakeholder acceptance.
+
+Phase 6.5 executes the bounded E21 plan and four-source brief through reusable
+gateway/coordinator paths, exercises the canonical connector ABI through the
+subprocess worker, and adds the pinned wheelhouse and OpenShift runtime handoff.
+The certificate still treats every live-source, image, mirror, cluster and
+stakeholder state as separate evidence.

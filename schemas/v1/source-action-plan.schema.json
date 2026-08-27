@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://orchestra.local/schemas/data-harness/v1/source-action-plan.schema.json",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/source-action-plan.schema.json",
   "title": "SourceActionPlan",
   "type": "object",
   "additionalProperties": false,

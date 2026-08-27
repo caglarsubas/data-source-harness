@@ -3,17 +3,19 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import hashlib
 import json
 import os
 import re
+import signal
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-_SAFE_ENVIRONMENT = frozenset({"LANG", "LC_ALL", "PATH", "PYTHONPATH"})
+_SAFE_ENVIRONMENT = frozenset({"LANG", "LC_ALL"})
 _SENSITIVE_NAME = re.compile(r"(?i)(credential|password|secret|token|api.?key|private.?key)")
 _OPERATION = re.compile(r"^[a-z][a-z0-9_.-]{0,127}$")
 
@@ -86,10 +88,24 @@ class ConnectorWorkerSpec:
             r"sha256:[0-9a-f]{64}", self.image_digest
         ):
             raise ValueError("worker image must be pinned by SHA-256 digest")
+        if self.image_digest is not None:
+            raise ValueError(
+                "process worker specs cannot claim a container image; use a verified "
+                "container runner"
+            )
 
     @property
     def entrypoint_digest(self) -> str:
-        encoded = json.dumps(self.command, separators=(",", ":")).encode()
+        materials = []
+        for token in self.command:
+            candidate = Path(token)
+            if candidate.is_absolute() and candidate.is_file():
+                materials.append(
+                    {"path": token, "sha256": hashlib.sha256(candidate.read_bytes()).hexdigest()}
+                )
+            else:
+                materials.append({"argument": token})
+        encoded = json.dumps(materials, sort_keys=True, separators=(",", ":")).encode()
         return f"sha256:{hashlib.sha256(encoded).hexdigest()}"
 
     def to_contract(self) -> dict[str, Any]:
@@ -97,8 +113,8 @@ class ConnectorWorkerSpec:
             "schemaVersion": "data.harness/v1",
             "workerId": self.worker_id,
             "connectorId": self.connector_id,
-            "runtimeMode": "container" if self.image_digest else "process",
-            "imageDigest": self.image_digest,
+            "runtimeMode": "process",
+            "imageDigest": None,
             "entrypointDigest": self.entrypoint_digest,
             "credentialReferences": list(self.credential_references),
             "limits": {
@@ -107,10 +123,8 @@ class ConnectorWorkerSpec:
                 "maxResponseBytes": self.limits.max_response_bytes,
                 "maxParallelism": self.limits.max_parallelism,
             },
-            "networkMode": "none" if self.image_digest else "host",
-            "certificationStatus": (
-                "image-pinned" if self.image_digest else "process-isolation-only"
-            ),
+            "networkMode": "host",
+            "certificationStatus": "process-isolation-only",
         }
 
 
@@ -129,6 +143,7 @@ class ConnectorWorkerClient:
         payload: Mapping[str, Any],
         *,
         request_id: str | None = None,
+        timeout_seconds: float | None = None,
     ) -> Mapping[str, Any]:
         if not _OPERATION.fullmatch(operation):
             raise ValueError("worker operation name is invalid")
@@ -154,11 +169,15 @@ class ConnectorWorkerClient:
             self._active += 1
             self.max_observed_parallelism = max(self.max_observed_parallelism, self._active)
             try:
-                return await self._invoke(encoded + b"\n", request["requestId"])
+                return await self._invoke(
+                    encoded + b"\n", request["requestId"], timeout_seconds=timeout_seconds
+                )
             finally:
                 self._active -= 1
 
-    async def _invoke(self, encoded: bytes, request_id: str) -> Mapping[str, Any]:
+    async def _invoke(
+        self, encoded: bytes, request_id: str, *, timeout_seconds: float | None
+    ) -> Mapping[str, Any]:
         environment = {
             name: os.environ[name]
             for name in _SAFE_ENVIRONMENT
@@ -172,23 +191,27 @@ class ConnectorWorkerClient:
             stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            start_new_session=True,
         )
+        timeout = self.spec.limits.operation_timeout_seconds
+        if timeout_seconds is not None:
+            if timeout_seconds <= 0:
+                await self._terminate(process)
+                raise WorkerTimeout("connector worker deadline is already exhausted")
+            timeout = min(timeout, timeout_seconds)
         try:
-            stdout, _stderr = await asyncio.wait_for(
-                process.communicate(encoded), self.spec.limits.operation_timeout_seconds
-            )
+            stdout, _stderr = await asyncio.wait_for(self._exchange(process, encoded), timeout)
         except TimeoutError as exc:
-            process.kill()
-            await process.wait()
+            await self._terminate(process)
             raise WorkerTimeout("connector worker exceeded its operation deadline") from exc
         except asyncio.CancelledError:
-            process.kill()
-            await process.wait()
+            await self._terminate(process)
+            raise
+        except WorkerProtocolViolation:
+            await self._terminate(process)
             raise
         if process.returncode != 0:
             raise WorkerCrashed(f"connector worker exited with code {process.returncode}")
-        if len(stdout) > self.spec.limits.max_response_bytes:
-            raise WorkerProtocolViolation("worker response exceeds configured byte limit")
         if stdout.count(b"\n") != 1 or not stdout.endswith(b"\n"):
             raise WorkerProtocolViolation("worker must emit exactly one JSON line")
         try:
@@ -209,3 +232,50 @@ class ConnectorWorkerClient:
         if not isinstance(response["result"], dict):
             raise WorkerProtocolViolation("worker result must be an object")
         return response["result"]
+
+    async def _exchange(
+        self, process: asyncio.subprocess.Process, encoded: bytes
+    ) -> tuple[bytes, bytes]:
+        if process.stdin is None or process.stdout is None or process.stderr is None:
+            raise WorkerProtocolViolation("worker pipes are unavailable")
+        process.stdin.write(encoded)
+        await process.stdin.drain()
+        process.stdin.close()
+        stdout_task = asyncio.create_task(
+            self._read_bounded(
+                process.stdout,
+                self.spec.limits.max_response_bytes,
+                "worker response exceeds configured byte limit",
+            )
+        )
+        stderr_task = asyncio.create_task(
+            self._read_bounded(
+                process.stderr,
+                min(self.spec.limits.max_response_bytes, 64 * 1024),
+                "worker stderr exceeds configured byte limit",
+            )
+        )
+        stdout, stderr = await asyncio.gather(stdout_task, stderr_task)
+        await process.wait()
+        return stdout, stderr
+
+    @staticmethod
+    async def _read_bounded(stream: asyncio.StreamReader, limit: int, message: str) -> bytes:
+        chunks: list[bytes] = []
+        size = 0
+        while chunk := await stream.read(min(64 * 1024, limit - size + 1)):
+            size += len(chunk)
+            if size > limit:
+                raise WorkerProtocolViolation(message)
+            chunks.append(chunk)
+        return b"".join(chunks)
+
+    @staticmethod
+    async def _terminate(process: asyncio.subprocess.Process) -> None:
+        if process.returncode is None:
+            with contextlib.suppress(ProcessLookupError):
+                os.killpg(process.pid, signal.SIGKILL)
+            with contextlib.suppress(ProcessLookupError):
+                process.kill()
+        with contextlib.suppress(ProcessLookupError):
+            await process.wait()

@@ -5,7 +5,7 @@ from __future__ import annotations
 from reference_labs.phase4_support import BoundedLabActionPolicy, LabMutationConnector
 from reference_labs.phase5_support import DurableRecoveryResult, run_durable_recovery
 
-from .phase4 import FIXED_TIME, _approval, _identity, incident_action
+from .phase4 import APPROVAL_AUTHORITY, FIXED_TIME, _approval, _identity, incident_action
 
 
 async def run_recovery_scenario() -> DurableRecoveryResult:
@@ -22,4 +22,5 @@ async def run_recovery_scenario() -> DurableRecoveryResult:
             frozenset({"acknowledge-excursion", "reopen-excursion"}),
         ),
         FIXED_TIME,
+        APPROVAL_AUTHORITY,
     )

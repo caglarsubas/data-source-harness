@@ -14,6 +14,26 @@ from typing import Protocol
 FIXED_ZIP_TIME = (2020, 1, 1, 0, 0, 0)
 
 
+@dataclass(frozen=True)
+class ArchiveLimits:
+    max_entries: int = 10_000
+    max_entry_bytes: int = 256 * 1024 * 1024
+    max_total_bytes: int = 1024 * 1024 * 1024
+    max_compression_ratio: float = 1_000.0
+
+    def __post_init__(self) -> None:
+        if (
+            min(
+                self.max_entries,
+                self.max_entry_bytes,
+                self.max_total_bytes,
+                self.max_compression_ratio,
+            )
+            <= 0
+        ):
+            raise ValueError("archive verification limits must be positive")
+
+
 class ArtifactSigner(Protocol):
     key_id: str
     algorithm: str
@@ -53,6 +73,7 @@ def build_signed_package(
     *,
     component_name: str,
     component_version: str,
+    dependencies: Mapping[str, str] | None = None,
 ) -> str:
     if not files or any(path.startswith("/") or ".." in Path(path).parts for path in files):
         raise ValueError("package paths must be non-empty and relative")
@@ -63,24 +84,50 @@ def build_signed_package(
             path: hashlib.sha256(payload).hexdigest() for path, payload in sorted(files.items())
         },
     }
+    dependency_components = [
+        {
+            "type": "library",
+            "name": name,
+            "version": version,
+            "bom-ref": f"pkg:pypi/{name}@{version}",
+            "purl": f"pkg:pypi/{name}@{version}",
+        }
+        for name, version in sorted((dependencies or {}).items())
+    ]
+    application_ref = f"pkg:generic/{component_name}@{component_version}"
+    file_components = [
+        {
+            "type": "file",
+            "name": path,
+            "bom-ref": f"file:{path}",
+            "hashes": [{"alg": "SHA-256", "content": digest}],
+        }
+        for path, digest in manifest["files"].items()
+    ]
     sbom = {
         "bomFormat": "CycloneDX",
-        "specVersion": "1.5",
+        "specVersion": "1.6",
         "version": 1,
         "metadata": {
             "component": {
                 "type": "application",
                 "name": component_name,
                 "version": component_version,
+                "bom-ref": application_ref,
             }
         },
-        "components": [
+        "components": file_components + dependency_components,
+        "dependencies": [
             {
-                "type": "file",
-                "name": path,
-                "hashes": [{"alg": "SHA-256", "content": digest}],
-            }
-            for path, digest in manifest["files"].items()
+                "ref": application_ref,
+                "dependsOn": [
+                    component["bom-ref"] for component in file_components + dependency_components
+                ],
+            },
+            *[
+                {"ref": component["bom-ref"], "dependsOn": []}
+                for component in file_components + dependency_components
+            ],
         ],
     }
     signed_payload = _canonical(manifest) + b"\n" + _canonical(sbom)
@@ -108,11 +155,31 @@ def build_signed_package(
     return hashlib.sha256(output.read_bytes()).hexdigest()
 
 
-def verify_signed_package(path: Path, signer: ArtifactSigner) -> str:
+def verify_signed_package(
+    path: Path,
+    signer: ArtifactSigner,
+    limits: ArchiveLimits | None = None,
+) -> str:
+    limits = limits or ArchiveLimits()
     with zipfile.ZipFile(path) as archive:
-        names = archive.namelist()
+        information = archive.infolist()
+        names = [item.filename for item in information]
         if len(names) != len(set(names)):
             raise ValueError("package contains duplicate paths")
+        if len(information) > limits.max_entries:
+            raise ValueError("package contains too many entries")
+        total_size = 0
+        for item in information:
+            total_size += item.file_size
+            if item.file_size > limits.max_entry_bytes or total_size > limits.max_total_bytes:
+                raise ValueError("package exceeds uncompressed size limits")
+            if item.file_size and item.compress_size == 0:
+                raise ValueError("package entry has an invalid compression size")
+            if (
+                item.compress_size
+                and item.file_size / item.compress_size > limits.max_compression_ratio
+            ):
+                raise ValueError("package entry exceeds compression ratio limit")
         manifest = json.loads(archive.read("META-INF/manifest.json"))
         sbom = json.loads(archive.read("META-INF/sbom.cdx.json"))
         signature = json.loads(archive.read("META-INF/signature.json"))
@@ -137,6 +204,12 @@ def verify_signed_package(path: Path, signer: ArtifactSigner) -> str:
         }
         if sbom_files != manifest["files"]:
             raise ValueError("SBOM does not cover every payload file")
+        if (
+            sbom.get("bomFormat") != "CycloneDX"
+            or not sbom.get("dependencies")
+            or not all(component.get("bom-ref") for component in sbom["components"])
+        ):
+            raise ValueError("SBOM component/dependency graph is incomplete")
         payload = _canonical(manifest) + b"\n" + _canonical(sbom)
         if not signer.verify(payload, signature["value"]):
             raise ValueError("package signature verification failed")

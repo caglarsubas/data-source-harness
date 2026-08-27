@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import json
 import zipfile
 from pathlib import Path
 
 import pytest
 
 from data_source_harness.packaging import (
+    ArchiveLimits,
     HmacSha256Signer,
     build_signed_package,
     verify_signed_package,
@@ -21,14 +23,28 @@ def test_package_is_deterministic_signed_and_sbom_covered(tmp_path: Path) -> Non
     second = tmp_path / "second.zip"
     files = {"connector.py": b"VALUE = 1\n", "profile.json": b"{}\n"}
     digest = build_signed_package(
-        first, files, _signer(), component_name="test", component_version="1"
+        first,
+        files,
+        _signer(),
+        component_name="test",
+        component_version="1",
+        dependencies={"jsonschema": "4.25.1"},
     )
     assert digest == build_signed_package(
-        second, files, _signer(), component_name="test", component_version="1"
+        second,
+        files,
+        _signer(),
+        component_name="test",
+        component_version="1",
+        dependencies={"jsonschema": "4.25.1"},
     )
     assert verify_signed_package(first, _signer()) == digest
     with pytest.raises(ValueError, match="signer identity"):
         verify_signed_package(first, HmacSha256Signer("other", b"other-reference-key-material"))
+    with zipfile.ZipFile(first) as archive:
+        sbom = json.loads(archive.read("META-INF/sbom.cdx.json"))
+    assert any(item.get("purl") == "pkg:pypi/jsonschema@4.25.1" for item in sbom["components"])
+    assert sbom["dependencies"][0]["dependsOn"]
 
 
 def test_tampered_payload_is_rejected(tmp_path: Path) -> None:
@@ -47,3 +63,20 @@ def test_tampered_payload_is_rejected(tmp_path: Path) -> None:
             target.writestr(name, payload)
     with pytest.raises(ValueError, match="checksum mismatch"):
         verify_signed_package(tampered, _signer())
+
+
+def test_archive_size_and_compression_limits_fail_before_payload_reads(tmp_path: Path) -> None:
+    package = tmp_path / "package.zip"
+    build_signed_package(
+        package,
+        {"large.txt": b"x" * 4096},
+        _signer(),
+        component_name="test",
+        component_version="1",
+    )
+    with pytest.raises(ValueError, match="uncompressed size"):
+        verify_signed_package(
+            package,
+            _signer(),
+            ArchiveLimits(max_entry_bytes=1024),
+        )

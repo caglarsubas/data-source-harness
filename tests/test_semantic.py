@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -75,3 +75,43 @@ def test_identity_merge_cannot_cross_a_not_same_as_boundary() -> None:
     graph.append(assertion("a2", AssertionPredicate.SAME_AS, "a", "b"))
     with pytest.raises(SemanticContradiction, match="distinct clusters"):
         graph.append(assertion("a3", AssertionPredicate.SAME_AS, "b", "c"))
+
+
+def test_active_enforces_valid_and_transaction_time_even_with_default_query() -> None:
+    graph = AssertionGraph()
+    expired = SemanticAssertion(
+        "expired",
+        "a",
+        AssertionPredicate.MENTIONS,
+        "b",
+        0.9,
+        NOW - timedelta(days=3),
+        NOW - timedelta(days=2),
+        NOW - timedelta(days=1),
+        "sha256:policy",
+        (LineageRef("erp", "customers", "1"),),
+    )
+    future_asserted = SemanticAssertion(
+        "future",
+        "a",
+        AssertionPredicate.MENTIONS,
+        "c",
+        0.9,
+        NOW + timedelta(days=2),
+        NOW,
+        None,
+        "sha256:policy",
+        (LineageRef("erp", "customers", "1"),),
+    )
+    graph.append(expired)
+    graph.append(future_asserted)
+    assert graph.active(NOW, as_known_at=NOW) == ()
+
+
+def test_active_supports_independent_valid_and_transaction_time() -> None:
+    graph = AssertionGraph()
+    item = assertion("a1", AssertionPredicate.MENTIONS, "a", "b")
+    graph.append(item)
+    graph.retract(AssertionRetraction("a1", NOW + timedelta(days=2), "later correction"))
+    assert graph.active(NOW + timedelta(days=1), as_known_at=NOW + timedelta(days=1)) == (item,)
+    assert graph.active(NOW + timedelta(days=1), as_known_at=NOW + timedelta(days=3)) == ()

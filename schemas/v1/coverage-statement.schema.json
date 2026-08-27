@@ -10,6 +10,7 @@
     "kind": {"const": "CoverageStatement"},
     "requestId": {"type": "string", "minLength": 1},
     "generatedAt": {"type": "string", "format": "date-time"},
+    "expectedSources": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "included": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["sourceId", "assetIds", "complete"], "properties": {"sourceId": {"type": "string", "minLength": 1}, "assetIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "complete": {"type": "boolean"}, "watermark": {"type": ["string", "null"]}}}},
     "excluded": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["sourceId", "reasonCode", "detail"], "properties": {"sourceId": {"type": "string", "minLength": 1}, "reasonCode": {"type": "string", "minLength": 1}, "detail": {"type": "string", "minLength": 1}}}}
   },

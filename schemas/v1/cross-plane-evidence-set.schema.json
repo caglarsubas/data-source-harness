@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://orchestra.local/schemas/data-harness/v1/cross-plane-evidence-set.schema.json",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/cross-plane-evidence-set.schema.json",
   "title": "CrossPlaneEvidenceSet",
   "type": "object",
   "additionalProperties": false,
@@ -12,13 +12,20 @@
     "combinedRuntimeAccepted": {"type": "boolean"},
     "components": {
       "type": "array",
-      "minItems": 1,
+      "minItems": 4,
+      "maxItems": 4,
+      "allOf": [
+        {"contains": {"properties": {"component": {"const": "ADLC"}}, "required": ["component"]}},
+        {"contains": {"properties": {"component": {"const": "Python-SDK"}}, "required": ["component"]}},
+        {"contains": {"properties": {"component": {"const": "OCP-reference-lab"}}, "required": ["component"]}},
+        {"contains": {"properties": {"component": {"const": "model-plane"}}, "required": ["component"]}}
+      ],
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": ["component", "repository", "revision", "evidence"],
         "properties": {
-          "component": {"type": "string", "minLength": 1},
+          "component": {"enum": ["ADLC", "Python-SDK", "OCP-reference-lab", "model-plane"]},
           "repository": {"type": "string", "format": "uri"},
           "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
           "evidence": {
