@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "whitegoods.runtime.protocol-profiles/v1",
+  "profiles": [
+    {
+      "profileId": "mcp-2026-07-28-tools",
+      "specification": "https://modelcontextprotocol.io/specification/2026-07-28",
+      "protocolVersion": "2026-07-28",
+      "transportOwner": "Python-SDK/runtime-host",
+      "harnessRole": "scoped action-plan adapter",
+      "upstreamSuite": "not-run"
+    },
+    {
+      "profileId": "a2a-1.0-send-message",
+      "specification": "https://a2a-protocol.org/latest/specification",
+      "protocolVersion": "1.0",
+      "transportOwner": "tenant runtime",
+      "harnessRole": "bounded action delegation adapter",
+      "upstreamSuite": "not-run"
+    }
+  ]
+}

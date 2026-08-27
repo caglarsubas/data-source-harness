@@ -21,7 +21,7 @@ planes:
 The control plane is never required synchronously for a production source,
 retrieval, tool, or model request.
 
-## Implemented scope through Phase 5
+## Implemented scope through Phase 6
 
 Phase 0 establishes the reusable scaffold:
 
@@ -64,6 +64,14 @@ description change cannot silently alter a previously inspected tool. This is
 an adapter boundary for later MCP/A2A hosting, not a claim of official protocol
 conformance.
 
+Phase 6 moves connector calls behind replaceable operating-system process
+workers with bounded request/response sizes, deadlines, cancellation,
+parallelism and a sanitized environment. It adds MCP `2026-07-28` and A2A `1.0`
+profile adapters, a cross-plane evidence ledger that cannot collapse CI into
+runtime acceptance, and a signed disconnected-transfer packet with OpenShift
+security templates. The certificate deliberately records upstream protocol
+suites, image mirroring, live deployment and stakeholder acceptance as missing.
+
 ## Developer quick start
 
 ```bash
@@ -72,7 +80,7 @@ uv run ruff check .
 uv run pytest
 uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
-make phase5
+make phase6
 ```
 
 The built wheel embeds the versioned schemas, contract catalog, deployment
@@ -90,8 +98,8 @@ profiles, and neutral reference-lab manifest under
 - Missing, partial, stale, ambiguous, and unauthorized evidence remain visible
   in coverage statements rather than being converted into success.
 
-See [Phase 5 architecture](docs/architecture/phase-5-durable-runtime.md) for
-the durable action and northbound protocol boundaries.
+See [Phase 6 architecture](docs/architecture/phase-6-runtime-scaffold.md) for
+connector-worker isolation, protocol profiles and cross-plane evidence states.
 
 The staged [development roadmap](docs/development-roadmap.md) defines the
 white-goods and cold-chain pilots without coupling the core to either industry.

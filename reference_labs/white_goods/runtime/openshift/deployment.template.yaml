@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-source-harness
+  labels:
+    app.kubernetes.io/name: data-source-harness
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: data-source-harness
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: data-source-harness
+    spec:
+      serviceAccountName: data-source-harness
+      automountServiceAccountToken: false
+      containers:
+        - name: harness
+          image: IMAGE_DIGEST_REQUIRED
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests: {cpu: 100m, memory: 128Mi}
+            limits: {cpu: "1", memory: 512Mi}
+          volumeMounts:
+            - {name: runtime-state, mountPath: /var/lib/data-source-harness}
+            - {name: temporary, mountPath: /tmp}
+      volumes:
+        - name: runtime-state
+          emptyDir: {}
+        - name: temporary
+          emptyDir: {}

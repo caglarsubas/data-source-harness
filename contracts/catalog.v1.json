@@ -1,6 +1,6 @@
 {
   "schemaVersion": "data.harness.catalog/v1",
-  "scope": "phase-5",
+  "scope": "phase-6",
   "ownershipRule": "reuse upstream contracts; introduce only data-plane-specific contracts here",
   "reusedContracts": [
     {"owner": "ADLC", "names": ["IntegrationManifest", "CredentialReference", "EgressPolicy", "CapabilityProfile", "HealthObservation", "ConformanceResult", "SupportProfile", "RetrievalRequest", "ProvenancePackage", "MemoryCandidate", "MemoryRecord", "PromotionDecision"]},
@@ -28,6 +28,10 @@
     {"name": "ActionPreview", "schema": "schemas/v1/action-preview.schema.json"},
     {"name": "SourceMutationReceipt", "schema": "schemas/v1/source-mutation-receipt.schema.json"},
     {"name": "DurableActionRecord", "schema": "schemas/v1/durable-action-record.schema.json"},
-    {"name": "NorthboundToolCatalog", "schema": "schemas/v1/northbound-tool-catalog.schema.json"}
+    {"name": "NorthboundToolCatalog", "schema": "schemas/v1/northbound-tool-catalog.schema.json"},
+    {"name": "ConnectorWorkerProfile", "schema": "schemas/v1/connector-worker-profile.schema.json"},
+    {"name": "CrossPlaneEvidenceSet", "schema": "schemas/v1/cross-plane-evidence-set.schema.json"},
+    {"name": "ProtocolProfileConformance", "schema": "schemas/v1/protocol-profile-conformance.schema.json"},
+    {"name": "DisconnectedRuntimeReadiness", "schema": "schemas/v1/disconnected-runtime-readiness.schema.json"}
   ]
 }
