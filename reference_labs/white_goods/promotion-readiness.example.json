@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "releaseSet": "phase-2-trustworthy-context-baseline",
+  "revision": "0000000000000000000000000000000000000000",
+  "readyForAdlcDecision": false,
+  "evidence": [
+    {"evidenceId":"source-phase2","kind":"source","status":"missing","digest":"sha256:not-observed"},
+    {"evidenceId":"ci-phase2","kind":"ci","status":"missing","digest":"sha256:not-observed"},
+    {"evidenceId":"runtime-phase2","kind":"runtime","status":"missing","digest":"sha256:not-observed"},
+    {"evidenceId":"stakeholder-phase2","kind":"stakeholder","status":"missing","digest":"sha256:not-observed"}
+  ],
+  "compatibility": [
+    {"component":"ADLC","revision":"7ee0cb75dffcf1715bcb4d625011b6bc83815803","compatible":true,"evidenceId":"contract-pin:7ee0cb75dffcf1715bcb4d625011b6bc83815803"},
+    {"component":"Python-SDK","revision":"3a4012d809e6ed00a3f05be940c5278eac20a166","compatible":true,"evidenceId":"contract-pin:3a4012d809e6ed00a3f05be940c5278eac20a166"},
+    {"component":"OCP-reference-lab","revision":"4b7bce1265e2eb9435b5dae76ea323269fcf0fc5","compatible":true,"evidenceId":"contract-pin:4b7bce1265e2eb9435b5dae76ea323269fcf0fc5"},
+    {"component":"model-plane","revision":"e820728e14a6121c0549f4ef6d51baacd1fec573","compatible":true,"evidenceId":"contract-pin:e820728e14a6121c0549f4ef6d51baacd1fec573"}
+  ]
+}

@@ -21,7 +21,7 @@ planes:
 The control plane is never required synchronously for a production source,
 retrieval, tool, or model request.
 
-## Phase 0 scope
+## Implemented scope through Phase 2
 
 Phase 0 establishes the reusable scaffold:
 
@@ -39,6 +39,11 @@ Phase 0 establishes the reusable scaffold:
 Industry logic does not belong in the core package. White-goods manufacturing
 is implemented separately as the first `IndustryDomainPack` and reference lab.
 
+Phase 1 supplies the heterogeneous reference estate. Phase 2 adds steward-approved
+semantic mappings, drift quarantine, freshness-aware routing, monotonic CDC
+checkpoints, bounded field/relationship planning, grounded answer envelopes and
+promotion-readiness evidence without duplicating ADLC's final release decision.
+
 ## Developer quick start
 
 ```bash
@@ -47,7 +52,7 @@ uv run ruff check .
 uv run pytest
 uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
-make phase1
+make phase2
 ```
 
 The built wheel embeds the versioned schemas, contract catalog, deployment
@@ -65,8 +70,8 @@ profiles, and neutral reference-lab manifest under
 - Missing, partial, stale, ambiguous, and unauthorized evidence remain visible
   in coverage statements rather than being converted into success.
 
-See [Phase 0 architecture](docs/architecture/phase-0.md) for ownership,
-contracts, and acceptance gates.
+See [Phase 2 architecture](docs/architecture/phase-2-trustworthy-context.md)
+for routing, semantic governance, freshness, planning and promotion boundaries.
 
 The staged [development roadmap](docs/development-roadmap.md) defines the
 white-goods pilot and later industry-pack factory without coupling the core to

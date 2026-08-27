@@ -32,13 +32,19 @@ Apply Goal–Question–Metric design to every scenario. Example: goal “reduce
 
 ## Phase 2 — trustworthy cross-source context
 
+**Outcome:** turn the Phase-1 source abstraction into a governed context plane that answers only when mappings, freshness, authorization, coverage and provenance are sufficient.
+
+**Implementation status:** implemented in core version `0.3.0` and white-goods pack `1.1.0`. Completion is revision-specific: `make phase2`, Python 3.11/3.12 CI and CodeQL must be green for the referenced revision.
+
 - semantic-aware source routing and hybrid retrieval;
 - human-governed mapping candidates and drift detection;
 - resumable CDC/freshness SLOs and richer source families;
 - field/relationship authorization and bounded query planning;
 - reference-lab promotion workflow and compatibility matrix.
 
-**Exit:** covered questions meet agreed accuracy and citation thresholds, ambiguous requests refuse or escalate, and every answer exposes coverage and exact provenance.
+**Repository exit:** covered questions meet the declared GQM routing and provenance thresholds; ambiguous or stale requests refuse/escalate; schema drift quarantines affected mappings; checkpoint regression and unauthorized fields/relationships are denied; every answer exposes complete coverage and exact record provenance; and the Phase-1 certificate remains green.
+
+**Combined-platform acceptance:** the repository emits contract-pinned compatibility and promotion-readiness evidence, but ADLC retains the authoritative `PromotionDecision`. Live SDK workflow execution, model-plane reranking, OCP deployment/runtime evidence and stakeholder approval remain separately required states.
 
 ## Phase 3 — reusable industry/domain pack factory
 

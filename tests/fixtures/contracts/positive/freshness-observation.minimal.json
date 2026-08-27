@@ -1,0 +1,1 @@
+{"schemaVersion":"data.harness/v1","sourceId":"erp","assetId":"orders","observedAt":"2026-08-27T00:00:00Z","sourceEventTime":"2026-08-26T23:59:00Z","watermark":"42","assessment":{"fresh":true,"ageMs":60000,"breachAction":null}}

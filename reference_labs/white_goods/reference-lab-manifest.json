@@ -5,7 +5,7 @@
   "industry": "white-goods manufacturing",
   "domain": "after-sales service and manufacturing quality",
   "datasets": ["master-data-v1", "service-orders-v1", "quality-inspections-v1", "telemetry-events-v1", "technical-documents-v1", "service-api-v1"],
-  "connectors": ["whitegoods.erp", "whitegoods.documents", "whitegoods.telemetry", "whitegoods.service-api", "whitegoods.search"],
+  "connectors": ["whitegoods.erp", "whitegoods.documents", "whitegoods.telemetry", "whitegoods.service-api", "whitegoods.search", "whitegoods.semantic-graph"],
   "deploymentProfiles": ["self-hosted", "air-gapped"],
-  "acceptanceScenarios": ["deterministic-reset", "connector-fidelity", "authorization-negative-paths", "failure-injection", "checkpoint-replay", "semantic-correctness", "retrieval-quality", "performance-budget", "zero-egress"]
+  "acceptanceScenarios": ["deterministic-reset", "connector-fidelity", "authorization-negative-paths", "failure-injection", "checkpoint-replay", "semantic-correctness", "retrieval-quality", "performance-budget", "zero-egress", "semantic-routing", "drift-quarantine", "freshness-refusal", "bounded-query-planning", "promotion-readiness"]
 }

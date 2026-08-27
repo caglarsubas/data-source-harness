@@ -11,6 +11,7 @@ This lab is the first industry consumer of the neutral data-source harness. It m
 | Product telemetry | Kafka-compatible Redpanda | ordered JSONL with checkpoint, duplicate, late and quarantined events |
 | Service scheduling | REST/OpenAPI | OpenAPI 3.1 contract plus paginated response fixtures |
 | Hybrid retrieval | OpenSearch | deterministic lexical/semantic synonym fusion with ACL filtering |
+| Governed semantics | Property graph | lineage-bound assertions and steward-approved mapping candidates |
 
 The optional `docker-compose.yml` documents the heterogeneous deployment topology on an internal-only network. The certification path is deliberately offline and does not pull or start those images. Air-gapped deployments must first replace every development image tag with an approved mirrored digest recorded outside source control.
 
@@ -21,7 +22,9 @@ The mock corpus includes repeat visits, product/serial/customer relationships, m
 ## Run
 
 ```bash
-make phase1
+make phase2
 ```
 
-The generated `phase1-report.json` contains every GQM threshold, observed value and evidence note. It certifies deterministic application-level behavior and zero socket egress. Its perfect scores describe the bounded synthetic corpus and are not evidence of production generalization. It does not claim that a live OpenShift cluster or mirrored container estate was deployed.
+`phase1-report.json` retains the source and zero-egress certificate. `phase2-report.json` adds ten GQM metrics for approved/fresh routing, exact provenance, ambiguity and stale refusal, drift quarantine, bounded planning, monotonic checkpoints, compatibility pins and promotion evidence separation.
+
+The perfect scores describe the bounded synthetic corpus and are not evidence of production generalization. They do not claim that a live OpenShift cluster, mirrored container estate or combined ADLC/SDK/model-plane runtime was deployed. ADLC retains the final promotion decision.

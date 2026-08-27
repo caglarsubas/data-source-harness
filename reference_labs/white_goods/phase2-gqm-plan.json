@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "whitegoods.lab.phase2-gqm/v1",
+  "goals": [
+    {"goalId":"P2-G1","goal":"Route covered concepts only through approved, fresh mappings","metricIds":["P2-M1","P2-M4","P2-M5"]},
+    {"goalId":"P2-G2","goal":"Answer with complete coverage and provenance or explicitly refuse/escalate","metricIds":["P2-M2","P2-M3"]},
+    {"goalId":"P2-G3","goal":"Keep execution and promotion bounded, replayable and evidence-separated","metricIds":["P2-M6","P2-M7","P2-M8","P2-M9","P2-M10"]}
+  ],
+  "metrics": [
+    {"metricId":"P2-M1","name":"covered concept routing rate","operator":"==","threshold":1.0},
+    {"metricId":"P2-M2","name":"answer provenance completeness","operator":"==","threshold":1.0},
+    {"metricId":"P2-M3","name":"ambiguity and stale refusal precision","operator":"==","threshold":1.0},
+    {"metricId":"P2-M4","name":"schema drift quarantine rate","operator":"==","threshold":1.0},
+    {"metricId":"P2-M5","name":"freshness SLO adherence","operator":"==","threshold":1.0},
+    {"metricId":"P2-M6","name":"field relationship bound enforcement","operator":"==","threshold":1.0},
+    {"metricId":"P2-M7","name":"checkpoint monotonicity","operator":"==","threshold":1.0},
+    {"metricId":"P2-M8","name":"pinned compatibility coverage","operator":"==","threshold":1.0},
+    {"metricId":"P2-M9","name":"promotion evidence separation","operator":"==","threshold":1.0},
+    {"metricId":"P2-M10","name":"phase one regression certificate","operator":"==","threshold":1.0}
+  ]
+}

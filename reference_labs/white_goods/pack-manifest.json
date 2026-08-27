@@ -2,10 +2,10 @@
   "schemaVersion": "data.harness/v1",
   "kind": "IndustryDomainPackManifest",
   "packId": "white-goods-service-quality",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "industry": "white-goods manufacturing",
   "domains": ["installed-base", "after-sales-service", "manufacturing-quality", "product-telemetry", "technical-knowledge"],
   "mockDatasets": ["master-data-v1", "service-orders-v1", "quality-inspections-v1", "telemetry-events-v1", "technical-documents-v1", "service-api-v1"],
   "technologyExamples": ["PostgreSQL", "S3/MinIO", "Kafka/Redpanda", "REST/OpenAPI", "OpenSearch"],
-  "acceptanceScenarios": ["repeat-service-analysis", "E21-guided-diagnosis", "customer-scope-denial", "checkpoint-replay", "late-and-duplicate-event-handling", "prompt-injection-isolation", "source-outage-degradation", "zero-internet-egress"]
+  "acceptanceScenarios": ["repeat-service-analysis", "E21-guided-diagnosis", "customer-scope-denial", "checkpoint-replay", "late-and-duplicate-event-handling", "prompt-injection-isolation", "source-outage-degradation", "zero-internet-egress", "semantic-aware-routing", "schema-drift-quarantine", "freshness-slo-refusal", "bounded-field-relationship-planning", "promotion-evidence-separation"]
 }

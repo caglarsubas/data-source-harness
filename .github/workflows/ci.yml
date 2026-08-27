@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   certification:
-    name: Phase 0+1 / Python ${{ matrix.python-version }}
+    name: Phase 0+1+2 / Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -46,18 +46,21 @@ jobs:
       - name: Verify isolated wheel and embedded offline resources
         run: >-
           uv run --no-project --isolated
-          --with ./dist/orchestra_data_source_harness-0.2.0-py3-none-any.whl
+          --with ./dist/orchestra_data_source_harness-0.3.0-py3-none-any.whl
           python -c 'from importlib.resources import files; import data_source_harness as h;
-          assert h.__version__ == "0.2.0";
-          assert (files("data_source_harness") /
-          "resources/schemas/v1/data-batch.schema.json").is_file()'
+          root = files("data_source_harness");
+          assert h.__version__ == "0.3.0";
+          assert (root / "resources/schemas/v1/data-batch.schema.json").is_file();
+          assert (root / "resources/schemas/v1/promotion-readiness.schema.json").is_file()'
       - run: uv run python -m reference_labs.white_goods.certify --output phase1-report.json
+      - run: uv run python -m reference_labs.white_goods.certify_phase2 --output phase2-report.json
       - run: uv run python -m reference_labs.white_goods.bundle build
       - run: uv run python -m reference_labs.white_goods.bundle verify
       - uses: actions/upload-artifact@v4
         with:
-          name: phase0-phase1-python-${{ matrix.python-version }}
+          name: phase0-phase1-phase2-python-${{ matrix.python-version }}
           path: |
             phase0-report.json
             phase1-report.json
+            phase2-report.json
             dist/*

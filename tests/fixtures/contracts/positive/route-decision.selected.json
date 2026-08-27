@@ -1,0 +1,1 @@
+{"schemaVersion":"data.harness/v1","requestId":"req-1","status":"selected","routes":[{"sourceId":"erp","assetId":"orders","conceptIds":["service.error-code"],"mappingIds":["map-1"],"score":0.95,"watermark":"42","lineage":[{"sourceId":"erp","assetId":"orders","fieldPath":"error_code"}]}],"uncoveredConcepts":[],"reasonCodes":[]}
