@@ -7,7 +7,7 @@ Compatibility changes require:
 1. a new exact upstream revision and version where one exists;
 2. review against `contracts/catalog.v1.json` to prevent duplicate ownership;
 3. passing schema fixtures and package tests;
-4. Phase-1 source and Phase-2 trustworthy-context consumer tests in the selected reference lab;
+4. Phase-1 source, Phase-2 trustworthy-context, Phase-3 pack and Phase-4 action consumer tests in the selected reference labs;
 5. an exact entry in `phase2-compatibility-matrix.json` with contract-only evidence;
 6. separate capture of source, CI, deployment/runtime and stakeholder evidence.
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 
+from data_source_harness import __version__
 from reference_labs.cold_chain.bundle import build_bundle, verify_bundle
 from reference_labs.cold_chain.certify import certify_phase3
 from reference_labs.cold_chain.lab import excursion_count, generated_data
@@ -24,7 +25,7 @@ def test_cold_chain_scenario_has_grounded_excursions() -> None:
 
 def test_disconnected_bundle_is_deterministic_and_verifiable(tmp_path: Path) -> None:
     repository_root = Path(__file__).resolve().parents[2]
-    wheel = repository_root / "dist/orchestra_data_source_harness-0.4.0-py3-none-any.whl"
+    wheel = repository_root / f"dist/orchestra_data_source_harness-{__version__}-py3-none-any.whl"
     if not wheel.exists():
         return
     first = tmp_path / "first.zip"

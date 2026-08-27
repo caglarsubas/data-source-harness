@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "kind": "SourceActionCapabilityProfile",
+  "sourceId": "whitegoods.service-actions",
+  "connectorVersion": "1.0.0",
+  "operations": [
+    {
+      "operation": "reschedule-appointment",
+      "risk": "high",
+      "approvalMode": "human",
+      "supportsIdempotencyKey": true,
+      "supportsVersionPrecondition": true,
+      "compensationOperation": "restore-appointment"
+    }
+  ]
+}

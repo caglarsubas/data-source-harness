@@ -1,6 +1,6 @@
 {
   "schemaVersion": "data.harness.catalog/v1",
-  "scope": "phase-2",
+  "scope": "phase-4",
   "ownershipRule": "reuse upstream contracts; introduce only data-plane-specific contracts here",
   "reusedContracts": [
     {"owner": "ADLC", "names": ["IntegrationManifest", "CredentialReference", "EgressPolicy", "CapabilityProfile", "HealthObservation", "ConformanceResult", "SupportProfile", "RetrievalRequest", "ProvenancePackage", "MemoryCandidate", "MemoryRecord", "PromotionDecision"]},
@@ -22,6 +22,10 @@
     {"name": "FreshnessObservation", "schema": "schemas/v1/freshness-observation.schema.json"},
     {"name": "RouteDecision", "schema": "schemas/v1/route-decision.schema.json"},
     {"name": "BoundedQueryPlan", "schema": "schemas/v1/bounded-query-plan.schema.json"},
-    {"name": "PromotionReadiness", "schema": "schemas/v1/promotion-readiness.schema.json"}
+    {"name": "PromotionReadiness", "schema": "schemas/v1/promotion-readiness.schema.json"},
+    {"name": "SourceActionCapabilityProfile", "schema": "schemas/v1/source-action-capability-profile.schema.json"},
+    {"name": "SourceActionPlan", "schema": "schemas/v1/source-action-plan.schema.json"},
+    {"name": "ActionPreview", "schema": "schemas/v1/action-preview.schema.json"},
+    {"name": "SourceMutationReceipt", "schema": "schemas/v1/source-mutation-receipt.schema.json"}
   ]
 }

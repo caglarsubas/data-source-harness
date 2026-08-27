@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orchestra.local/schemas/data-harness/v1/action-preview.schema.json",
+  "title": "ActionPreview",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "previewId", "actionId", "actionDigest", "policyDigest", "policyDecisionId", "createdAt", "expiresAt", "allowed", "approvalRequired", "effects"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "previewId": {"type": "string", "minLength": 1},
+    "actionId": {"type": "string", "minLength": 1},
+    "actionDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "policyDigest": {"type": "string", "minLength": 1},
+    "policyDecisionId": {"type": "string", "minLength": 1},
+    "createdAt": {"type": "string", "format": "date-time"},
+    "expiresAt": {"type": "string", "format": "date-time"},
+    "allowed": {"type": "boolean"},
+    "approvalRequired": {"type": "boolean"},
+    "effects": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  }
+}

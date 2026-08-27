@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "data.harness.phase4-boundary/v1",
+  "evidenceBoundary": "Static contract and ownership mapping only; no live cross-plane runtime or stakeholder acceptance is asserted.",
+  "components": [
+    {
+      "name": "ADLC",
+      "revision": "7ee0cb75dffcf1715bcb4d625011b6bc83815803",
+      "owns": ["authoritative approval workflow", "MemoryCandidate", "MemoryRecord", "PromotionDecision"],
+      "harnessBoundary": ["ActionPreview", "SourceMutationReceipt", "semantic-memory adapter"]
+    },
+    {
+      "name": "Python-SDK",
+      "revision": "3a4012d809e6ed00a3f05be940c5278eac20a166",
+      "owns": ["ExecutionReceipt", "TelemetryEnvelope", "tenant runtime transport"],
+      "harnessBoundary": ["SourceMutationReceipt adapter", "data.harness.action.* telemetry"]
+    },
+    {
+      "name": "OCP-reference-lab",
+      "revision": "4b7bce1265e2eb9435b5dae76ea323269fcf0fc5",
+      "owns": ["DeploymentOverlay", "ReferenceProfileVerification"],
+      "harnessBoundary": ["offline lab bundle", "Phase-4 certification report"]
+    },
+    {
+      "name": "model-plane",
+      "revision": "e820728e14a6121c0549f4ef6d51baacd1fec573",
+      "owns": ["model inference", "embedding", "reranking", "guardrail evaluation"],
+      "harnessBoundary": ["no synchronous dependency in source-action execution"]
+    }
+  ]
+}

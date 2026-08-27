@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "data.harness.phase4.gqm/v1",
+  "goals": [
+    {"goalId": "G1", "goal": "Prevent unauthorized or unintended source side effects", "metricIds": ["P4-M1", "P4-M2", "P4-M3", "P4-M4"]},
+    {"goalId": "G2", "goal": "Recover safely and retain complete metadata-only audit evidence", "metricIds": ["P4-M5", "P4-M6"]},
+    {"goalId": "G3", "goal": "Promote and share semantics only through governed scope", "metricIds": ["P4-M7", "P4-M8"]},
+    {"goalId": "G4", "goal": "Accept bounded cross-agent delegation without connector protocol coupling", "metricIds": ["P4-M9", "P4-M10"]}
+  ],
+  "metrics": [
+    {"metricId": "P4-M1", "name": "preview coverage across action labs", "operator": "==", "threshold": 1.0},
+    {"metricId": "P4-M2", "name": "unauthorized false-allow rate", "operator": "==", "threshold": 0.0},
+    {"metricId": "P4-M3", "name": "missing approval denial rate", "operator": "==", "threshold": 1.0},
+    {"metricId": "P4-M4", "name": "idempotent exactly-once source effect rate", "operator": "==", "threshold": 1.0},
+    {"metricId": "P4-M5", "name": "conditional-write rejection rate", "operator": "==", "threshold": 1.0},
+    {"metricId": "P4-M6", "name": "compensation and audit success rate", "operator": "==", "threshold": 1.0},
+    {"metricId": "P4-M7", "name": "unreviewed memory promotion denial rate", "operator": "==", "threshold": 1.0},
+    {"metricId": "P4-M8", "name": "cross-agent memory scope correctness", "operator": "==", "threshold": 1.0},
+    {"metricId": "P4-M9", "name": "bounded delegation acceptance", "operator": "==", "threshold": 1.0},
+    {"metricId": "P4-M10", "name": "connector ABI protocol coupling tokens", "operator": "==", "threshold": 0.0}
+  ]
+}

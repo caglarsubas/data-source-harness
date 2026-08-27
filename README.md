@@ -21,7 +21,7 @@ planes:
 The control plane is never required synchronously for a production source,
 retrieval, tool, or model request.
 
-## Implemented scope through Phase 3
+## Implemented scope through Phase 4
 
 Phase 0 establishes the reusable scaffold:
 
@@ -50,6 +50,12 @@ cold-chain logistics pilot. A Phase-2 digest lock proves that all 14 wire
 contracts remain unchanged, while a core-source scan prevents first-pilot terms
 from leaking into the public package.
 
+Phase 4 adds preview-bound and conditionally authorized source actions,
+human-approval gates, source-level idempotency, compensations, metadata-only
+hash-chained audits, governed semantic-memory promotion, and a bounded A2A-facing
+adapter that remains outside the connector ABI. The safety gates run in both the
+white-goods and cold-chain labs.
+
 ## Developer quick start
 
 ```bash
@@ -58,7 +64,7 @@ uv run ruff check .
 uv run pytest
 uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
-make phase3
+make phase4
 ```
 
 The built wheel embeds the versioned schemas, contract catalog, deployment
@@ -76,8 +82,8 @@ profiles, and neutral reference-lab manifest under
 - Missing, partial, stale, ambiguous, and unauthorized evidence remain visible
   in coverage statements rather than being converted into success.
 
-See [Phase 3 architecture](docs/architecture/phase-3-pack-factory.md) for the
-factory, second-pilot and offline package boundary.
+See [Phase 4 architecture](docs/architecture/phase-4-governed-actions.md) for
+the mutation, compensation, memory and delegation boundaries.
 
 The staged [development roadmap](docs/development-roadmap.md) defines the
 white-goods and cold-chain pilots without coupling the core to either industry.

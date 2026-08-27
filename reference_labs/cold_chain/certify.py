@@ -67,7 +67,9 @@ def _schema_reuse() -> tuple[bool, str]:
         path.name: hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted((REPOSITORY_ROOT / "schemas/v1").glob("*.json"))
     }
-    return actual == lock["schemas"], f"locked={len(lock['schemas'])}; actual={len(actual)}"
+    locked = lock["schemas"]
+    unchanged = all(actual.get(name) == digest for name, digest in locked.items())
+    return unchanged, f"locked_unchanged={len(locked)}; available={len(actual)}"
 
 
 def _core_leakage() -> tuple[int, str]:

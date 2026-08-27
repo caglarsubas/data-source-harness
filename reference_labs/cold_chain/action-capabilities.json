@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "kind": "SourceActionCapabilityProfile",
+  "sourceId": "coldchain.incident-actions",
+  "connectorVersion": "1.0.0",
+  "operations": [
+    {
+      "operation": "acknowledge-excursion",
+      "risk": "high",
+      "approvalMode": "human",
+      "supportsIdempotencyKey": true,
+      "supportsVersionPrecondition": true,
+      "compensationOperation": "reopen-excursion"
+    }
+  ]
+}
