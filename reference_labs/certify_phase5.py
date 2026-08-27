@@ -174,7 +174,7 @@ async def certify_phase5() -> Phase5Report:
         CertificationCheck(
             "durability.journal-integrity-and-privacy",
             journal_valid and payload_exposure == 0,
-            "SQLite FULL sync/WAL metadata journal; SHA-256 chain valid; raw values absent",
+            "SQLite FULL sync/WAL metadata journal; keyed HMAC chain valid; raw values absent",
         ),
         CertificationCheck(
             "protocol.bounded-pinned-catalog",

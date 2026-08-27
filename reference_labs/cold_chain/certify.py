@@ -63,13 +63,28 @@ def _schema_reuse() -> tuple[bool, str]:
     lock = json.loads(
         (REPOSITORY_ROOT / "compatibility/phase2-core-contracts.lock.json").read_text()
     )
+    evolution = json.loads(
+        (REPOSITORY_ROOT / "compatibility/phase2-contract-evolution.json").read_text()
+    )
     actual = {
         path.name: hashlib.sha256(path.read_bytes()).hexdigest()
         for path in sorted((REPOSITORY_ROOT / "schemas/v1").glob("*.json"))
     }
     locked = lock["schemas"]
-    unchanged = all(actual.get(name) == digest for name, digest in locked.items())
-    return unchanged, f"locked_unchanged={len(locked)}; available={len(actual)}"
+    entries = {item["schema"]: item for item in evolution["entries"]}
+    changed = {name for name, digest in locked.items() if actual.get(name) != digest}
+    approved = changed == set(entries) and all(
+        entry["baselineSha256"] == locked[name]
+        and entry["currentSha256"] == actual.get(name)
+        and entry["backwardCompatible"] is True
+        and bool(entry["reason"])
+        for name, entry in entries.items()
+    )
+    compatible = set(locked) <= set(actual) and approved
+    return (
+        compatible,
+        f"baseline={len(locked)}; unchanged={len(locked) - len(changed)}; evolved={len(changed)}",
+    )
 
 
 def _core_leakage() -> tuple[int, str]:
@@ -189,7 +204,9 @@ def certify_phase3() -> Phase3Report:
     scenarios = excursion_count()
     checks.extend(
         (
-            CertificationCheck("contracts.phase2-digest-reuse", schemas_unchanged, schema_detail),
+            CertificationCheck(
+                "contracts.phase2-compatible-evolution", schemas_unchanged, schema_detail
+            ),
             CertificationCheck(
                 "portability.no-first-pilot-core-tokens",
                 leakage_count == 0,

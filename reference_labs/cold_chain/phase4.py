@@ -13,6 +13,7 @@ from data_source_harness.actions import (
     ActionState,
     ApprovalMode,
     CompensationSpec,
+    HmacApprovalAuthority,
     SourceActionPlan,
 )
 from data_source_harness.connector import ConnectorRegistry
@@ -21,6 +22,11 @@ from data_source_harness.telemetry import MemoryTelemetrySink
 from reference_labs.phase4_support import BoundedLabActionPolicy, LabMutationConnector
 
 FIXED_TIME = datetime(2026, 8, 27, 10, tzinfo=UTC)
+APPROVAL_AUTHORITY = HmacApprovalAuthority(
+    "adlc-coldchain-lab",
+    "data-source-harness",
+    b"coldchain-lab-approval-key-material",
+)
 
 
 @dataclass(frozen=True)
@@ -65,14 +71,15 @@ def _identity() -> RequestIdentity:
 
 
 def _approval(action: SourceActionPlan) -> ActionApproval:
-    return ActionApproval(
-        f"cc-approval:{action.action_id}",
-        action.digest,
-        "human:logistics-supervisor",
-        "policy:cc-v1",
-        FIXED_TIME - timedelta(minutes=1),
-        FIXED_TIME + timedelta(minutes=10),
-        True,
+    return APPROVAL_AUTHORITY.issue(
+        action_digest=action.digest,
+        approver_id="human:logistics-supervisor",
+        policy_digest="policy:cc-v1",
+        approved_at=FIXED_TIME - timedelta(minutes=1),
+        expires_at=FIXED_TIME + timedelta(minutes=10),
+        allow_compensation=True,
+        identity=_identity(),
+        nonce=f"cc:{action.action_id}",
     )
 
 
@@ -91,6 +98,7 @@ async def run_action_scenario() -> ColdChainActionResult:
         ),
         telemetry,
         now=lambda: FIXED_TIME,
+        approval_verifier=APPROVAL_AUTHORITY,
     )
     stale = incident_action(expected_version=99)
     stale_preview = await gateway.preview(stale, _identity())

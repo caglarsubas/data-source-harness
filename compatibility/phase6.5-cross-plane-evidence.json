@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "releaseSet": "phase-6.5-integration-spine-2026-08-27",
+  "generatedAt": "2026-08-27T16:00:00Z",
+  "combinedRuntimeAccepted": false,
+  "components": [
+    {
+      "component": "ADLC",
+      "repository": "https://github.com/caglarsubas/agent-hook-v2.git",
+      "revision": "9bf6c11028a70944fda3f5e7ef315915768b9be7",
+      "evidence": {
+        "contract": {"status": "passed", "observedAt": "2026-08-27T16:00:00Z", "references": ["contract://data-source-harness/phase6.5/adlc-evidence-sink"]},
+        "ci": {"status": "missing", "observedAt": null, "references": []},
+        "published": {"status": "missing", "observedAt": null, "references": []},
+        "deployed": {"status": "missing", "observedAt": null, "references": []},
+        "runtimeVerified": {"status": "missing", "observedAt": null, "references": []},
+        "faultVerified": {"status": "missing", "observedAt": null, "references": []},
+        "stakeholderAccepted": {"status": "missing", "observedAt": null, "references": []}
+      }
+    },
+    {
+      "component": "Python-SDK",
+      "repository": "https://github.com/caglarsubas/planeon-orchestra-python-sdk.git",
+      "revision": "3a4012d809e6ed00a3f05be940c5278eac20a166",
+      "evidence": {
+        "contract": {"status": "passed", "observedAt": "2026-08-27T16:00:00Z", "references": ["contract://data-source-harness/phase6.5/sdk-evidence-sink"]},
+        "ci": {"status": "missing", "observedAt": null, "references": []},
+        "published": {"status": "missing", "observedAt": null, "references": []},
+        "deployed": {"status": "missing", "observedAt": null, "references": []},
+        "runtimeVerified": {"status": "missing", "observedAt": null, "references": []},
+        "faultVerified": {"status": "missing", "observedAt": null, "references": []},
+        "stakeholderAccepted": {"status": "missing", "observedAt": null, "references": []}
+      }
+    },
+    {
+      "component": "OCP-reference-lab",
+      "repository": "https://github.com/caglarsubas/orchestra-openshift-reference-lab.git",
+      "revision": "37480c11a5f3c06bf257e494c974b879b223733c",
+      "evidence": {
+        "contract": {"status": "passed", "observedAt": "2026-08-27T16:00:00Z", "references": ["contract://data-source-harness/phase6.5/ocp-transfer-boundary"]},
+        "ci": {"status": "missing", "observedAt": null, "references": []},
+        "published": {"status": "missing", "observedAt": null, "references": []},
+        "deployed": {"status": "missing", "observedAt": null, "references": []},
+        "runtimeVerified": {"status": "missing", "observedAt": null, "references": []},
+        "faultVerified": {"status": "missing", "observedAt": null, "references": []},
+        "stakeholderAccepted": {"status": "missing", "observedAt": null, "references": []}
+      }
+    },
+    {
+      "component": "model-plane",
+      "repository": "https://github.com/caglarsubas/llm_inference_engine.git",
+      "revision": "e820728e14a6121c0549f4ef6d51baacd1fec573",
+      "evidence": {
+        "contract": {"status": "passed", "observedAt": "2026-08-27T16:00:00Z", "references": ["contract://data-source-harness/phase6.5/tenant-bound-rerank"]},
+        "ci": {"status": "missing", "observedAt": null, "references": []},
+        "published": {"status": "missing", "observedAt": null, "references": []},
+        "deployed": {"status": "missing", "observedAt": null, "references": []},
+        "runtimeVerified": {"status": "missing", "observedAt": null, "references": []},
+        "faultVerified": {"status": "missing", "observedAt": null, "references": []},
+        "stakeholderAccepted": {"status": "missing", "observedAt": null, "references": []}
+      }
+    }
+  ]
+}

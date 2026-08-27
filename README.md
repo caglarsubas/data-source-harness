@@ -21,7 +21,7 @@ planes:
 The control plane is never required synchronously for a production source,
 retrieval, tool, or model request.
 
-## Implemented scope through Phase 6
+## Implemented scope through Phase 6.5
 
 Phase 0 establishes the reusable scaffold:
 
@@ -46,9 +46,9 @@ promotion-readiness evidence without duplicating ADLC's final release decision.
 
 Phase 3 adds a deterministic industry-pack factory, OpenAPI-driven connector
 scaffolding, signed connector archives with CycloneDX SBOMs, and a second
-cold-chain logistics pilot. A Phase-2 digest lock proves that all 14 wire
-contracts remain unchanged, while a core-source scan prevents first-pilot terms
-from leaking into the public package.
+cold-chain logistics pilot. The immutable Phase-2 digest lock plus an explicit
+compatibility-evolution ledger preserves contract history, while a core-source
+scan prevents first-pilot terms from leaking into the public package.
 
 Phase 4 adds preview-bound and conditionally authorized source actions,
 human-approval gates, source-level idempotency, compensations, metadata-only
@@ -56,7 +56,8 @@ hash-chained audits, governed semantic-memory promotion, and a bounded A2A-facin
 adapter that remains outside the connector ABI. The safety gates run in both the
 white-goods and cold-chain labs.
 
-Phase 5 adds a SQLite `FULL`-sync/WAL action journal, restart reconciliation
+Phase 5 adds a SQLite `FULL`-sync/WAL action journal with a keyed integrity
+chain, restart reconciliation
 against source idempotency evidence, fail-closed handling of uncertain outcomes,
 and a stateless JSON-RPC northbound action boundary. Agent-visible tool subsets
 are scoped, and every call is pinned to the exact tool-catalog digest so a
@@ -72,6 +73,18 @@ runtime acceptance, and a signed disconnected-transfer packet with OpenShift
 security templates. The certificate deliberately records upstream protocol
 suites, image mirroring, live deployment and stakeholder acceptance as missing.
 
+Phase 6.5 closes the repository-level integration spine: bounded planner output
+executes through the canonical gateway, the same connector ABI crosses a
+hardened subprocess boundary, and a reusable coordinator produces explicit
+expected-source coverage and deduplicated lineage. Human approvals require a
+cryptographically verified authority, decoders and archives are resource
+bounded, and tenant-neutral seams publish redacted execution evidence to the
+Python SDK/ADLC while keeping model-plane reranking locally governed. The
+air-gap packet now includes a pinned dependency wheelhouse recipe, runtime
+container recipe, health probes, service, configuration, network policies and
+an `oc-mirror` v2 image-set template. None of these local checks substitutes for
+live combined-platform acceptance.
+
 ## Developer quick start
 
 ```bash
@@ -80,7 +93,7 @@ uv run ruff check .
 uv run pytest
 uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
-make phase6
+make phase6.5
 ```
 
 The built wheel embeds the versioned schemas, contract catalog, deployment
@@ -98,8 +111,9 @@ profiles, and neutral reference-lab manifest under
 - Missing, partial, stale, ambiguous, and unauthorized evidence remain visible
   in coverage statements rather than being converted into success.
 
-See [Phase 6 architecture](docs/architecture/phase-6-runtime-scaffold.md) for
-connector-worker isolation, protocol profiles and cross-plane evidence states.
+See [Phase 6.5 architecture](docs/architecture/phase-6.5-integration-spine.md)
+for the execution spine, trust boundaries, cross-plane seams and air-gap
+handoff.
 
 The staged [development roadmap](docs/development-roadmap.md) defines the
 white-goods and cold-chain pilots without coupling the core to either industry.

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import sqlite3
 from collections.abc import Callable, Mapping
@@ -18,6 +19,7 @@ from .actions import (
     ActionGateway,
     ActionPreview,
     ActionState,
+    ApprovalVerifier,
     IdempotencyConflict,
     SourceActionPlan,
     SourceMutationReceipt,
@@ -28,9 +30,9 @@ from .policy import PolicyDenied, PolicyEvaluator, RequestIdentity
 from .telemetry import TelemetrySink
 
 
-def _digest(value: object) -> str:
+def _digest(value: object, key: bytes) -> str:
     encoded = json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
-    return f"sha256:{hashlib.sha256(encoded).hexdigest()}"
+    return f"hmac-sha256:{hmac.new(key, encoded, hashlib.sha256).hexdigest()}"
 
 
 class DurableActionState(StrEnum):
@@ -79,10 +81,13 @@ class DurableActionRecord:
 
 
 class SQLiteActionJournal:
-    """Durable action/idempotency ledger with a metadata-only SHA-256 event chain."""
+    """Durable action ledger with a keyed, metadata-only integrity chain."""
 
-    def __init__(self, path: str | Path) -> None:
+    def __init__(self, path: str | Path, *, integrity_key: bytes) -> None:
+        if len(integrity_key) < 16:
+            raise ValueError("journal integrity requires at least 128 bits of key material")
         self.path = str(path)
+        self._integrity_key = bytes(integrity_key)
         with self._connect() as connection:
             connection.executescript(
                 """
@@ -120,8 +125,8 @@ class SQLiteActionJournal:
         connection.row_factory = sqlite3.Row
         return connection
 
-    @staticmethod
     def _append_event(
+        self,
         connection: sqlite3.Connection,
         event_type: str,
         action_id: str,
@@ -132,7 +137,7 @@ class SQLiteActionJournal:
             "SELECT sequence, digest FROM action_events ORDER BY sequence DESC LIMIT 1"
         ).fetchone()
         sequence = int(previous_row["sequence"]) + 1 if previous_row else 1
-        previous = previous_row["digest"] if previous_row else "sha256:" + "0" * 64
+        previous = previous_row["digest"] if previous_row else "hmac-sha256:" + "0" * 64
         body = {
             "sequence": sequence,
             "event_type": event_type,
@@ -141,7 +146,7 @@ class SQLiteActionJournal:
             "attributes": dict(attributes),
             "previous_digest": previous,
         }
-        digest = _digest(body)
+        digest = _digest(body, self._integrity_key)
         connection.execute(
             "INSERT INTO action_events VALUES (?, ?, ?, ?, ?, ?, ?)",
             (
@@ -175,7 +180,12 @@ class SQLiteActionJournal:
                 DurableActionState.PREPARED.value,
                 action.action_id,
                 now,
-                {"source_id": action.source_id},
+                {
+                    "source_id": action.source_id,
+                    "idempotency_key": action.idempotency_key,
+                    "action_digest": action.digest,
+                    "policy_decision_id": policy_decision_id,
+                },
             )
             connection.execute(
                 """INSERT INTO action_records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
@@ -338,7 +348,10 @@ class SQLiteActionJournal:
     def verify(self) -> bool:
         with self._connect() as connection:
             rows = connection.execute("SELECT * FROM action_events ORDER BY sequence").fetchall()
-        previous = "sha256:" + "0" * 64
+            records = connection.execute("SELECT * FROM action_records").fetchall()
+        previous = "hmac-sha256:" + "0" * 64
+        events_by_digest: dict[str, sqlite3.Row] = {}
+        prepared_by_action: dict[str, Mapping[str, Any]] = {}
         for row in rows:
             body = {
                 "sequence": row["sequence"],
@@ -348,9 +361,45 @@ class SQLiteActionJournal:
                 "attributes": json.loads(row["attributes_json"]),
                 "previous_digest": previous,
             }
-            if row["previous_digest"] != previous or row["digest"] != _digest(body):
+            if row["previous_digest"] != previous or row["digest"] != _digest(
+                body, self._integrity_key
+            ):
                 return False
             previous = row["digest"]
+            events_by_digest[row["digest"]] = row
+            if row["event_type"] == DurableActionState.PREPARED.value:
+                prepared_by_action[row["action_id"]] = body["attributes"]
+        for row in records:
+            event = events_by_digest.get(row["journal_digest"])
+            if event is None or event["action_id"] != row["action_id"]:
+                return False
+            if event["event_type"] != row["state"]:
+                return False
+            prepared = prepared_by_action.get(row["action_id"])
+            if prepared is None or any(
+                prepared.get(field) != row[field]
+                for field in (
+                    "source_id",
+                    "idempotency_key",
+                    "action_digest",
+                    "policy_decision_id",
+                )
+            ):
+                return False
+            try:
+                record = self._record(row)
+            except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+                return False
+            if record.receipt is not None:
+                if (
+                    record.state is not DurableActionState.EXECUTED
+                    or record.receipt.action_id != record.action_id
+                    or record.receipt.action_digest != record.action_digest
+                    or record.receipt.idempotency_key != record.idempotency_key
+                ):
+                    return False
+            elif record.state is DurableActionState.EXECUTED:
+                return False
         return True
 
     @staticmethod
@@ -399,8 +448,15 @@ class DurableActionGateway(ActionGateway):
         *,
         now: Callable[[], datetime] | None = None,
         after_mutation: Callable[[SourceActionPlan, Mapping[str, Any]], None] | None = None,
+        approval_verifier: ApprovalVerifier | None = None,
     ) -> None:
-        super().__init__(registry, policy, telemetry, now=now)
+        super().__init__(
+            registry,
+            policy,
+            telemetry,
+            now=now,
+            approval_verifier=approval_verifier,
+        )
         self.journal = journal
         self.after_mutation = after_mutation
 

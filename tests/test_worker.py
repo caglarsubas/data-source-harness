@@ -6,6 +6,18 @@ from pathlib import Path
 
 import pytest
 
+from data_source_harness.connector import (
+    Capability,
+    ConnectorLimits,
+    ConnectorProfile,
+    ConnectorRegistry,
+    DataModel,
+    RuntimeMode,
+)
+from data_source_harness.models import QueryRequest
+from data_source_harness.policy import RequestIdentity, StaticPolicy
+from data_source_harness.runtime import HarnessGateway
+from data_source_harness.telemetry import MemoryTelemetrySink
 from data_source_harness.worker import (
     ConnectorWorkerClient,
     ConnectorWorkerSpec,
@@ -14,6 +26,7 @@ from data_source_harness.worker import (
     WorkerProtocolViolation,
     WorkerTimeout,
 )
+from data_source_harness.worker_connector import WorkerBackedConnector
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -77,3 +90,54 @@ async def test_cancelled_worker_is_terminated() -> None:
 async def test_worker_rejects_non_finite_json_before_process_start() -> None:
     with pytest.raises(ValueError, match="finite JSON"):
         await ConnectorWorkerClient(spec()).invoke("rest.get", {"value": float("nan")})
+
+
+def test_process_worker_cannot_self_attest_as_an_image_pinned_container() -> None:
+    with pytest.raises(ValueError, match="cannot claim a container image"):
+        ConnectorWorkerSpec(
+            "spoofed",
+            "whitegoods.reference-worker",
+            (str(Path(sys.executable).resolve()), "-c", "print('not a container')"),
+            ROOT,
+            image_digest="sha256:" + "a" * 64,
+        )
+
+
+async def test_gateway_executes_canonical_query_through_worker_boundary() -> None:
+    profile = ConnectorProfile(
+        "whitegoods.reference-worker",
+        "0.8.0",
+        "harness.connector/v1",
+        RuntimeMode.PROCESS,
+        frozenset({DataModel.TABULAR}),
+        frozenset({Capability.DISCOVER, Capability.DESCRIBE, Capability.QUERY}),
+        frozenset({"credential_reference"}),
+        limits=ConnectorLimits(max_parallelism=2, max_result_bytes=128 * 1024),
+    )
+    connector = WorkerBackedConnector(profile, ConnectorWorkerClient(spec()))
+    registry = ConnectorRegistry()
+    registry.register(connector)
+    gateway = HarnessGateway(
+        registry,
+        StaticPolicy({("whitegoods.reference-worker", Capability.QUERY)}),
+        MemoryTelemetrySink(),
+    )
+    request = QueryRequest(
+        "whitegoods.reference-worker",
+        ("service_orders",),
+        {
+            "select_by_asset": {"service_orders": ["service_order_id", "error_code"]},
+            "where_by_asset": {"service_orders": {"error_code": "E21"}},
+            "relationships": [],
+        },
+        20,
+        1_000,
+        "phase6.5 worker integration",
+    )
+    identity = RequestIdentity(
+        "org-lab", "whitegoods", "agent-quality", "worker-query", "trace", "policy:v1"
+    )
+    batches = [batch async for batch in gateway.execute(request, identity)]
+    assert batches[0].row_count == 2
+    assert {row["error_code"] for row in batches[0].payload} == {"E21"}
+    assert connector.client.max_observed_parallelism == 1

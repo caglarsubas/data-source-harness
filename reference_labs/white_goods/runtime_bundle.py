@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import shutil
 import subprocess
@@ -22,6 +23,66 @@ REPOSITORY_ROOT = LAB_ROOT.parents[1]
 RUNTIME_ROOT = LAB_ROOT / "runtime"
 DEFAULT_OUTPUT = REPOSITORY_ROOT / f"dist/white-goods-runtime-transfer-{harness_version}.zip"
 LAB_SIGNER = HmacSha256Signer("white-goods-runtime-lab", b"white-goods-runtime-lab-key-material")
+WHEELHOUSE_ROOT = REPOSITORY_ROOT / "dist/wheelhouse"
+REQUIRED_WHEEL_PREFIXES = (
+    "attrs-",
+    "jsonschema-",
+    "jsonschema_specifications-",
+    "referencing-",
+    "rpds_py-",
+    "typing_extensions-",
+)
+
+
+def _wheelhouse_complete() -> bool:
+    manifest_path = WHEELHOUSE_ROOT / "wheelhouse-manifest.json"
+    if not manifest_path.is_file():
+        return False
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        target = manifest["target"]
+        files = manifest["files"]
+        requirements_digest = hashlib.sha256(
+            (RUNTIME_ROOT / "wheelhouse-requirements.txt").read_bytes()
+        ).hexdigest()
+        if (
+            manifest.get("schemaVersion") != "data.harness.wheelhouse/v1"
+            or target.get("platform") != "manylinux_2_17_x86_64"
+            or target.get("implementation") != "cp"
+            or target.get("pythonVersion") not in {"311", "312"}
+            or manifest.get("requirementsSha256") != requirements_digest
+            or not isinstance(files, dict)
+        ):
+            return False
+        wheels = {path.name: path for path in WHEELHOUSE_ROOT.glob("*.whl")}
+        if set(files) != set(wheels):
+            return False
+        if any(
+            not isinstance(digest, str)
+            or hashlib.sha256(wheels[name].read_bytes()).hexdigest() != digest
+            for name, digest in files.items()
+        ):
+            return False
+        names = {name.lower() for name in wheels}
+        return all(
+            any(name.startswith(prefix) for name in names) for prefix in REQUIRED_WHEEL_PREFIXES
+        )
+    except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError):
+        return False
+
+
+def _runtime_dependencies() -> dict[str, str]:
+    requirements = RUNTIME_ROOT / "wheelhouse-requirements.txt"
+    dependencies: dict[str, str] = {}
+    for line in requirements.read_text(encoding="utf-8").splitlines():
+        entry = line.strip()
+        if not entry or entry.startswith("#"):
+            continue
+        name, separator, pinned_version = entry.partition("==")
+        if not separator or not name or not pinned_version:
+            raise ValueError(f"runtime dependency must be exactly pinned: {entry}")
+        dependencies[name] = pinned_version
+    return dependencies
 
 
 def _files(wheel: Path | None = None) -> dict[str, bytes]:
@@ -42,6 +103,11 @@ def _files(wheel: Path | None = None) -> dict[str, bytes]:
     if not wheel.is_file():
         raise RuntimeError(f"runtime packet wheel build did not produce: {wheel}")
     files: dict[str, bytes] = {f"wheels/{wheel.name}": wheel.read_bytes()}
+    for dependency_wheel in sorted(WHEELHOUSE_ROOT.glob("*.whl")):
+        files[f"wheels/{dependency_wheel.name}"] = dependency_wheel.read_bytes()
+    wheelhouse_manifest = WHEELHOUSE_ROOT / "wheelhouse-manifest.json"
+    if wheelhouse_manifest.is_file():
+        files["wheels/wheelhouse-manifest.json"] = wheelhouse_manifest.read_bytes()
     roots = (
         ("runtime", RUNTIME_ROOT),
         ("schemas/v1", REPOSITORY_ROOT / "schemas/v1"),
@@ -64,6 +130,7 @@ def build_runtime_bundle(path: Path = DEFAULT_OUTPUT) -> str:
         LAB_SIGNER,
         component_name="white-goods-runtime-transfer",
         component_version=harness_version,
+        dependencies=_runtime_dependencies(),
     )
 
 
@@ -75,7 +142,10 @@ def readiness(path: Path = DEFAULT_OUTPUT) -> dict[str, Any]:
     digest = verify_runtime_bundle(path)
     image_lock = json.loads((LAB_ROOT / "airgap-images.lock.json").read_text())
     images_resolved = all(item["airgapDigest"] for item in image_lock["images"])
+    wheelhouse_complete = _wheelhouse_complete()
     blockers = []
+    if not wheelhouse_complete:
+        blockers.append("wheelhouse-incomplete")
     if not images_resolved:
         blockers.append("image-digests-unresolved")
     blockers.extend(
@@ -85,6 +155,7 @@ def readiness(path: Path = DEFAULT_OUTPUT) -> dict[str, Any]:
         "schemaVersion": "data.harness/v1",
         "bundleDigest": f"sha256:{digest}",
         "artifactIntegrity": True,
+        "wheelhouseComplete": wheelhouse_complete,
         "imageDigestsResolved": images_resolved,
         "mirrorVerified": False,
         "deployed": False,

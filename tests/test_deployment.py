@@ -25,3 +25,5 @@ def test_airgap_egress_is_allowlist_only() -> None:
     guard.authorize("http://127.0.0.1:8080/health")
     with pytest.raises(EgressDenied, match="not permitted"):
         guard.authorize("https://api.external.example/v1")
+    with pytest.raises(EgressDenied, match="credentials"):
+        guard.authorize("https://user:password@model-plane.ai.svc/v1/embeddings")

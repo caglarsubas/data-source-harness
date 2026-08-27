@@ -76,3 +76,51 @@ def test_unknown_or_cyclic_reference_is_rejected() -> None:
     )
     with pytest.raises(ValueError, match="cyclic or unknown"):
         MockDatasetGenerator().generate(definition)
+
+
+def test_weighted_and_nullable_fields_are_deterministic_and_representative() -> None:
+    definition = IndustryPackDefinition(
+        "weighted-pack",
+        "1",
+        7,
+        (
+            DatasetBlueprint(
+                "events",
+                1_000,
+                (
+                    FieldBlueprint("event_id", FieldKind.SEQUENCE, prefix="event"),
+                    FieldBlueprint(
+                        "outcome",
+                        FieldKind.CHOICE,
+                        values=("normal", "rare"),
+                        weights=(99, 1),
+                    ),
+                    FieldBlueprint(
+                        "optional_code",
+                        FieldKind.CHOICE,
+                        values=("A", "B"),
+                        null_rate=0.2,
+                    ),
+                ),
+            ),
+        ),
+    )
+    first = MockDatasetGenerator().generate(definition)["events"]
+    second = MockDatasetGenerator().generate(definition)["events"]
+    assert first == second
+    rare = sum(row["outcome"] == "rare" for row in first)
+    missing = sum(row["optional_code"] is None for row in first)
+    assert 1 <= rare < 50
+    assert 100 <= missing <= 300
+
+
+def test_invalid_distribution_blueprints_are_rejected() -> None:
+    with pytest.raises(ValueError, match="weights"):
+        FieldBlueprint(
+            "outcome",
+            FieldKind.CHOICE,
+            values=("a", "b"),
+            weights=(1,),
+        )
+    with pytest.raises(ValueError, match="null rate"):
+        FieldBlueprint("value", FieldKind.INTEGER, null_rate=1.0)

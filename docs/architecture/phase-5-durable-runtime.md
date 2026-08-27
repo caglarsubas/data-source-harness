@@ -20,9 +20,11 @@ record. A subsequent replay returns the stored receipt without a new effect.
 
 The journal stores action and parameter digests, identifiers, state, versions
 and receipts. It does not persist raw mutation parameters or precondition
-values. Its event rows form a persistent SHA-256 chain. The SQLite implementation
-is the on-premises single-node reference pillar; it is not a multi-replica
-consensus or production database-HA claim.
+values. Its event rows form a persistent keyed HMAC chain that also binds the
+source, idempotency key, action digest and policy decision. The key is supplied
+by the caller and is not stored in the journal. The SQLite implementation is the
+on-premises single-node reference pillar; production key custody, multi-replica
+consensus and database HA remain deployment responsibilities.
 
 ## Northbound protocol boundary
 

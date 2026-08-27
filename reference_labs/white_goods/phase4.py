@@ -15,6 +15,7 @@ from data_source_harness.actions import (
     ApprovalMode,
     ApprovalRequired,
     CompensationSpec,
+    HmacApprovalAuthority,
     PreviewMismatch,
     SagaState,
     SourceActionPlan,
@@ -25,6 +26,11 @@ from data_source_harness.telemetry import MemoryTelemetrySink
 from reference_labs.phase4_support import BoundedLabActionPolicy, LabMutationConnector
 
 FIXED_TIME = datetime(2026, 8, 27, 9, tzinfo=UTC)
+APPROVAL_AUTHORITY = HmacApprovalAuthority(
+    "adlc-whitegoods-lab",
+    "data-source-harness",
+    b"whitegoods-lab-approval-key-material",
+)
 
 
 @dataclass(frozen=True)
@@ -65,14 +71,15 @@ def _identity(agent: str = "agent.whitegoods-service") -> RequestIdentity:
 
 
 def _approval(action: SourceActionPlan) -> ActionApproval:
-    return ActionApproval(
-        "wg-approval",
-        action.digest,
-        "human:service-supervisor",
-        "policy:wg-v1",
-        FIXED_TIME - timedelta(minutes=1),
-        FIXED_TIME + timedelta(minutes=10),
-        True,
+    return APPROVAL_AUTHORITY.issue(
+        action_digest=action.digest,
+        approver_id="human:service-supervisor",
+        policy_digest="policy:wg-v1",
+        approved_at=FIXED_TIME - timedelta(minutes=1),
+        expires_at=FIXED_TIME + timedelta(minutes=10),
+        allow_compensation=True,
+        identity=_identity(),
+        nonce=f"wg:{action.action_id}",
     )
 
 
@@ -95,6 +102,7 @@ async def run_action_scenario() -> WhiteGoodsActionResult:
         ),
         telemetry,
         now=lambda: FIXED_TIME,
+        approval_verifier=APPROVAL_AUTHORITY,
     )
     action = service_action()
     denied = await gateway.preview(action, _identity("agent.other"))
@@ -165,6 +173,7 @@ async def run_saga_scenario() -> bool:
         ),
         MemoryTelemetrySink(),
         now=lambda: FIXED_TIME,
+        approval_verifier=APPROVAL_AUTHORITY,
     )
     first = service_action()
     stale_second = replace(

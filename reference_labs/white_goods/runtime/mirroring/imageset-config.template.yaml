@@ -1,0 +1,10 @@
+apiVersion: mirror.openshift.io/v2alpha1
+kind: ImageSetConfiguration
+mirror:
+  additionalImages:
+    - name: PYTHON_BASE_IMAGE_DIGEST_REQUIRED
+    - name: HARNESS_IMAGE_DIGEST_REQUIRED
+    - name: POSTGRES_IMAGE_DIGEST_REQUIRED
+    - name: MINIO_IMAGE_DIGEST_REQUIRED
+    - name: REDPANDA_IMAGE_DIGEST_REQUIRED
+    - name: OPENSEARCH_IMAGE_DIGEST_REQUIRED

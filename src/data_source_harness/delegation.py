@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from typing import Any
 
@@ -62,24 +63,31 @@ class A2AActionDelegationAdapter:
         if compensation_data is not None:
             if not isinstance(compensation_data, Mapping):
                 raise DelegationRejected("compensation must be structured or null")
+            if set(compensation_data) != {"operation", "parameters", "preconditions"}:
+                raise DelegationRejected("compensation shape is not exact")
             compensation = CompensationSpec(
                 str(compensation_data["operation"]),
                 self._scalars(compensation_data["parameters"]),
                 self._scalars(compensation_data["preconditions"]),
             )
-        return SourceActionPlan(
-            str(action["actionId"]),
-            source_id,
-            str(action["assetId"]),
-            operation,
-            self._scalars(action["parameters"]),
-            self._scalars(action["preconditions"]),
-            str(action["idempotencyKey"]),
-            ActionRisk(str(action["risk"])),
-            ApprovalMode(str(action["approvalMode"])),
-            str(action["purpose"]),
-            compensation,
-        )
+        try:
+            return SourceActionPlan(
+                str(action["actionId"]),
+                source_id,
+                str(action["assetId"]),
+                operation,
+                self._scalars(action["parameters"]),
+                self._scalars(action["preconditions"]),
+                str(action["idempotencyKey"]),
+                ActionRisk(str(action["risk"])),
+                ApprovalMode(str(action["approvalMode"])),
+                str(action["purpose"]),
+                compensation,
+            )
+        except (TypeError, ValueError) as exc:
+            if isinstance(exc, DelegationRejected):
+                raise
+            raise DelegationRejected("delegated source action values are invalid") from exc
 
     @staticmethod
     def _scalars(value: object) -> dict[str, Scalar]:
@@ -91,5 +99,7 @@ class A2AActionDelegationAdapter:
                 item, (str, int, float, bool, type(None))
             ):
                 raise DelegationRejected("delegated values must be scalar")
+            if isinstance(item, float) and not math.isfinite(item):
+                raise DelegationRejected("delegated numeric values must be finite")
             result[key] = item
         return result

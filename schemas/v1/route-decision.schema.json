@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://orchestra.local/schemas/data-harness/v1/route-decision.schema.json",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/route-decision.schema.json",
   "title": "RouteDecision",
   "type": "object",
   "additionalProperties": false,

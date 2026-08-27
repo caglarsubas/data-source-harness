@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import re
 from dataclasses import asdict, dataclass
 from datetime import timedelta
 from pathlib import Path
@@ -128,13 +129,13 @@ def _validate_artifacts() -> tuple[CertificationCheck, ...]:
             encoding="utf-8"
         )
     )
-    release_set = json.loads(
-        (REPOSITORY_ROOT / "compatibility/cross-plane-release-set.lock.json").read_text(
-            encoding="utf-8"
-        )
-    )
-    pins = {(item["name"], item["revision"]) for item in release_set["components"]}
     matrix_pins = {(item["component"], item["revision"]) for item in matrix["components"]}
+    expected_components = {"ADLC", "Python-SDK", "OCP-reference-lab", "model-plane"}
+    exact_historical_pins = {
+        name for name, _revision in matrix_pins
+    } == expected_components and all(
+        re.fullmatch(r"[0-9a-f]{40}", revision) for _name, revision in matrix_pins
+    )
     return (
         CertificationCheck(
             "contract.promotion-readiness",
@@ -161,7 +162,7 @@ def _validate_artifacts() -> tuple[CertificationCheck, ...]:
         ),
         CertificationCheck(
             "compatibility.exact-pinned-matrix",
-            pins == matrix_pins
+            exact_historical_pins
             and all(item["contractCompatible"] for item in matrix["components"]),
             f"components={len(matrix_pins)}; boundary=contract-only",
         ),

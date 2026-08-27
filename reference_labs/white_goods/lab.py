@@ -22,7 +22,13 @@ from data_source_harness.connector import (
     RuntimeMode,
     UnsupportedCapability,
 )
-from data_source_harness.coverage import CoverageStatement, SourceCoverage
+from data_source_harness.coordination import (
+    CrossSourceCoordinator,
+    QueryStep,
+    SearchStep,
+    SourceExecutionPlan,
+)
+from data_source_harness.coverage import CoverageStatement
 from data_source_harness.decoder import (
     ContentTrust,
     DecodeRequest,
@@ -231,29 +237,40 @@ class StructuredConnector(BaseLabConnector):
 
     async def execute(self, request: QueryRequest) -> AsyncIterator[DataBatch]:
         self._require_available()
-        if len(request.asset_ids) != 1:
-            raise ValueError("the lab structured connector accepts exactly one asset per request")
-        asset = request.asset_ids[0]
-        if asset not in self.rows:
-            raise KeyError(f"unknown structured asset: {asset}")
-        where = request.plan.get("where", {})
-        select = tuple(request.plan.get("select", ()))
-        if not isinstance(where, Mapping):
-            raise ValueError("where must be a mapping")
-        allowed_fields = {field.name for field in self._asset_schemas[asset]}
-        if not set(where).issubset(allowed_fields) or not set(select).issubset(allowed_fields):
-            raise ValueError("query references an unknown field")
-        matched = [
-            row
-            for row in self.rows[asset]
-            if all(str(row.get(key)) == str(value) for key, value in where.items())
-        ][: request.limit]
-        payload = [({key: row[key] for key in select} if select else dict(row)) for row in matched]
-        primary_key = self.PRIMARY_KEYS[asset]
-        lineage = tuple(
-            LineageRef(self.profile.connector_id, asset, row[primary_key]) for row in matched
-        ) or (LineageRef(self.profile.connector_id, asset, "empty-result"),)
-        yield DataBatch(BatchKind.ARROW, payload, (self.version,), lineage, row_count=len(payload))
+        select_by_asset = request.plan.get("select_by_asset")
+        where_by_asset = request.plan.get("where_by_asset")
+        canonical = select_by_asset is not None or where_by_asset is not None
+        if canonical and (
+            not isinstance(select_by_asset, Mapping) or not isinstance(where_by_asset, Mapping)
+        ):
+            raise ValueError("canonical select and filter scopes must be mappings")
+        for asset in request.asset_ids:
+            if asset not in self.rows:
+                raise KeyError(f"unknown structured asset: {asset}")
+            where = where_by_asset.get(asset, {}) if canonical else request.plan.get("where", {})
+            select = tuple(
+                select_by_asset.get(asset, ()) if canonical else request.plan.get("select", ())
+            )
+            if not isinstance(where, Mapping):
+                raise ValueError("where must be a mapping")
+            allowed_fields = {field.name for field in self._asset_schemas[asset]}
+            if not set(where).issubset(allowed_fields) or not set(select).issubset(allowed_fields):
+                raise ValueError("query references an unknown field")
+            matched = [
+                row
+                for row in self.rows[asset]
+                if all(str(row.get(key)) == str(value) for key, value in where.items())
+            ][: request.limit]
+            payload = [
+                ({key: row[key] for key in select} if select else dict(row)) for row in matched
+            ]
+            primary_key = self.PRIMARY_KEYS[asset]
+            lineage = tuple(
+                LineageRef(self.profile.connector_id, asset, row[primary_key]) for row in matched
+            ) or (LineageRef(self.profile.connector_id, asset, "empty-result"),)
+            yield DataBatch(
+                BatchKind.ARROW, payload, (self.version,), lineage, row_count=len(payload)
+            )
 
 
 def _parse_documents() -> tuple[LabDocument, ...]:
@@ -715,7 +732,6 @@ class WhiteGoodsLab:
             1_000,
             "E21 quality and service analysis",
         )
-        service_batches = [batch async for batch in self.gateway.execute(service_request, identity)]
         event_request = QueryRequest(
             "whitegoods.telemetry",
             ("telemetry_events",),
@@ -724,7 +740,6 @@ class WhiteGoodsLab:
             1_000,
             "E21 telemetry correlation",
         )
-        event_batches = [batch async for batch in self.gateway.execute(event_request, identity)]
         search_request = SearchRequest(
             "whitegoods.search",
             "repeat E21 drain pump filter hose quality lot",
@@ -733,7 +748,6 @@ class WhiteGoodsLab:
             "E21 guided diagnosis",
             {"role": "quality"},
         )
-        hits = await self.gateway.search(search_request, identity)
         appointment_request = QueryRequest(
             "whitegoods.service-api",
             ("appointments",),
@@ -742,9 +756,29 @@ class WhiteGoodsLab:
             1_000,
             "E21 appointment evidence",
         )
-        appointment_batches = [
-            batch async for batch in self.gateway.execute(appointment_request, identity)
-        ]
+        result = await CrossSourceCoordinator(self.gateway).execute(
+            SourceExecutionPlan(
+                "e21-cross-source",
+                FIXED_TIME,
+                (
+                    QueryStep("service", service_request),
+                    QueryStep("telemetry", event_request),
+                    QueryStep("appointments", appointment_request),
+                ),
+                (
+                    SearchStep(
+                        "guidance",
+                        search_request,
+                        ("technical_document_index",),
+                    ),
+                ),
+            ),
+            identity,
+        )
+        service_batches = list(result.step("service").batches)
+        event_batches = list(result.step("telemetry").batches)
+        hits = result.step("guidance").hits
+        appointment_batches = list(result.step("appointments").batches)
         service_rows = service_batches[0].payload
         events = [event for event in event_batches[0].payload if event.get("error_code") == "E21"]
         appointments = [row for batch in appointment_batches for row in batch.payload]
@@ -758,14 +792,4 @@ class WhiteGoodsLab:
             "appointment_ids": [row["appointment_id"] for row in appointments],
             "lineage_count": lineage_count,
         }
-        coverage = CoverageStatement(
-            "e21-cross-source",
-            FIXED_TIME,
-            (
-                SourceCoverage("whitegoods.erp", ("service_orders",), True),
-                SourceCoverage("whitegoods.telemetry", ("telemetry_events",), True, "9"),
-                SourceCoverage("whitegoods.search", ("technical_document_index",), True),
-                SourceCoverage("whitegoods.service-api", ("appointments",), True),
-            ),
-        )
-        return brief, coverage
+        return brief, result.coverage

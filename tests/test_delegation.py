@@ -49,3 +49,15 @@ def test_a2a_adapter_rejects_identity_mismatch_and_extra_fields() -> None:
     overbroad["shell"] = "unsafe"
     with pytest.raises(DelegationRejected):
         adapter.to_action_plan(overbroad, identity())
+
+
+def test_a2a_adapter_rejects_malformed_compensation_and_non_finite_values() -> None:
+    adapter = A2AActionDelegationAdapter(frozenset({("lab.erp", "update-status")}))
+    malformed = envelope()
+    malformed["sourceAction"]["compensation"] = {}
+    with pytest.raises(DelegationRejected, match="compensation shape"):
+        adapter.to_action_plan(malformed, identity())
+    invalid_number = envelope()
+    invalid_number["sourceAction"]["parameters"] = {"score": float("nan")}
+    with pytest.raises(DelegationRejected, match="finite"):
+        adapter.to_action_plan(invalid_number, identity())

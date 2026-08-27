@@ -8,6 +8,8 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Any
 
+REQUIRED_PLANE_COMPONENTS = frozenset({"ADLC", "Python-SDK", "OCP-reference-lab", "model-plane"})
+
 
 class EvidenceStatus(StrEnum):
     MISSING = "missing"
@@ -91,6 +93,11 @@ class CrossPlaneEvidenceSet:
         names = [component.component for component in self.components]
         if len(names) != len(set(names)):
             raise ValueError("cross-plane component names must be unique")
+        if set(names) != REQUIRED_PLANE_COMPONENTS:
+            raise ValueError(
+                "cross-plane evidence must contain exactly ADLC, Python-SDK, "
+                "OCP-reference-lab and model-plane"
+            )
 
     @property
     def combined_runtime_accepted(self) -> bool:

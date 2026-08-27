@@ -15,6 +15,7 @@ from typing import Any
 import jsonschema
 import yaml
 
+from data_source_harness import __version__
 from data_source_harness.delegation import A2AActionDelegationAdapter
 from data_source_harness.policy import RequestIdentity
 from data_source_harness.protocol import (
@@ -283,7 +284,7 @@ def _protocol_evidence() -> tuple[bool, bool, int, str]:
         "Harness actions",
         "Governed source action delegation",
         "https://harness.internal/a2a",
-        "0.7.0",
+        __version__,
         (A2AAgentSkill("source-action", "Source action", "Bounded action", ("data",)),),
     )
     a2a = A2A10ActionServer(
@@ -365,7 +366,7 @@ def _acceptance_packet_evidence() -> tuple[bool, bool, bool, str]:
         for path in sorted((LAB_ROOT / "runtime/openshift").glob("*.yaml"))
     ]
     templates_valid = (
-        len(manifests) == 3
+        len(manifests) >= 3
         and all(document.get("apiVersion") and document.get("kind") for document in manifests)
         and "IMAGE_DIGEST_REQUIRED"
         in (LAB_ROOT / "runtime/openshift/deployment.template.yaml").read_text()

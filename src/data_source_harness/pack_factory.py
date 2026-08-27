@@ -6,6 +6,7 @@ import csv
 import hashlib
 import io
 import json
+import math
 import random
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -33,12 +34,24 @@ class FieldBlueprint:
     prefix: str = "id"
     reference_dataset: str | None = None
     reference_field: str | None = None
+    weights: tuple[float, ...] = ()
+    null_rate: float = 0.0
 
     def __post_init__(self) -> None:
         if not self.name:
             raise ValueError("field name is required")
         if self.kind is FieldKind.CHOICE and not self.values:
             raise ValueError(f"choice field {self.name!r} requires values")
+        if self.weights and (
+            self.kind is not FieldKind.CHOICE
+            or len(self.weights) != len(self.values)
+            or any(not math.isfinite(weight) or weight <= 0 for weight in self.weights)
+        ):
+            raise ValueError(f"weights for {self.name!r} must match choices and be positive")
+        if not math.isfinite(self.null_rate) or not 0 <= self.null_rate < 1:
+            raise ValueError(f"null rate for {self.name!r} must be in [0, 1)")
+        if self.kind is FieldKind.SEQUENCE and self.null_rate:
+            raise ValueError(f"sequence field {self.name!r} cannot be nullable")
         if self.kind is FieldKind.INTEGER and self.minimum > self.maximum:
             raise ValueError(f"invalid integer range for {self.name!r}")
         if self.kind is FieldKind.REFERENCE and (
@@ -124,8 +137,14 @@ class MockDatasetGenerator:
             for field in dataset.fields:
                 if field.kind is FieldKind.SEQUENCE:
                     value: Any = f"{field.prefix}-{index + 1:04d}"
+                elif field.null_rate and rng.random() < field.null_rate:
+                    value = None
                 elif field.kind is FieldKind.CHOICE:
-                    value = field.values[rng.randrange(len(field.values))]
+                    value = (
+                        rng.choices(field.values, weights=field.weights, k=1)[0]
+                        if field.weights
+                        else field.values[rng.randrange(len(field.values))]
+                    )
                 elif field.kind is FieldKind.INTEGER:
                     value = rng.randint(field.minimum, field.maximum)
                 elif field.kind is FieldKind.TIMESTAMP:

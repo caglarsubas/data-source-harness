@@ -1,6 +1,11 @@
 from datetime import UTC, datetime, timedelta
 
-from data_source_harness.freshness import FreshnessObservation, FreshnessRegistry, FreshnessSLO
+from data_source_harness.freshness import (
+    FreshnessBreachAction,
+    FreshnessObservation,
+    FreshnessRegistry,
+    FreshnessSLO,
+)
 from data_source_harness.governance import (
     MappingReview,
     MappingStatus,
@@ -77,3 +82,54 @@ def test_router_refuses_stale_or_drift_quarantined_mapping() -> None:
     )
     assert decision.status is RouteStatus.REFUSED
     assert decision.uncovered_concepts == ("service.error-code",)
+
+
+def test_router_distinguishes_degrade_exclude_and_refuse_freshness_actions() -> None:
+    mappings = approved_registry(mapping("m1", "erp"))
+    stale = freshness("erp", age=timedelta(minutes=10))
+    degraded_request = RouteRequest(
+        "req-degrade",
+        ("service.error-code",),
+        1,
+        0.8,
+        0.02,
+        FreshnessSLO(timedelta(minutes=5), FreshnessBreachAction.DEGRADE),
+    )
+    degraded = SemanticSourceRouter(mappings, stale).route(degraded_request, NOW)
+    assert degraded.status is RouteStatus.SELECTED
+    assert degraded.reason_codes == ("freshness_degraded:service.error-code",)
+
+    refused_request = RouteRequest(
+        "req-refuse",
+        ("service.error-code",),
+        1,
+        0.8,
+        0.02,
+        FreshnessSLO(timedelta(minutes=5), FreshnessBreachAction.REFUSE),
+    )
+    refused = SemanticSourceRouter(mappings, stale).route(refused_request, NOW)
+    assert refused.status is RouteStatus.REFUSED
+    assert refused.reason_codes == (
+        "uncovered:service.error-code",
+        "freshness_refused:service.error-code",
+    )
+
+
+def test_router_escalates_same_source_mapping_ambiguity() -> None:
+    alternate = SemanticMappingCandidate(
+        "m2",
+        "service.error-code",
+        "erp",
+        "service_history",
+        "fault_code",
+        0.94,
+        "sha256:schema",
+        NOW,
+        "alternate field",
+        (LineageRef("erp", "service_history", field_path="fault_code"),),
+    )
+    registry = approved_registry(mapping("m1", "erp"), alternate)
+    observations = freshness("erp")
+    observations.record(FreshnessObservation("erp", "service_history", NOW, NOW, "43"))
+    decision = SemanticSourceRouter(registry, observations).route(request(), NOW)
+    assert decision.status is RouteStatus.ESCALATION_REQUIRED

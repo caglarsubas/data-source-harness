@@ -1,3 +1,3 @@
 {
-  "schemaVersion": "data.harness/v1", "kind": "CoverageStatement", "requestId": "req-1", "generatedAt": "2026-08-27T00:00:00Z", "included": [{"sourceId": "erp", "assetIds": ["orders"], "complete": true, "watermark": "42"}], "excluded": [{"sourceId": "legacy", "reasonCode": "unavailable", "detail": "maintenance window"}]
+  "schemaVersion": "data.harness/v1", "kind": "CoverageStatement", "requestId": "req-1", "generatedAt": "2026-08-27T00:00:00Z", "expectedSources": ["erp", "legacy"], "included": [{"sourceId": "erp", "assetIds": ["orders"], "complete": true, "watermark": "42"}], "excluded": [{"sourceId": "legacy", "reasonCode": "unavailable", "detail": "maintenance window"}]
 }

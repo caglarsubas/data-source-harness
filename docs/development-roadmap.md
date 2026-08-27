@@ -58,13 +58,16 @@ revision.
 - automated connector scaffolding from OpenAPI/schema metadata;
 - signed connector packages, SBOMs and certification evidence.
 
-**Exit:** a second industry pack uses the unchanged core contracts and demonstrates that no white-goods assumptions leaked into public APIs.
+**Exit:** a second industry pack uses compatible, evidence-tracked core
+contracts and demonstrates that no white-goods assumptions leaked into public
+APIs.
 
 **Repository exit:** the deterministic generator reproduces every committed
 cold-chain fixture with valid relationships; the OpenAPI scaffold is contract
 valid and compilable; the disconnected connector archive verifies its checksum,
-signature and complete SBOM; wrong signer identities are refused; and all 14
-Phase-2 schema digests remain exact.
+signature and complete SBOM; wrong signer identities are refused; and the 14
+Phase-2 schema digests remain immutable in their baseline lock. Later compatible
+changes require exact old/new digests and a reason in the evolution ledger.
 
 **Evidence boundary:** HMAC signing is a replaceable offline lab verifier, not
 production publisher identity. Production connectivity, asymmetric/HSM-backed
@@ -163,6 +166,44 @@ specification profiles, not their upstream conformance suites. The transfer
 packet is not mirrored, deployed or accepted; unresolved image digests and live
 runtime gates remain blockers. Process workers use host networking and do not
 claim container or zero-egress isolation.
+
+## Phase 6.5 — repository integration spine and hardened trust boundaries
+
+**Implementation status:** implemented in core version `0.8.0`. Completion is
+revision-specific: `make phase6.5`, Python 3.11/3.12 CI and CodeQL must be green
+for the referenced revision. Live-source and combined-platform acceptance remain
+Phase 7.
+
+- execute bounded multi-asset plans end to end through policy, gateway and the
+  white-goods pilot connector;
+- expose a canonical `WorkerBackedConnector` so gateway calls cross the same
+  process boundary certified in Phase 6;
+- coordinate independent query/search steps concurrently with an explicit
+  expected-source universe, failure exclusions and deduplicated lineage;
+- enforce gateway deadlines, per-connector parallelism, aggregate result-size,
+  finite-JSON, source-version, search-ACL and source-identity invariants;
+- require a pluggable cryptographic approval verifier and keyed durable-journal
+  integrity instead of trusting human-looking identifiers or an unkeyed chain;
+- bound JSON/JSONL/CSV/HTML/text decoding and archive extraction; emit a
+  CycloneDX dependency graph for all pinned runtime wheels;
+- publish redacted, tenant-neutral execution evidence through Python-SDK and
+  ADLC ownership seams, and validate bounded tenant-bound model-plane reranking;
+- package an offline wheelhouse recipe, runtime container, lifecycle endpoint,
+  OpenShift configuration/service/probes/network policies and `oc-mirror` v2
+  input while leaving unresolved image and live-cluster gates false.
+
+**Repository exit:** the planner, four-source pilot and subprocess worker path
+all execute; forged approvals, malformed delegations and spoofed container
+claims fail closed; the evidence schema requires exactly ADLC, Python-SDK,
+OCP-reference-lab and model-plane; the current evidence revisions equal the
+release-set lock; the signed transfer packet contains the declared offline and
+OpenShift assets; and the Phase 0–6 regression chain remains green.
+
+**Evidence boundary:** this phase proves deterministic fixtures, local process
+execution and interface seams. It does not run upstream repository CI or
+protocol suites, real PostgreSQL/S3/Kafka/REST services, an approved image build
+and scan, registry mirroring, live OpenShift deployment, runtime zero-egress or
+fault drills, production generalization, or stakeholder acceptance.
 
 ## Phase 7 — live combined-platform and disconnected-runtime acceptance
 

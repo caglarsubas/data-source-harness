@@ -1,14 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://orchestra.local/schemas/data-harness/v1/disconnected-runtime-readiness.schema.json",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/disconnected-runtime-readiness.schema.json",
   "title": "DisconnectedRuntimeReadiness",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "bundleDigest", "artifactIntegrity", "imageDigestsResolved", "mirrorVerified", "deployed", "zeroEgressRuntimeVerified", "stakeholderAccepted", "blockers"],
+  "required": ["schemaVersion", "bundleDigest", "artifactIntegrity", "wheelhouseComplete", "imageDigestsResolved", "mirrorVerified", "deployed", "zeroEgressRuntimeVerified", "stakeholderAccepted", "blockers"],
   "properties": {
     "schemaVersion": {"const": "data.harness/v1"},
     "bundleDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "artifactIntegrity": {"type": "boolean"},
+    "wheelhouseComplete": {"type": "boolean"},
     "imageDigestsResolved": {"type": "boolean"},
     "mirrorVerified": {"type": "boolean"},
     "deployed": {"type": "boolean"},
@@ -17,6 +18,6 @@
     "blockers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
   },
   "allOf": [
-    {"if": {"properties": {"stakeholderAccepted": {"const": true}}}, "then": {"properties": {"artifactIntegrity": {"const": true}, "imageDigestsResolved": {"const": true}, "mirrorVerified": {"const": true}, "deployed": {"const": true}, "zeroEgressRuntimeVerified": {"const": true}, "blockers": {"maxItems": 0}}}}
+    {"if": {"properties": {"stakeholderAccepted": {"const": true}}}, "then": {"properties": {"artifactIntegrity": {"const": true}, "wheelhouseComplete": {"const": true}, "imageDigestsResolved": {"const": true}, "mirrorVerified": {"const": true}, "deployed": {"const": true}, "zeroEgressRuntimeVerified": {"const": true}, "blockers": {"maxItems": 0}}}}
   ]
 }

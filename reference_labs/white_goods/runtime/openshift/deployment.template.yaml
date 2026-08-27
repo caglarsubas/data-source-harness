@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: data-source-harness
+      annotations:
+        data-harness.prometa.ai/evidence-boundary: deployment-template-only
     spec:
       serviceAccountName: data-source-harness
       automountServiceAccountToken: false
@@ -20,6 +22,24 @@ spec:
         - name: harness
           image: IMAGE_DIGEST_REQUIRED
           imagePullPolicy: IfNotPresent
+          command: ["harness-runtime"]
+          args: ["--bind", "0.0.0.0", "--port", "8080"]
+          ports:
+            - {name: http, containerPort: 8080, protocol: TCP}
+          env:
+            - {name: HARNESS_DEPLOYMENT_PROFILE, value: /etc/data-source-harness/deployment-profile.json}
+          readinessProbe:
+            httpGet: {path: /readyz, port: http}
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 6
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -34,8 +54,12 @@ spec:
           volumeMounts:
             - {name: runtime-state, mountPath: /var/lib/data-source-harness}
             - {name: temporary, mountPath: /tmp}
+            - {name: deployment-profile, mountPath: /etc/data-source-harness, readOnly: true}
       volumes:
         - name: runtime-state
           emptyDir: {}
         - name: temporary
           emptyDir: {}
+        - name: deployment-profile
+          configMap:
+            name: data-source-harness-runtime

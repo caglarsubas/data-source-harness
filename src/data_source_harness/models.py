@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -190,10 +191,19 @@ class SearchRequest:
     filters: Mapping[str, Scalar] = field(default_factory=dict)
     purpose: str = "retrieval"
     policy_attributes: Mapping[str, Scalar] = field(default_factory=dict)
+    deadline_ms: int = 5_000
 
     def __post_init__(self) -> None:
-        if not self.source_id or not self.query.strip() or self.top_k <= 0 or not self.purpose:
-            raise ValueError("search source, query, purpose and positive top_k are required")
+        if (
+            not self.source_id
+            or not self.query.strip()
+            or self.top_k <= 0
+            or not self.purpose
+            or self.deadline_ms <= 0
+        ):
+            raise ValueError(
+                "search source, query, purpose, positive top_k and deadline are required"
+            )
 
 
 @dataclass(frozen=True)
@@ -215,6 +225,18 @@ class SearchHit:
             raise ValueError("search hit source, asset and record identity are required")
         if not self.lineage:
             raise ValueError("search hits require lineage")
+        scores = (
+            self.fusion_score,
+            self.lexical_score,
+            self.dense_score,
+            self.sparse_score,
+            self.reranker_score,
+        )
+        if any(
+            value is not None and (not isinstance(value, (int, float)) or not math.isfinite(value))
+            for value in scores
+        ):
+            raise ValueError("search hit scores must be finite numbers")
 
 
 @dataclass(frozen=True)

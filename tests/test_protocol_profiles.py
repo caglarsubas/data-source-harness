@@ -148,7 +148,7 @@ def test_a2a_profile_advertises_v1_and_maps_one_data_part_without_execution() ->
         "Harness actions",
         "Governed source action delegation",
         "https://harness.internal/a2a",
-        "0.7.0",
+        "0.8.0",
         (A2AAgentSkill("source-action", "Source action", "Delegate a bounded action", ("data",)),),
     )
     assert card.to_contract()["supportedInterfaces"][0]["protocolVersion"] == A2A_PROTOCOL_VERSION
@@ -174,3 +174,18 @@ def test_a2a_profile_advertises_v1_and_maps_one_data_part_without_execution() ->
     assert wrong_version["error"]["code"] == -32009
     invalid_id = server.handle({"A2A-Version": "1.0"}, {**request, "id": True}, identity())
     assert invalid_id["error"]["code"] == -32600
+
+    malformed = a2a_envelope()
+    malformed["sourceAction"]["compensation"] = {}
+    malformed_request = {
+        **request,
+        "params": {
+            "message": {
+                "messageId": "message-bad",
+                "role": "ROLE_USER",
+                "parts": [{"data": malformed, "mediaType": "application/json"}],
+            }
+        },
+    }
+    rejected = server.handle({"A2A-Version": "1.0"}, malformed_request, identity())
+    assert rejected["error"]["code"] == -32602

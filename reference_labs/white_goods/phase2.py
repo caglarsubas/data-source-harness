@@ -36,6 +36,7 @@ from data_source_harness.planning import (
     QueryIntent,
     RelationshipRef,
 )
+from data_source_harness.policy import FieldRelationshipPolicy, QueryAccessGrant, StaticPolicy
 from data_source_harness.promotion import (
     CompatibilityEntry,
     CompatibilityMatrix,
@@ -50,7 +51,9 @@ from data_source_harness.routing import (
     RouteRequest,
     SemanticSourceRouter,
 )
+from data_source_harness.runtime import HarnessGateway
 from data_source_harness.semantic import SemanticAssertion
+from data_source_harness.telemetry import MemoryTelemetrySink
 
 from .lab import FIXED_TIME, LAB_ROOT, BaseLabConnector, WhiteGoodsLab
 
@@ -257,6 +260,41 @@ def bounded_e21_plan() -> BoundedQueryPlan:
             100,
             2_000,
         ),
+    )
+
+
+async def execute_bounded_e21_plan() -> tuple[DataBatch, ...]:
+    """Run the planner output through the canonical gateway and pilot connector."""
+
+    lab = WhiteGoodsLab()
+    plan = bounded_e21_plan()
+    policy = FieldRelationshipPolicy(
+        StaticPolicy({("whitegoods.erp", Capability.QUERY)}),
+        (
+            QueryAccessGrant(
+                "whitegoods-lab",
+                "service-quality",
+                "agent-quality",
+                "whitegoods.erp",
+                {
+                    "service_orders": frozenset(
+                        {"service_order_id", "serial_number", "error_code"}
+                    ),
+                    "installed_products": frozenset({"serial_number", "product_id"}),
+                },
+                frozenset({"service_orders.serial_number->installed_products.serial_number"}),
+            ),
+        ),
+    )
+    gateway = HarnessGateway(lab.registry, policy, MemoryTelemetrySink())
+    return tuple(
+        [
+            batch
+            async for batch in gateway.execute(
+                plan.to_query_request({"role": "quality"}),
+                lab.identity("agent-quality", "bounded-e21"),
+            )
+        ]
     )
 
 

@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
-from typing import Any
+from typing import Any, Protocol
 
 from .connector import Capability, ConnectorRegistry
 from .models import Scalar
@@ -210,6 +211,102 @@ class ActionApproval:
             raise ValueError("approval must expire after it is granted")
 
 
+class ApprovalVerifier(Protocol):
+    """Authoritative approval verification seam owned by ADLC in production."""
+
+    def verify(
+        self,
+        approval: ActionApproval,
+        action: SourceActionPlan,
+        identity: RequestIdentity,
+        now: datetime,
+        *,
+        compensation: bool,
+    ) -> bool: ...
+
+
+@dataclass(frozen=True)
+class HmacApprovalAuthority:
+    """Offline lab authority; production must inject an ADLC trust verifier."""
+
+    issuer: str
+    audience: str
+    secret: bytes
+
+    def __post_init__(self) -> None:
+        if not self.issuer or not self.audience or len(self.secret) < 16:
+            raise ValueError("approval authority requires issuer, audience and 128-bit key")
+
+    def issue(
+        self,
+        *,
+        action_digest: str,
+        approver_id: str,
+        policy_digest: str,
+        approved_at: datetime,
+        expires_at: datetime,
+        allow_compensation: bool,
+        identity: RequestIdentity,
+        nonce: str,
+    ) -> ActionApproval:
+        if not nonce:
+            raise ValueError("approval nonce is required")
+        unsigned = ActionApproval(
+            "pending",
+            action_digest,
+            approver_id,
+            policy_digest,
+            approved_at,
+            expires_at,
+            allow_compensation,
+        )
+        signature = self._signature(unsigned, identity, nonce)
+        return replace(unsigned, approval_id=f"{self.issuer}:{nonce}:{signature}")
+
+    def verify(
+        self,
+        approval: ActionApproval,
+        action: SourceActionPlan,
+        identity: RequestIdentity,
+        now: datetime,
+        *,
+        compensation: bool,
+    ) -> bool:
+        prefix = f"{self.issuer}:"
+        if not approval.approval_id.startswith(prefix):
+            return False
+        try:
+            nonce, signature = approval.approval_id.removeprefix(prefix).rsplit(":", 1)
+        except ValueError:
+            return False
+        expected = self._signature(replace(approval, approval_id="pending"), identity, nonce)
+        return (
+            hmac.compare_digest(signature, expected)
+            and approval.action_digest == action.digest
+            and approval.policy_digest == identity.policy_digest
+            and approval.approved_at <= now < approval.expires_at
+            and (not compensation or approval.allow_compensation)
+        )
+
+    def _signature(self, approval: ActionApproval, identity: RequestIdentity, nonce: str) -> str:
+        body = {
+            "issuer": self.issuer,
+            "audience": self.audience,
+            "nonce": nonce,
+            "action_digest": approval.action_digest,
+            "approver_id": approval.approver_id,
+            "policy_digest": approval.policy_digest,
+            "approved_at": approval.approved_at.isoformat(),
+            "expires_at": approval.expires_at.isoformat(),
+            "allow_compensation": approval.allow_compensation,
+            "organization_id": identity.organization_id,
+            "solution_id": identity.solution_id,
+            "agent_id": identity.agent_id,
+            "request_id": identity.request_id,
+        }
+        return hmac.new(self.secret, _canonical(body), hashlib.sha256).hexdigest()
+
+
 @dataclass(frozen=True)
 class AuditEntry:
     sequence: int
@@ -351,12 +448,14 @@ class ActionGateway:
         telemetry: TelemetrySink,
         audit: ActionAuditLedger | None = None,
         now: Callable[[], datetime] | None = None,
+        approval_verifier: ApprovalVerifier | None = None,
     ) -> None:
         self.registry = registry
         self.policy = policy
         self.telemetry = telemetry
         self.audit = audit or ActionAuditLedger()
         self.now = now or (lambda: datetime.now(UTC))
+        self.approval_verifier = approval_verifier
         self._idempotency: dict[tuple[str, str], tuple[str, SourceMutationReceipt]] = {}
 
     async def preview(
@@ -591,8 +690,8 @@ class ActionGateway:
         ):
             raise PreviewMismatch("preview is denied, stale or not bound to this action and policy")
 
-    @staticmethod
     def _validate_approval(
+        self,
         action: SourceActionPlan,
         approval: ActionApproval | None,
         identity: RequestIdentity,
@@ -603,14 +702,17 @@ class ActionGateway:
             return
         if approval is None:
             raise ApprovalRequired("human approval is required")
-        valid = (
-            approval.action_digest == action.digest
-            and approval.policy_digest == identity.policy_digest
-            and approval.approved_at <= now < approval.expires_at
-            and (not compensation or approval.allow_compensation)
+        valid = self.approval_verifier is not None and self.approval_verifier.verify(
+            approval,
+            action,
+            identity,
+            now,
+            compensation=compensation,
         )
         if not valid:
-            raise ApprovalRequired("approval is stale, mismatched or excludes compensation")
+            raise ApprovalRequired(
+                "approval is untrusted, stale, mismatched or excludes compensation"
+            )
 
     async def _emit(
         self,
