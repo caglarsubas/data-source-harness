@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "whitegoods.lab.gqm/v1",
+  "goals": [
+    {
+      "goalId": "G1",
+      "goal": "Reduce repeat service visits using grounded cross-source evidence",
+      "questions": [
+        {"questionId": "Q1", "question": "Which model exhibits repeat service visits?", "metricIds": ["M1", "M2"]},
+        {"questionId": "Q2", "question": "Does E21 guidance cite both obstruction checks and pump evidence?", "metricIds": ["M2", "M3"]}
+      ]
+    },
+    {
+      "goalId": "G2",
+      "goal": "Keep agent access least-privileged and source content non-authoritative",
+      "questions": [
+        {"questionId": "Q3", "question": "Are cross-customer requests denied before execution?", "metricIds": ["M4"]},
+        {"questionId": "Q4", "question": "Is adversarial document text preserved as untrusted evidence?", "metricIds": ["M5"]}
+      ]
+    },
+    {
+      "goalId": "G3",
+      "goal": "Operate reproducibly under stream disorder, source failure, and air-gap constraints",
+      "questions": [
+        {"questionId": "Q5", "question": "Can event replay resume without duplicate logical events?", "metricIds": ["M6"]},
+        {"questionId": "Q6", "question": "Can the lab reset and run with no internet egress?", "metricIds": ["M7", "M8"]}
+      ]
+    }
+  ],
+  "metrics": [
+    {"metricId": "M1", "name": "scenario accuracy", "operator": ">=", "threshold": 0.9},
+    {"metricId": "M2", "name": "lineage completeness", "operator": "==", "threshold": 1.0},
+    {"metricId": "M3", "name": "retrieval recall at 3", "operator": ">=", "threshold": 0.9},
+    {"metricId": "M4", "name": "authorization negative-path pass rate", "operator": "==", "threshold": 1.0},
+    {"metricId": "M5", "name": "untrusted-content labeling rate", "operator": "==", "threshold": 1.0},
+    {"metricId": "M6", "name": "checkpoint replay correctness", "operator": "==", "threshold": 1.0},
+    {"metricId": "M7", "name": "deterministic reset", "operator": "==", "threshold": 1.0},
+    {"metricId": "M8", "name": "external egress violations", "operator": "==", "threshold": 0.0},
+    {"metricId": "M9", "name": "p95 local query latency milliseconds", "operator": "<=", "threshold": 50.0}
+  ]
+}

@@ -169,6 +169,7 @@ class QueryRequest:
     limit: int
     deadline_ms: int
     purpose: str
+    policy_attributes: Mapping[str, Scalar] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.source_id or not self.asset_ids or any(not item for item in self.asset_ids):
@@ -187,10 +188,12 @@ class SearchRequest:
     query: str
     top_k: int
     filters: Mapping[str, Scalar] = field(default_factory=dict)
+    purpose: str = "retrieval"
+    policy_attributes: Mapping[str, Scalar] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        if not self.source_id or not self.query.strip() or self.top_k <= 0:
-            raise ValueError("search source, query and positive top_k are required")
+        if not self.source_id or not self.query.strip() or self.top_k <= 0 or not self.purpose:
+            raise ValueError("search source, query, purpose and positive top_k are required")
 
 
 @dataclass(frozen=True)

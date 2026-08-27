@@ -37,7 +37,7 @@ Phase 0 establishes the reusable scaffold:
 - executable tests and a machine-readable Phase-0 gate report.
 
 Industry logic does not belong in the core package. White-goods manufacturing
-will be the first `IndustryDomainPack` built on this foundation during Phase 1.
+is implemented separately as the first `IndustryDomainPack` and reference lab.
 
 ## Developer quick start
 
@@ -47,6 +47,7 @@ uv run ruff check .
 uv run pytest
 uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
+make phase1
 ```
 
 The built wheel embeds the versioned schemas, contract catalog, deployment
@@ -70,3 +71,7 @@ contracts, and acceptance gates.
 The staged [development roadmap](docs/development-roadmap.md) defines the
 white-goods pilot and later industry-pack factory without coupling the core to
 that first pilot.
+
+See the [white-goods lab](reference_labs/white_goods/README.md) for its mock
+data, representative technology topology, GQM scorecard, and explicit runtime
+evidence boundary.

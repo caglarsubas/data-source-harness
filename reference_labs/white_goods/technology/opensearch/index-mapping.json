@@ -1,0 +1,15 @@
+{
+  "settings": {"index": {"number_of_shards": 1, "number_of_replicas": 0}},
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "document_id": {"type": "keyword"},
+      "product": {"type": "keyword"},
+      "acl_principals": {"type": "keyword"},
+      "title": {"type": "text"},
+      "content": {"type": "text"},
+      "content_hash": {"type": "keyword"},
+      "trust": {"type": "keyword"}
+    }
+  }
+}

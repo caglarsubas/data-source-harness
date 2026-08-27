@@ -1,0 +1,4 @@
+product_id,model_code,category,launch_date,warranty_months
+P100,WG-WM-500,washing_machine,2024-01-15,24
+P200,WG-RF-700,refrigerator,2024-03-10,36
+P300,WG-DW-300,dishwasher,2024-06-01,24

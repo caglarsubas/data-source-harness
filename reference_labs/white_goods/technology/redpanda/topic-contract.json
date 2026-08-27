@@ -1,0 +1,9 @@
+{
+  "topic": "whitegoods.telemetry.v1",
+  "partitions": 3,
+  "key": "serial_number",
+  "deduplicationKey": "event_id",
+  "checkpoint": "sequence",
+  "lateEventPolicy": "accept-and-mark",
+  "missingKeyPolicy": "quarantine"
+}

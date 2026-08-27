@@ -1,0 +1,40 @@
+openapi: 3.1.0
+info:
+  title: White Goods Service Scheduling Mock API
+  version: 1.0.0
+servers:
+  - url: http://service-api.lab.svc/v1
+paths:
+  /appointments:
+    get:
+      operationId: listAppointments
+      parameters:
+        - name: serviceOrderId
+          in: query
+          schema: {type: string}
+        - name: cursor
+          in: query
+          schema: {type: string}
+      responses:
+        "200":
+          description: A bounded appointment page
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items, nextCursor]
+                properties:
+                  items:
+                    type: array
+                    items: {$ref: "#/$defs/Appointment"}
+                  nextCursor: {type: [string, "null"]}
+$defs:
+  Appointment:
+    type: object
+    required: [appointment_id, service_order_id, technician_id, scheduled_at, status]
+    properties:
+      appointment_id: {type: string}
+      service_order_id: {type: string}
+      technician_id: {type: string}
+      scheduled_at: {type: string, format: date-time}
+      status: {type: string}

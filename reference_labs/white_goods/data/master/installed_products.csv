@@ -1,0 +1,5 @@
+serial_number,product_id,customer_id,installed_at
+SN-WM-001,P100,C001,2025-01-15
+SN-WM-002,P100,C002,2025-02-20
+SN-RF-001,P200,C001,2025-03-01
+SN-DW-001,P300,C003,2025-03-12

@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "src/**/*.py"
+      - "reference_labs/**/*.py"
   pull_request:
   schedule:
     - cron: "23 3 * * 1"

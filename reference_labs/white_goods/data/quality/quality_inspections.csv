@@ -1,0 +1,5 @@
+inspection_id,product_id,lot_id,inspected_at,check_name,result,measurement
+QI001,P100,LOT-WM-24A,2025-04-01T08:00:00Z,pump_flow,fail,11.2
+QI002,P100,LOT-WM-24B,2025-04-02T08:00:00Z,pump_flow,pass,14.8
+QI003,P200,LOT-RF-31A,2025-04-03T08:00:00Z,temperature_stability,pass,0.7
+QI004,P300,LOT-DW-11A,2025-04-04T08:00:00Z,inlet_seal,fail,0.3

@@ -1,0 +1,4 @@
+customer_id,region,service_tier,analytics_consent
+C001,north,premium,true
+C002,west,standard,true
+C003,south,standard,false

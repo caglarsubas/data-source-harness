@@ -1,0 +1,9 @@
+{
+  "appointments": [
+    {"appointment_id": "AP001", "service_order_id": "SO1002", "technician_id": "T17", "scheduled_at": "2025-05-18T08:30:00Z", "status": "completed"},
+    {"appointment_id": "AP002", "service_order_id": "SO1004", "technician_id": "T22", "scheduled_at": "2025-06-07T07:45:00Z", "status": "completed"},
+    {"appointment_id": "AP003", "service_order_id": "SO1005", "technician_id": "T17", "scheduled_at": "2025-06-09T14:00:00Z", "status": "completed"}
+  ],
+  "rateLimit": {"requestsPerMinute": 60},
+  "pagination": {"defaultPageSize": 2}
+}
