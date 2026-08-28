@@ -32,6 +32,10 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 LOCK_PATH = REPOSITORY_ROOT / "compatibility/phase7-release-set.lock.json"
 CAMPAIGN_PATH = REPOSITORY_ROOT / "compatibility/phase7-acceptance-readiness.json"
 SCHEMA_PATH = REPOSITORY_ROOT / "schemas/v1/live-acceptance-campaign.schema.json"
+LOCAL_IMAGE_LOCK_PATH = REPOSITORY_ROOT / "compatibility/phase7-local-images.lock.json"
+LOCAL_IMAGE_LOCK_SCHEMA_PATH = REPOSITORY_ROOT / "schemas/v1/local-image-lock.schema.json"
+LOCAL_SOURCE_EVIDENCE_PATH = REPOSITORY_ROOT / "compatibility/phase7-local-source-evidence.json"
+LOCAL_SOURCE_EVIDENCE_SCHEMA_PATH = REPOSITORY_ROOT / "schemas/v1/local-source-evidence.schema.json"
 GQM_PATH = Path(__file__).resolve().with_name("phase7_gqm_plan.json")
 OBSERVED_AT = datetime(2026, 8, 28, tzinfo=UTC)
 
@@ -52,31 +56,25 @@ class Phase7ReadinessReport:
 
 
 def _source_targets() -> tuple[LiveSourceTarget, ...]:
-    return (
+    evidence = json.loads(LOCAL_SOURCE_EVIDENCE_PATH.read_text(encoding="utf-8"))
+    connector_ids = {
+        "whitegoods.postgresql": "whitegoods.erp",
+        "whitegoods.object-store": "whitegoods.documents",
+        "whitegoods.event-stream": "whitegoods.telemetry",
+        "whitegoods.service-api": "whitegoods.service-api",
+    }
+    return tuple(
         LiveSourceTarget(
-            "whitegoods.postgresql",
-            LiveSourceShape.POSTGRESQL,
-            "whitegoods.erp",
-            "credential-ref://phase7/postgresql",
-        ),
-        LiveSourceTarget(
-            "whitegoods.object-store",
-            LiveSourceShape.S3_COMPATIBLE,
-            "whitegoods.documents",
-            "credential-ref://phase7/object-store",
-        ),
-        LiveSourceTarget(
-            "whitegoods.event-stream",
-            LiveSourceShape.KAFKA_COMPATIBLE,
-            "whitegoods.telemetry",
-            "credential-ref://phase7/event-stream",
-        ),
-        LiveSourceTarget(
-            "whitegoods.service-api",
-            LiveSourceShape.REST,
-            "whitegoods.service-api",
-            "credential-ref://phase7/service-api",
-        ),
+            item["sourceId"],
+            LiveSourceShape(item["shape"]),
+            connector_ids[item["sourceId"]],
+            f"credential-ref://phase7/{item['sourceId'].removeprefix('whitegoods.')}",
+            item["imageDigest"],
+            evidence["passed"],
+            datetime.fromisoformat(item["observedAt"]),
+            tuple(item["references"]),
+        )
+        for item in evidence["sources"]
     )
 
 
@@ -164,10 +162,24 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
     expected = build_readiness_campaign()
     committed_contract = json.loads(CAMPAIGN_PATH.read_text(encoding="utf-8"))
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    local_image_lock = json.loads(LOCAL_IMAGE_LOCK_PATH.read_text(encoding="utf-8"))
+    local_image_lock_schema = json.loads(LOCAL_IMAGE_LOCK_SCHEMA_PATH.read_text(encoding="utf-8"))
+    local_source_evidence = json.loads(LOCAL_SOURCE_EVIDENCE_PATH.read_text(encoding="utf-8"))
+    local_source_evidence_schema = json.loads(
+        LOCAL_SOURCE_EVIDENCE_SCHEMA_PATH.read_text(encoding="utf-8")
+    )
     schema_errors = list(
         jsonschema.Draft202012Validator(
             schema, format_checker=jsonschema.FormatChecker()
         ).iter_errors(committed_contract)
+    )
+    local_image_lock_errors = list(
+        jsonschema.Draft202012Validator(local_image_lock_schema).iter_errors(local_image_lock)
+    )
+    local_source_evidence_errors = list(
+        jsonschema.Draft202012Validator(
+            local_source_evidence_schema, format_checker=jsonschema.FormatChecker()
+        ).iter_errors(local_source_evidence)
     )
     try:
         parsed = LocalLaptopAcceptanceCampaign.from_contract(committed_contract)
@@ -191,6 +203,32 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
     )
     services = compose.get("services", {})
     expected_services = {"postgresql", "object-store", "event-stream", "service-api"}
+    locked_images = {item["sourceId"]: item["imageDigest"] for item in local_image_lock["images"]}
+    observed_images = {
+        item["sourceId"]: item["imageDigest"] for item in local_source_evidence["sources"]
+    }
+    expected_local_checks = {
+        "postgresql.seeded-query",
+        "object-store.seeded-list",
+        "event-stream.seeded-consume",
+        "service-api.auth-pagination",
+        "network.internal",
+        "network.no-published-ports",
+        "network.public-egress-denied",
+    }
+    observed_local_checks = {item["checkId"] for item in local_source_evidence["checks"]}
+    expected_records = {
+        "whitegoods.postgresql": 6,
+        "whitegoods.object-store": 4,
+        "whitegoods.event-stream": 9,
+        "whitegoods.service-api": 3,
+    }
+    observed_records = {
+        item["sourceId"]: item["recordsObserved"] for item in local_source_evidence["sources"]
+    }
+    locked_platforms = {
+        f"{item['os']}/{item['architecture']}" for item in local_image_lock["images"]
+    }
     local_only_compose = (
         set(services) == expected_services
         and compose.get("networks", {}).get("lab-internal", {}).get("internal") is True
@@ -239,8 +277,25 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
             and all(
                 item.endpoint_reference.startswith("credential-ref://") for item in parsed.sources
             )
-            and not any(item.live_verified for item in parsed.sources),
-            f"targets={len(parsed.sources)}; verified=0",
+            and all(item.live_verified for item in parsed.sources),
+            f"targets={len(parsed.sources)}; "
+            f"verified={sum(item.live_verified for item in parsed.sources)}",
+        ),
+        CertificationCheck(
+            "campaign.local-source-evidence",
+            not local_image_lock_errors
+            and not local_source_evidence_errors
+            and local_source_evidence["passed"] is True
+            and local_source_evidence["externalResourcesCreated"] == []
+            and locked_images == observed_images
+            and observed_local_checks == expected_local_checks
+            and len(local_source_evidence["checks"]) == len(expected_local_checks)
+            and observed_records == expected_records
+            and locked_platforms == {local_image_lock["platform"]}
+            and len(set(locked_images.values())) == 4,
+            f"platform={local_image_lock['platform']}; "
+            f"checks={len(local_source_evidence['checks'])}; "
+            f"externalResources={len(local_source_evidence['externalResourcesCreated'])}",
         ),
         CertificationCheck(
             "campaign.local-only-compose-handoff",
@@ -284,6 +339,18 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
             float(len(parsed.cost_boundary.external_mutations)),
             "readiness-only",
         ),
+        _metric(
+            definitions,
+            "P7R-M8",
+            float(sum(item.live_verified for item in parsed.sources)),
+            "local source observations",
+        ),
+        _metric(
+            definitions,
+            "P7R-M9",
+            float(len(local_source_evidence["externalResourcesCreated"])),
+            "local source lab",
+        ),
     )
     return Phase7ReadinessReport(
         "phase-7-readiness",
@@ -294,9 +361,10 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         metrics,
         parsed.blockers,
         "This readiness certificate validates the fail-closed laptop-local Phase 7 campaign "
-        "ledger and records read-only source/CI observations. GCP, OpenShift and remote-cluster "
-        "provisioning are prohibited. It does not claim artifact publication, local image load, "
-        "local startup, runtime, protocol conformance, fault, soak or stakeholder acceptance.",
+        "ledger, records source/CI observations and verifies four digest-bound source services "
+        "on a local Docker engine. GCP, OpenShift and remote-cluster provisioning are prohibited. "
+        "It does not claim platform artifact publication, combined-platform image load/startup, "
+        "runtime, protocol conformance, fault, soak or stakeholder acceptance.",
     )
 
 

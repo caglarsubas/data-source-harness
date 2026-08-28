@@ -33,8 +33,11 @@ references.
   acceptance workloads run locally and do not create remote runtime resources.
 
 The readiness snapshot observes exact source revisions for all four components
-and exact-main CI for the harness, ADLC and model-plane. Python-SDK CI, artifact
-digests and all local execution evidence remain explicit blockers.
+and exact-main CI for the harness, ADLC and model-plane. A separate observed
+packet proves the four source services on a local ARM64 Docker engine, including
+seeded reads, internal networking, zero published ports and public-egress
+denial. Python-SDK CI, platform artifact digests and combined-platform execution
+evidence remain explicit blockers.
 
 Phase 7 completes only when the same digest-pinned release set passes the four
 local source services, protocol suites, local image load/startup, runtime

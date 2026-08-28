@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "data.harness.local-image-lock/v1",
+  "platform": "linux/arm64",
+  "images": [
+    {"sourceId":"whitegoods.postgresql","sourceReference":"postgres:16","imageDigest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","repoDigests":["postgres@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"],"os":"linux","architecture":"arm64"},
+    {"sourceId":"whitegoods.object-store","sourceReference":"minio/minio:release","imageDigest":"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","repoDigests":["minio/minio@sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"],"os":"linux","architecture":"arm64"},
+    {"sourceId":"whitegoods.event-stream","sourceReference":"redpanda:v1","imageDigest":"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","repoDigests":["redpanda@sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"],"os":"linux","architecture":"arm64"},
+    {"sourceId":"whitegoods.service-api","sourceReference":"service-api:1","imageDigest":"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","repoDigests":["service-api@sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"],"os":"linux","architecture":"arm64"}
+  ]
+}

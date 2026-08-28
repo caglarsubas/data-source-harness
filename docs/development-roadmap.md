@@ -207,8 +207,8 @@ generalization, or stakeholder acceptance.
 
 ## Phase 7 — laptop-local combined-platform acceptance
 
-**Status:** local-only readiness ledger implemented in core version `0.10.0`;
-execution campaign not complete and no completion claim.
+**Status:** local-only readiness ledger and four-source laptop runtime implemented
+in core version `0.11.0`; combined-platform campaign not complete.
 
 Implemented readiness foundation:
 
@@ -229,14 +229,19 @@ Implemented readiness foundation:
   commands;
 - remove OCP-reference-lab from the Phase 7 release set. Its Phase 6/6.5 files
   remain historical evidence and are not executed.
+- execute digest-bound PostgreSQL, MinIO, Redpanda and authenticated REST source
+  services on the ARM64 laptop; seed the representative white-goods corpus and
+  verify query/list/consume/pagination behavior;
+- verify the Compose network is internal-only, has zero published ports and
+  denies a public-egress connection; record zero external resources created.
 
 Remaining laptop campaign:
 
-- build or import digest-pinned laptop-compatible images for the four source
-  services, harness runtime, ADLC and model-plane without contacting a registry
-  during acceptance;
-- start the local topology and verify connector discovery, decoding, semantic
-  resolution, bounded queries, provenance and governed actions end to end;
+- build digest-pinned laptop-compatible images for the harness runtime, ADLC and
+  model-plane without contacting a registry during acceptance;
+- connect the verified source services to the harness adapters and exercise
+  discovery, decoding, semantic resolution, bounded queries, provenance and
+  governed actions end to end;
 - run MCP/A2A conformance tools against the local runtime host and preserve the
   exact suite versions/results;
 - verify Python-SDK receipts/telemetry, ADLC evidence ingestion/promotion inputs

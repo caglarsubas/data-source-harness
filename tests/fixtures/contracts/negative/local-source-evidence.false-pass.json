@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "data.harness.local-source-evidence/v1",
+  "campaignId": "phase7-local",
+  "generatedAt": "2026-08-28T07:00:00Z",
+  "dockerContext": "remote",
+  "dockerEndpointKind": "tcp",
+  "externalResourcesCreated": ["cluster://remote"],
+  "checks": [{"checkId":"network.public-egress-denied","passed":false}],
+  "sources": [],
+  "passed": true
+}

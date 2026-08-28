@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/local-image-lock.schema.json",
+  "title": "LocalImageLock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "platform", "images"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness.local-image-lock/v1"},
+    "platform": {"pattern": "^linux/(arm64|amd64)$"},
+    "images": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "allOf": [
+        {"contains": {"properties": {"sourceId": {"const": "whitegoods.postgresql"}}, "required": ["sourceId"]}},
+        {"contains": {"properties": {"sourceId": {"const": "whitegoods.object-store"}}, "required": ["sourceId"]}},
+        {"contains": {"properties": {"sourceId": {"const": "whitegoods.event-stream"}}, "required": ["sourceId"]}},
+        {"contains": {"properties": {"sourceId": {"const": "whitegoods.service-api"}}, "required": ["sourceId"]}}
+      ],
+      "items": {"$ref": "#/$defs/image"}
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "sourceReference", "imageDigest", "repoDigests", "os", "architecture"],
+      "properties": {
+        "sourceId": {"enum": ["whitegoods.postgresql", "whitegoods.object-store", "whitegoods.event-stream", "whitegoods.service-api"]},
+        "sourceReference": {"type": "string", "minLength": 1},
+        "imageDigest": {"$ref": "#/$defs/digest"},
+        "repoDigests": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "os": {"const": "linux"},
+        "architecture": {"enum": ["arm64", "amd64"]}
+      }
+    }
+  }
+}

@@ -84,7 +84,7 @@ air-gap packet includes a pinned dependency wheelhouse and runtime container
 recipe. Previously produced OCP assets remain immutable historical artifacts;
 none is a current execution requirement.
 
-Phase 7 readiness is laptop-local in core version `0.10.0`. Its fail-closed
+Phase 7 readiness is laptop-local in core version `0.11.0`. Its fail-closed
 campaign covers the harness, ADLC, Python-SDK and model-plane plus local
 PostgreSQL, S3-compatible, Kafka-compatible and REST services. Mirror and cluster
 deployment gates are replaced by local image-load and local-startup gates.
@@ -92,6 +92,13 @@ Images must already exist on the laptop (`pull_policy: never`), services expose
 no host ports, and the internal network has no external route. GCP, OpenShift
 and remote-cluster provisioning are prohibited by contract and an automation
 scan. The readiness snapshot is not a completed acceptance claim.
+
+The Phase 7 local-source lab now executes real PostgreSQL, S3-compatible MinIO,
+Kafka-compatible Redpanda and an authenticated OpenAPI-backed REST service on
+the laptop. It seeds representative data, verifies queries/consumption,
+confirms zero published ports and proves public egress is denied. Its immutable
+ARM64 image lock and schema-validated evidence remove all source-service
+verification blockers while leaving combined-platform blockers explicit.
 
 ## Developer quick start
 
@@ -103,6 +110,12 @@ uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
 make phase7-local-readiness
 ```
+
+To refresh the source-service evidence on a laptop where the locked images are
+already present, run `make phase7-local-sources`. This command builds only the
+mock REST image, starts the internal Compose topology, records evidence and
+removes the containers and volumes. It never provisions cloud or cluster
+resources.
 
 The built wheel embeds the versioned schemas, contract catalog, deployment
 profiles, and neutral reference-lab manifest under

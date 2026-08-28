@@ -16,8 +16,12 @@ certifies that:
 - publication and later evidence cannot omit an artifact digest;
 - endpoints remain credential references;
 - the snapshot equals its deterministic source/CI observations;
-- Python-SDK CI, artifact publication, image resolution, local startup,
-  protocol, runtime, fault, soak and stakeholder evidence
+- all four source images are immutable, platform-consistent and bound to an
+  observed local runtime packet;
+- seeded PostgreSQL query, MinIO listing, Redpanda consumption and REST
+  authentication/pagination checks pass;
+- Python-SDK CI, platform artifact publication, combined-platform image load
+  and startup, protocol, runtime, fault, soak and stakeholder evidence
   remain blockers;
 - `pull_policy: never`, no host-published ports and an internal-only Compose
   network prevent implicit pulls and externally exposed services;
@@ -28,3 +32,8 @@ certifies that:
 A passing readiness report means the evidence machinery is ready to receive
 local results. Its `campaign_accepted` field remains false until the laptop-local
 campaign closes every gate for one digest-pinned release set.
+
+`make phase7-local-sources` is the explicit laptop-only evidence refresh. It
+requires the three upstream source images to be present locally, builds the REST
+mock with `--pull=false`, creates no host ports or external resources, and tears
+down its containers and volumes after verification.
