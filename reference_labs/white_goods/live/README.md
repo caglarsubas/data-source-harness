@@ -24,5 +24,11 @@ execution tool, and invokes the model-plane's local virtual environment. The
 result proves SDK receipt, ADLC validation and tenant-bound rerank contracts;
 it is not a production-image or full-platform startup claim.
 
+`make phase7-local-harness` builds a revision-labelled ARM64 acceptance image
+from the locally available Python base, harness wheel and pinned binary wheels.
+It joins the internal-only network and runs the actual connector gateway
+against PostgreSQL, MinIO, Redpanda and the authenticated service API. The
+acceptance image has no published port and Compose uses `pull_policy: never`.
+
 The existing `docker-compose.yml` remains a development topology for synthetic
 fixtures. It must not be cited as Phase 7 evidence.

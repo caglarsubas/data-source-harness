@@ -1,4 +1,4 @@
-.PHONY: lint test contracts local-only phase0 phase1 phase2 phase3 phase4 phase5 phase6 phase6.5 phase7-readiness phase7-local-sources phase7-local-cross-plane phase7-local-readiness build wheelhouse
+.PHONY: lint test contracts local-only phase0 phase1 phase2 phase3 phase4 phase5 phase6 phase6.5 phase7-readiness phase7-local-sources phase7-local-cross-plane phase7-local-harness phase7-local-readiness build wheelhouse
 
 lint:
 	uv run ruff check .
@@ -15,8 +15,8 @@ local-only:
 
 build:
 	uv build
-	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.12.0-py3-none-any.whl python -c 'from importlib.resources import files; import data_source_harness as h; root = files("data_source_harness"); assert h.__version__ == "0.12.0"; assert (root / "resources/schemas/v1/data-batch.schema.json").is_file(); assert (root / "resources/schemas/v1/connector-worker-profile.schema.json").is_file(); assert (root / "resources/schemas/v1/live-acceptance-campaign.schema.json").is_file(); assert (root / "resources/schemas/v1/local-source-evidence.schema.json").is_file(); assert (root / "resources/schemas/v1/local-cross-plane-evidence.schema.json").is_file(); assert (root / "resources/deployment/profiles/local-laptop.json").is_file()'
-	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.12.0-py3-none-any.whl harness-contracts validate
+	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.13.0-py3-none-any.whl python -c 'from importlib.resources import files; import data_source_harness as h; root = files("data_source_harness"); assert h.__version__ == "0.13.0"; assert (root / "resources/schemas/v1/data-batch.schema.json").is_file(); assert (root / "resources/schemas/v1/connector-worker-profile.schema.json").is_file(); assert (root / "resources/schemas/v1/live-acceptance-campaign.schema.json").is_file(); assert (root / "resources/schemas/v1/local-source-evidence.schema.json").is_file(); assert (root / "resources/schemas/v1/local-cross-plane-evidence.schema.json").is_file(); assert (root / "resources/schemas/v1/local-harness-runtime-evidence.schema.json").is_file(); assert (root / "resources/deployment/profiles/local-laptop.json").is_file()'
+	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.13.0-py3-none-any.whl harness-contracts validate
 
 wheelhouse: build
 	bash scripts/build-airgap-wheelhouse.sh
@@ -73,5 +73,8 @@ phase7-local-sources: local-only
 
 phase7-local-cross-plane: local-only
 	uv run python -m reference_labs.white_goods.live.cross_plane_lab --output compatibility/phase7-local-cross-plane-evidence.json
+
+phase7-local-harness: local-only
+	uv run python -m reference_labs.white_goods.live.harness_runtime_lab --output compatibility/phase7-local-harness-runtime-evidence.json
 
 phase7-readiness: phase7-local-readiness

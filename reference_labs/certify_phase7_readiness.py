@@ -220,7 +220,8 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         )
     )
     services = compose.get("services", {})
-    expected_services = {"postgresql", "object-store", "event-stream", "service-api"}
+    expected_source_services = {"postgresql", "object-store", "event-stream", "service-api"}
+    expected_services = expected_source_services | {"harness-acceptance"}
     locked_images = {item["sourceId"]: item["imageDigest"] for item in local_image_lock["images"]}
     observed_images = {
         item["sourceId"]: item["imageDigest"] for item in local_source_evidence["sources"]
@@ -267,7 +268,10 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
     local_only_compose = (
         set(services) == expected_services
         and compose.get("networks", {}).get("lab-internal", {}).get("internal") is True
-        and all(service.get("profiles") == ["phase7-local"] for service in services.values())
+        and all(
+            services[name].get("profiles") == ["phase7-local"] for name in expected_source_services
+        )
+        and services["harness-acceptance"].get("profiles") == ["phase7-harness"]
         and all(service.get("pull_policy") == "never" for service in services.values())
         and all("ports" not in service for service in services.values())
         and all(
@@ -335,7 +339,7 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         CertificationCheck(
             "campaign.local-only-compose-handoff",
             local_only_compose,
-            f"services={','.join(sorted(services))}; profile=phase7-local; "
+            f"services={','.join(sorted(services))}; profiles=phase7-local,phase7-harness; "
             "pullPolicy=never; publishedPorts=0",
         ),
         CertificationCheck(

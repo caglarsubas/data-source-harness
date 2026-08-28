@@ -207,9 +207,9 @@ generalization, or stakeholder acceptance.
 
 ## Phase 7 — laptop-local combined-platform acceptance
 
-**Status:** local-only readiness ledger, four-source runtime and revision-bound
-cross-plane contract lab implemented in core version `0.12.0`; combined-platform
-campaign not complete.
+**Status:** local-only readiness ledger, four-source runtime, revision-bound
+cross-plane contract lab and digest-bound harness runtime implemented in core
+version `0.13.0`; combined-platform campaign not complete.
 
 Implemented readiness foundation:
 
@@ -244,14 +244,20 @@ Implemented readiness foundation:
 - feed model-plane scores through the harness candidate bound and ranking
   validation, with all three mature component surfaces hashed into a
   schema-bound evidence packet and zero external resources.
+- build a laptop-native harness acceptance image from a preloaded base and
+  pinned offline wheelhouse, then execute real PostgreSQL, S3-compatible,
+  Kafka-compatible and REST connectors through the production gateway on the
+  internal-only network;
+- prove bounded query planning, untrusted document decoding, governed semantic
+  resolution, exact lineage, tenant-neutral telemetry and read-only action
+  denial without published ports or external resources.
 
 Remaining laptop campaign:
 
-- build digest-pinned laptop-compatible images for the harness runtime, ADLC and
-  model-plane without contacting a registry during acceptance;
-- connect the verified source services to the harness adapters and exercise
-  discovery, decoding, semantic resolution, bounded queries, provenance and
-  governed actions end to end;
+- build digest-pinned laptop-compatible images for ADLC and model-plane without
+  contacting a registry during acceptance;
+- extend the harness proof from governed read-only denial to a deliberately
+  mutable mock source with preview, approval, idempotency and compensation;
 - run MCP/A2A conformance tools against the local runtime host and preserve the
   exact suite versions/results;
 - extend the proven Python-SDK receipt/ADLC parser seam into live ADLC evidence

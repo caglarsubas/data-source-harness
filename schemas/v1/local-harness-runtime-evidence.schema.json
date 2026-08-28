@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/local-harness-runtime-evidence.schema.json",
+  "title": "LocalHarnessRuntimeEvidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "campaignId", "generatedAt", "revision", "artifactDigest", "baseImageDigest", "wheelhouseDigest", "harnessVersion", "networkMode", "externalResourcesCreated", "sourceRecordCounts", "checks", "passed"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness.local-harness-runtime-evidence/v1"},
+    "campaignId": {"const": "phase7-white-goods-local-harness-runtime"},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "artifactDigest": {"$ref": "#/$defs/digest"},
+    "baseImageDigest": {"$ref": "#/$defs/digest"},
+    "wheelhouseDigest": {"$ref": "#/$defs/digest"},
+    "harnessVersion": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "networkMode": {"const": "compose-internal"},
+    "externalResourcesCreated": {"type": "array", "maxItems": 0},
+    "sourceRecordCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["whitegoods.postgresql", "whitegoods.object-store", "whitegoods.event-stream", "whitegoods.service-api"],
+      "properties": {
+        "whitegoods.postgresql": {"type": "integer", "minimum": 1},
+        "whitegoods.object-store": {"type": "integer", "minimum": 1},
+        "whitegoods.event-stream": {"type": "integer", "minimum": 1},
+        "whitegoods.service-api": {"type": "integer", "minimum": 1}
+      }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 13,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checkId", "passed", "observed"],
+        "properties": {
+          "checkId": {"type": "string", "minLength": 1},
+          "passed": {"type": "boolean"},
+          "observed": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "passed": {"type": "boolean"}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"passed": {"const": true}}},
+      "then": {"properties": {"checks": {"items": {"properties": {"passed": {"const": true}}}}}}
+    }
+  ]
+}

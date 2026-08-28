@@ -1,0 +1,11 @@
+boto3==1.43.82
+attrs==26.1.0
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+kafka-python-ng==2.2.3
+psycopg==3.2.13
+psycopg-binary==3.2.13
+python-snappy==0.7.3
+referencing==0.37.0
+rpds-py==2026.6.3
+typing-extensions==4.16.0
