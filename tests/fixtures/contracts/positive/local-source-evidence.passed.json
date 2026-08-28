@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "data.harness.local-source-evidence/v1",
+  "campaignId": "phase7-local",
+  "generatedAt": "2026-08-28T07:00:00Z",
+  "dockerContext": "desktop-linux",
+  "dockerEndpointKind": "unix",
+  "externalResourcesCreated": [],
+  "checks": [
+    {"checkId":"postgresql.seeded-query","passed":true},
+    {"checkId":"object-store.seeded-list","passed":true},
+    {"checkId":"event-stream.seeded-consume","passed":true},
+    {"checkId":"service-api.auth-pagination","passed":true},
+    {"checkId":"network.internal","passed":true},
+    {"checkId":"network.no-published-ports","passed":true},
+    {"checkId":"network.public-egress-denied","passed":true}
+  ],
+  "sources": [
+    {"sourceId":"whitegoods.postgresql","shape":"postgresql","imageDigest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","recordsObserved":6,"observedAt":"2026-08-28T07:00:00Z","references":["local-evidence://phase7/postgresql"]},
+    {"sourceId":"whitegoods.object-store","shape":"s3-compatible","imageDigest":"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","recordsObserved":4,"observedAt":"2026-08-28T07:00:00Z","references":["local-evidence://phase7/object-store"]},
+    {"sourceId":"whitegoods.event-stream","shape":"kafka-compatible","imageDigest":"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","recordsObserved":9,"observedAt":"2026-08-28T07:00:00Z","references":["local-evidence://phase7/event-stream"]},
+    {"sourceId":"whitegoods.service-api","shape":"rest","imageDigest":"sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","recordsObserved":3,"observedAt":"2026-08-28T07:00:00Z","references":["local-evidence://phase7/service-api"]}
+  ],
+  "passed": true
+}

@@ -69,7 +69,7 @@ def _handle(operation: str, payload: dict[str, Any]) -> dict[str, Any]:
         sensitive = ("AWS_SECRET_ACCESS_KEY", "DATABASE_PASSWORD", "BEARER_TOKEN")
         return {"sensitiveVariablesPresent": [name for name in sensitive if name in os.environ]}
     if operation == "connector.health":
-        return {"healthy": True, "observedVersion": "0.10.0", "limitations": []}
+        return {"healthy": True, "observedVersion": "0.11.0", "limitations": []}
     if operation == "connector.discover":
         return {
             "assets": [

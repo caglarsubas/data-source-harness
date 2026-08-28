@@ -1,0 +1,46 @@
+{
+  "images": [
+    {
+      "architecture": "arm64",
+      "imageDigest": "sha256:95206741a5b214807675e14165369d05b93a9cf692223b616d07cca227e74b0b",
+      "os": "linux",
+      "repoDigests": [
+        "postgres@sha256:95206741a5b214807675e14165369d05b93a9cf692223b616d07cca227e74b0b"
+      ],
+      "sourceId": "whitegoods.postgresql",
+      "sourceReference": "postgres@sha256:95206741a5b214807675e14165369d05b93a9cf692223b616d07cca227e74b0b"
+    },
+    {
+      "architecture": "arm64",
+      "imageDigest": "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+      "os": "linux",
+      "repoDigests": [
+        "minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e"
+      ],
+      "sourceId": "whitegoods.object-store",
+      "sourceReference": "minio/minio@sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e"
+    },
+    {
+      "architecture": "arm64",
+      "imageDigest": "sha256:468bd13a9f2bd24794cb7fddc867c767fb1008b9a07b297b89fde48c564d7d96",
+      "os": "linux",
+      "repoDigests": [
+        "docker.redpanda.com/redpandadata/redpanda@sha256:468bd13a9f2bd24794cb7fddc867c767fb1008b9a07b297b89fde48c564d7d96"
+      ],
+      "sourceId": "whitegoods.event-stream",
+      "sourceReference": "docker.redpanda.com/redpandadata/redpanda@sha256:468bd13a9f2bd24794cb7fddc867c767fb1008b9a07b297b89fde48c564d7d96"
+    },
+    {
+      "architecture": "arm64",
+      "imageDigest": "sha256:4526bbf5bac4f1f73a7807070064d014e2b65b4a1be90739b1043416bf61ce7f",
+      "os": "linux",
+      "repoDigests": [
+        "data-source-harness-whitegoods-service-api@sha256:4526bbf5bac4f1f73a7807070064d014e2b65b4a1be90739b1043416bf61ce7f"
+      ],
+      "sourceId": "whitegoods.service-api",
+      "sourceReference": "data-source-harness-whitegoods-service-api@sha256:4526bbf5bac4f1f73a7807070064d014e2b65b4a1be90739b1043416bf61ce7f"
+    }
+  ],
+  "platform": "linux/arm64",
+  "schemaVersion": "data.harness.local-image-lock/v1"
+}

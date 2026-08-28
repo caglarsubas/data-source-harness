@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "data.harness.contract-evolution/v1",
+  "fromCoreVersion": "0.10.0",
+  "toCoreVersion": "0.11.0",
+  "decision": "add observed laptop-local source-service evidence",
+  "changes": [
+    "add immutable local image lock for PostgreSQL, MinIO, Redpanda and the mock REST API",
+    "add schema-validated local source evidence with seeded query and network-denial checks",
+    "remove all four source image and live-verification blockers from Phase 7",
+    "retain combined-platform publication, startup, runtime, protocol, fault, soak and stakeholder blockers"
+  ]
+}

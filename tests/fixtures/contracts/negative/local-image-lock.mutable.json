@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "data.harness.local-image-lock/v1",
+  "platform": "linux/arm64",
+  "images": [
+    {"sourceId":"whitegoods.postgresql","sourceReference":"postgres:latest","imageDigest":"latest","repoDigests":[],"os":"linux","architecture":"arm64"}
+  ]
+}

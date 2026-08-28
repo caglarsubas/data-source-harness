@@ -5,15 +5,17 @@ local source shapes. Every service is behind the explicit `phase7-local` profile
 has no host-published port, and joins an internal-only network. Images have no
 defaults: an operator must preload and supply an approved digest reference for PostgreSQL,
 MinIO, Redpanda and the contract-backed service API. Credentials enter through
-local secret files and are not committed.
+ephemeral environment-backed Compose secrets and are not committed or written by the harness.
 
 The template is packaged and statically checked by `make phase7-readiness` but
-is not started by CI or certification. Before an operator runs it, the approved
-image digests must be copied into a new Phase 7 release-set candidate.
+is not started by CI. `make phase7-local-sources` is the explicit laptop-only
+lifecycle: it requires PostgreSQL, MinIO, Redpanda `v26.2.2` and Python images
+to exist locally, builds the REST image with `--pull=false`, starts and seeds the
+four services, verifies them and tears the topology down.
 `pull_policy: never` prevents an implicit registry pull. The campaign may not
 provision GCP, OpenShift or any remote cluster. A successful Compose start is
-still only local-source evidence; it is not publication, zero-egress, fault,
-soak or stakeholder evidence.
+still only local-source evidence; it is not combined-platform publication,
+startup, runtime, fault, soak or stakeholder evidence.
 
 The existing `docker-compose.yml` remains a development topology for synthetic
 fixtures. It must not be cited as Phase 7 evidence.

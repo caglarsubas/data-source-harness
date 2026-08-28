@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/local-source-evidence.schema.json",
+  "title": "LocalSourceEvidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "campaignId", "generatedAt", "dockerContext", "dockerEndpointKind", "externalResourcesCreated", "checks", "sources", "passed"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness.local-source-evidence/v1"},
+    "campaignId": {"type": "string", "minLength": 1},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "dockerContext": {"type": "string", "minLength": 1},
+    "dockerEndpointKind": {"enum": ["unix", "npipe"]},
+    "externalResourcesCreated": {"type": "array", "maxItems": 0},
+    "checks": {
+      "type": "array",
+      "minItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checkId", "passed"],
+        "properties": {
+          "checkId": {"type": "string", "minLength": 1},
+          "passed": {"type": "boolean"}
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "allOf": [
+        {"contains": {"properties": {"sourceId": {"const": "whitegoods.postgresql"}, "shape": {"const": "postgresql"}}, "required": ["sourceId", "shape"]}},
+        {"contains": {"properties": {"sourceId": {"const": "whitegoods.object-store"}, "shape": {"const": "s3-compatible"}}, "required": ["sourceId", "shape"]}},
+        {"contains": {"properties": {"sourceId": {"const": "whitegoods.event-stream"}, "shape": {"const": "kafka-compatible"}}, "required": ["sourceId", "shape"]}},
+        {"contains": {"properties": {"sourceId": {"const": "whitegoods.service-api"}, "shape": {"const": "rest"}}, "required": ["sourceId", "shape"]}}
+      ],
+      "items": {"$ref": "#/$defs/source"}
+    },
+    "passed": {"type": "boolean"}
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "shape", "imageDigest", "recordsObserved", "observedAt", "references"],
+      "properties": {
+        "sourceId": {"enum": ["whitegoods.postgresql", "whitegoods.object-store", "whitegoods.event-stream", "whitegoods.service-api"]},
+        "shape": {"enum": ["postgresql", "s3-compatible", "kafka-compatible", "rest"]},
+        "imageDigest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "recordsObserved": {"type": "integer", "minimum": 1},
+        "observedAt": {"type": "string", "format": "date-time"},
+        "references": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^local-evidence://"}}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"passed": {"const": true}}},
+      "then": {"properties": {"checks": {"items": {"properties": {"passed": {"const": true}}}}}}
+    }
+  ]
+}

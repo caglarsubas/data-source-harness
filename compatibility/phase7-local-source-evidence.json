@@ -1,0 +1,81 @@
+{
+  "campaignId": "phase7-white-goods-local-sources",
+  "checks": [
+    {
+      "checkId": "postgresql.seeded-query",
+      "passed": true
+    },
+    {
+      "checkId": "object-store.seeded-list",
+      "passed": true
+    },
+    {
+      "checkId": "event-stream.seeded-consume",
+      "passed": true
+    },
+    {
+      "checkId": "service-api.auth-pagination",
+      "passed": true
+    },
+    {
+      "checkId": "network.internal",
+      "passed": true
+    },
+    {
+      "checkId": "network.no-published-ports",
+      "passed": true
+    },
+    {
+      "checkId": "network.public-egress-denied",
+      "passed": true
+    }
+  ],
+  "dockerContext": "desktop-linux",
+  "dockerEndpointKind": "unix",
+  "externalResourcesCreated": [],
+  "generatedAt": "2026-08-28T07:46:12+00:00",
+  "passed": true,
+  "schemaVersion": "data.harness.local-source-evidence/v1",
+  "sources": [
+    {
+      "imageDigest": "sha256:95206741a5b214807675e14165369d05b93a9cf692223b616d07cca227e74b0b",
+      "observedAt": "2026-08-28T07:46:12+00:00",
+      "recordsObserved": 6,
+      "references": [
+        "local-evidence://phase7/whitegoods.postgresql"
+      ],
+      "shape": "postgresql",
+      "sourceId": "whitegoods.postgresql"
+    },
+    {
+      "imageDigest": "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
+      "observedAt": "2026-08-28T07:46:12+00:00",
+      "recordsObserved": 4,
+      "references": [
+        "local-evidence://phase7/whitegoods.object-store"
+      ],
+      "shape": "s3-compatible",
+      "sourceId": "whitegoods.object-store"
+    },
+    {
+      "imageDigest": "sha256:468bd13a9f2bd24794cb7fddc867c767fb1008b9a07b297b89fde48c564d7d96",
+      "observedAt": "2026-08-28T07:46:12+00:00",
+      "recordsObserved": 9,
+      "references": [
+        "local-evidence://phase7/whitegoods.event-stream"
+      ],
+      "shape": "kafka-compatible",
+      "sourceId": "whitegoods.event-stream"
+    },
+    {
+      "imageDigest": "sha256:4526bbf5bac4f1f73a7807070064d014e2b65b4a1be90739b1043416bf61ce7f",
+      "observedAt": "2026-08-28T07:46:12+00:00",
+      "recordsObserved": 3,
+      "references": [
+        "local-evidence://phase7/whitegoods.service-api"
+      ],
+      "shape": "rest",
+      "sourceId": "whitegoods.service-api"
+    }
+  ]
+}

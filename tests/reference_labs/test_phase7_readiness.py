@@ -11,9 +11,8 @@ async def test_phase7_readiness_passes_without_claiming_live_acceptance() -> Non
     assert all(check.passed for check in report.checks)
     assert all(metric.passed for metric in report.metrics)
     assert "Python-SDK:exact-main-ci:missing" in report.blockers
-    assert (
-        "GCP, OpenShift and remote-cluster provisioning are prohibited" in report.evidence_boundary
-    )
+    assert "four digest-bound source services" in report.evidence_boundary
+    assert not any("live-verification-missing" in blocker for blocker in report.blockers)
 
 
 def test_phase7_snapshot_records_read_only_observations() -> None:
@@ -22,4 +21,5 @@ def test_phase7_snapshot_records_read_only_observations() -> None:
     assert campaign.cost_boundary.resources_created == ()
     assert campaign.cost_boundary.external_mutations == ()
     assert len(campaign.evidence) == 7
+    assert all(source.live_verified for source in campaign.sources)
     assert not campaign.accepted

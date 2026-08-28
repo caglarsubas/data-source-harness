@@ -12,6 +12,8 @@ services:
     secrets: [postgres-user, postgres-password]
     volumes:
       - ../technology/postgresql/schema.sql:/docker-entrypoint-initdb.d/00-schema.sql:ro
+      - ./postgresql-seed.sql:/docker-entrypoint-initdb.d/10-seed.sql:ro
+      - ../data:/fixtures:ro
     networks: [lab-internal]
     healthcheck:
       test: [CMD-SHELL, pg_isready -d whitegoods]
@@ -28,14 +30,42 @@ services:
       MINIO_ROOT_USER_FILE: /run/secrets/object-store-user
       MINIO_ROOT_PASSWORD_FILE: /run/secrets/object-store-password
     secrets: [object-store-user, object-store-password]
+    volumes:
+      - ../data/documents:/fixtures:ro
     networks: [lab-internal]
+    healthcheck:
+      test: [CMD-SHELL, curl --fail --silent http://localhost:9000/minio/health/live]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
   event-stream:
     image: ${PHASE7_REDPANDA_IMAGE:?set an approved image by digest}
     pull_policy: never
     profiles: [phase7-local]
-    command: redpanda start --smp 1 --memory 1G --overprovisioned --check=false
+    command:
+      - redpanda
+      - start
+      - --mode
+      - dev-container
+      - --smp
+      - "1"
+      - --memory
+      - 1G
+      - --default-log-level
+      - warn
+      - --kafka-addr
+      - internal://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - internal://event-stream:9092
+    volumes:
+      - ../data/events/telemetry.jsonl:/fixtures/telemetry.jsonl:ro
     networks: [lab-internal]
+    healthcheck:
+      test: [CMD, rpk, cluster, info, -X, brokers=localhost:9092]
+      interval: 5s
+      timeout: 5s
+      retries: 30
 
   service-api:
     image: ${PHASE7_SERVICE_API_IMAGE:?set an approved image by digest}
@@ -44,10 +74,16 @@ services:
     environment:
       SERVICE_API_CREDENTIAL_FILE: /run/secrets/service-api-credential
       SERVICE_API_CONTRACT: /contracts/openapi.yaml
+      SERVICE_API_FIXTURES: /opt/white-goods-service-api/fixtures.json
     secrets: [service-api-credential]
     volumes:
       - ../technology/service-api/openapi.yaml:/contracts/openapi.yaml:ro
     networks: [lab-internal]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8080/health', timeout=2)"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
 networks:
   lab-internal:
@@ -55,12 +91,12 @@ networks:
 
 secrets:
   postgres-user:
-    file: ${PHASE7_POSTGRES_USER_FILE:?set a local secret-file path}
+    environment: PHASE7_POSTGRES_USER
   postgres-password:
-    file: ${PHASE7_POSTGRES_PASSWORD_FILE:?set a local secret-file path}
+    environment: PHASE7_POSTGRES_PASSWORD
   object-store-user:
-    file: ${PHASE7_OBJECT_STORE_USER_FILE:?set a local secret-file path}
+    environment: PHASE7_OBJECT_STORE_USER
   object-store-password:
-    file: ${PHASE7_OBJECT_STORE_PASSWORD_FILE:?set a local secret-file path}
+    environment: PHASE7_OBJECT_STORE_PASSWORD
   service-api-credential:
-    file: ${PHASE7_SERVICE_API_CREDENTIAL_FILE:?set a local secret-file path}
+    environment: PHASE7_SERVICE_API_CREDENTIAL
