@@ -6,9 +6,20 @@ import asyncio
 import json
 import os
 from collections.abc import AsyncIterator
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from data_source_harness.actions import (
+    ActionExecutionFailed,
+    ActionGateway,
+    ActionRisk,
+    ActionState,
+    ApprovalMode,
+    ApprovalRequired,
+    CompensationSpec,
+    HmacApprovalAuthority,
+    SourceActionPlan,
+)
 from data_source_harness.connector import Capability, ConnectorRegistry, UnsupportedCapability
 from data_source_harness.decoder import DecodeRequest, DecoderRegistry, PayloadFormat
 from data_source_harness.models import DataBatch, LineageRef, QueryRequest
@@ -40,6 +51,27 @@ class LocalReadPolicy:
         )
 
 
+class LocalMutationPolicy:
+    """Allow only the representative, supervised service-order operations."""
+
+    async def evaluate(self, request: AuthorizationRequest) -> PolicyDecision:
+        operation = str(request.parameters.get("operation", ""))
+        allowed = (
+            request.identity.organization_id == "org-lab"
+            and request.identity.solution_id == "whitegoods-lab"
+            and request.identity.agent_id == "agent.phase7-acceptance"
+            and request.source_id == "whitegoods.erp"
+            and request.capability is Capability.MUTATE
+            and request.asset_ids == ("service_orders",)
+            and operation in {"resolve-service-order", "restore-service-order"}
+        )
+        return PolicyDecision(
+            allowed,
+            f"phase7-mutation:{request.identity.request_id}:{request.attributes['stage']}",
+            "local_mutation_allowed" if allowed else "local_mutation_denied",
+        )
+
+
 def _identity() -> RequestIdentity:
     return RequestIdentity(
         "org-lab",
@@ -51,8 +83,201 @@ def _identity() -> RequestIdentity:
     )
 
 
+def _mutation_identity() -> RequestIdentity:
+    return RequestIdentity(
+        "org-lab",
+        "whitegoods-lab",
+        "agent.phase7-acceptance",
+        "phase7-live-mutation",
+        "trace.phase7-live-mutation",
+        "policy:phase7-local-mutation-v1",
+    )
+
+
 async def _collect(stream: AsyncIterator[DataBatch]) -> tuple[DataBatch, ...]:
     return tuple([batch async for batch in stream])
+
+
+async def _exercise_mutation(
+    connector: PostgreSQLLiveConnector,
+) -> list[dict[str, Any]]:
+    """Run the real preview/approval/idempotency/compensation lifecycle."""
+
+    observed_at = datetime.now(UTC)
+    identity = _mutation_identity()
+    authority = HmacApprovalAuthority(
+        "adlc-phase7-local",
+        "data-source-harness",
+        b"phase7-local-disposable-approval-key",
+    )
+    telemetry = MemoryTelemetrySink()
+    registry = ConnectorRegistry()
+    registry.register(connector)
+
+    def new_gateway() -> ActionGateway:
+        return ActionGateway(
+            registry,
+            LocalMutationPolicy(),
+            telemetry,
+            now=lambda: observed_at,
+            approval_verifier=authority,
+        )
+
+    action = SourceActionPlan(
+        "phase7-resolve-SO1001",
+        "whitegoods.erp",
+        "service_orders",
+        "resolve-service-order",
+        {
+            "serviceOrderId": "SO1001",
+            "resolution": "replaced drain pump and verified flow",
+        },
+        {"recordVersion": 1, "expectedResolution": "replaced drain pump"},
+        "phase7:SO1001:resolve:v1",
+        ActionRisk.HIGH,
+        ApprovalMode.HUMAN,
+        "verify supervised service-order resolution",
+        CompensationSpec(
+            "restore-service-order",
+            {"serviceOrderId": "SO1001", "resolution": "replaced drain pump"},
+            {
+                "recordVersion": 2,
+                "expectedResolution": "replaced drain pump and verified flow",
+            },
+        ),
+    )
+    approval = authority.issue(
+        action_digest=action.digest,
+        approver_id="human:phase7-lab-supervisor",
+        policy_digest=identity.policy_digest,
+        approved_at=observed_at - timedelta(minutes=1),
+        expires_at=observed_at + timedelta(minutes=10),
+        allow_compensation=True,
+        identity=identity,
+        nonce="SO1001-resolution-v1",
+    )
+    gateway = new_gateway()
+    preview = await gateway.preview(action, identity)
+    approval_required = False
+    try:
+        await gateway.execute(action, preview, identity)
+    except ApprovalRequired:
+        approval_required = True
+
+    receipt = await gateway.execute(action, preview, identity, approval)
+    gateway_replay = await gateway.execute(action, preview, identity, approval)
+    changed = connector.read_mutation_state("SO1001")
+
+    restarted_gateway = new_gateway()
+    restarted_preview = await restarted_gateway.preview(action, identity)
+    source_replay = await restarted_gateway.execute(
+        action, restarted_preview, identity, approval
+    )
+    replayed = connector.read_mutation_state("SO1001")
+
+    stale = SourceActionPlan(
+        "phase7-stale-SO1001",
+        "whitegoods.erp",
+        "service_orders",
+        "resolve-service-order",
+        {"serviceOrderId": "SO1001", "resolution": "unsafe stale overwrite"},
+        {"recordVersion": 1, "expectedResolution": "replaced drain pump"},
+        "phase7:SO1001:stale:v1",
+        ActionRisk.HIGH,
+        ApprovalMode.HUMAN,
+        "prove optimistic-concurrency denial",
+    )
+    stale_approval = authority.issue(
+        action_digest=stale.digest,
+        approver_id="human:phase7-lab-supervisor",
+        policy_digest=identity.policy_digest,
+        approved_at=observed_at - timedelta(minutes=1),
+        expires_at=observed_at + timedelta(minutes=10),
+        allow_compensation=False,
+        identity=identity,
+        nonce="SO1001-stale-v1",
+    )
+    stale_denied = False
+    stale_preview = await restarted_gateway.preview(stale, identity)
+    try:
+        await restarted_gateway.execute(stale, stale_preview, identity, stale_approval)
+    except ActionExecutionFailed:
+        stale_denied = True
+    after_stale = connector.read_mutation_state("SO1001")
+
+    compensated = await gateway.compensate(action, receipt, identity, approval)
+    restored = connector.read_mutation_state("SO1001")
+    sensitive = {
+        "replaced drain pump",
+        "replaced drain pump and verified flow",
+        "unsafe stale overwrite",
+    }
+    audit_payload_free = all(
+        not any(value in json.dumps(dict(entry.attributes)) for value in sensitive)
+        for entry in (*gateway.audit.entries, *restarted_gateway.audit.entries)
+    )
+    telemetry_payload_free = all(
+        not any(value in json.dumps(dict(event.attributes)) for value in sensitive)
+        for event in telemetry.events
+    )
+    checks = [
+        {
+            "checkId": "mutation.preview-policy-bound",
+            "passed": preview.allowed and preview.approval_required,
+            "observed": 1,
+        },
+        {
+            "checkId": "mutation.human-approval-required",
+            "passed": approval_required,
+            "observed": 1 if approval_required else 0,
+        },
+        {
+            "checkId": "mutation.postgresql-executed",
+            "passed": receipt.state is ActionState.EXECUTED
+            and changed["recordVersion"] == 2,
+            "observed": changed["recordVersion"],
+        },
+        {
+            "checkId": "mutation.gateway-replay-idempotent",
+            "passed": gateway_replay.state is ActionState.ALREADY_EXECUTED
+            and changed["idempotencyRecords"] == 1,
+            "observed": changed["idempotencyRecords"],
+        },
+        {
+            "checkId": "mutation.source-replay-after-gateway-restart",
+            "passed": source_replay.state is ActionState.EXECUTED
+            and replayed["recordVersion"] == 2
+            and replayed["idempotencyRecords"] == 1,
+            "observed": replayed["recordVersion"],
+        },
+        {
+            "checkId": "mutation.stale-precondition-denied",
+            "passed": stale_denied and after_stale == replayed,
+            "observed": 1 if stale_denied else 0,
+        },
+        {
+            "checkId": "mutation.compensated",
+            "passed": compensated.state is ActionState.COMPENSATED
+            and restored["resolution"] == "replaced drain pump"
+            and restored["recordVersion"] == 3
+            and restored["idempotencyRecords"] == 2,
+            "observed": restored["recordVersion"],
+        },
+        {
+            "checkId": "mutation.audit-chain-payload-free",
+            "passed": gateway.audit.verify()
+            and restarted_gateway.audit.verify()
+            and audit_payload_free,
+            "observed": len(gateway.audit.entries) + len(restarted_gateway.audit.entries),
+        },
+        {
+            "checkId": "mutation.telemetry-tenant-bound-payload-free",
+            "passed": telemetry_payload_free
+            and all(event.identity.solution_id == "whitegoods-lab" for event in telemetry.events),
+            "observed": len(telemetry.events),
+        },
+    ]
+    return checks
 
 
 async def run_probe() -> dict[str, Any]:
@@ -90,6 +315,8 @@ async def run_probe() -> dict[str, Any]:
             "observed": len(health),
         }
     )
+
+    checks.extend(await _exercise_mutation(connectors[0]))
 
     discovered = {
         connector.profile.connector_id: await gateway.discover(

@@ -1,9 +1,9 @@
 """Bounded connectors used by the laptop-local Phase 7 runtime lab.
 
-The implementations deliberately expose a small, read-only surface.  They use
-the same connector contracts and gateway as production code while keeping all
-credentials in mounted secret files and every endpoint on the internal Compose
-network.
+The implementations expose read-only discovery/query surfaces plus one tightly
+allowlisted PostgreSQL mutation used to certify the governed action lifecycle.
+Credentials remain in mounted secret files and every endpoint stays on the
+internal Compose network.
 """
 
 from __future__ import annotations
@@ -21,6 +21,7 @@ from data_source_harness.connector import (
     Capability,
     ConnectorLimits,
     ConnectorProfile,
+    ConsistencyProfile,
     DataModel,
     HealthStatus,
     RuntimeMode,
@@ -65,22 +66,35 @@ def _profile(
     model: DataModel,
     *,
     max_result_bytes: int = 2 * 1024 * 1024,
+    mutable: bool = False,
 ) -> ConnectorProfile:
+    capabilities = {Capability.DISCOVER, Capability.DESCRIBE, Capability.QUERY}
+    if mutable:
+        capabilities.add(Capability.MUTATE)
     return ConnectorProfile(
         connector_id,
         "1.0.0",
         "harness.connector/v1",
         RuntimeMode.CONTAINER,
         frozenset({model}),
-        frozenset({Capability.DISCOVER, Capability.DESCRIBE, Capability.QUERY}),
+        frozenset(capabilities),
         frozenset({"credential-reference"}),
+        consistency=ConsistencyProfile(
+            read_isolation=("read-committed",),
+            supports_version_precondition=mutable,
+            supports_idempotency_key=mutable,
+            supports_transactions=mutable,
+        ),
         limits=ConnectorLimits(max_parallelism=1, max_result_bytes=max_result_bytes),
-        metadata={"networkBoundary": "compose-internal", "mutationMode": "disabled"},
+        metadata={
+            "networkBoundary": "compose-internal",
+            "mutationMode": "preview-approval-compensation" if mutable else "disabled",
+        },
     )
 
 
 class PostgreSQLLiveConnector:
-    """Read-only PostgreSQL discovery and bounded projection/filter execution."""
+    """Bounded PostgreSQL reads and one versioned, idempotent mutation surface."""
 
     source_id = "whitegoods.erp"
 
@@ -89,18 +103,21 @@ class PostgreSQLLiveConnector:
         self.database = database
         self.user_file = user_file
         self.password_file = password_file
-        self.profile = _profile(self.source_id, DataModel.TABULAR)
+        self.profile = _profile(self.source_id, DataModel.TABULAR, mutable=True)
 
-    def _connect(self) -> Any:
+    def _connect(self, *, read_only: bool = True) -> Any:
         import psycopg
 
+        options = "-c statement_timeout=5000"
+        if read_only:
+            options += " -c default_transaction_read_only=on"
         return psycopg.connect(
             host=self.host,
             dbname=self.database,
             user=_secret(self.user_file),
             password=_secret(self.password_file),
             connect_timeout=5,
-            options="-c default_transaction_read_only=on -c statement_timeout=5000",
+            options=options,
         )
 
     async def health(self) -> HealthStatus:
@@ -173,6 +190,117 @@ class PostgreSQLLiveConnector:
             tuple(LineageRef(self.source_id, asset_id, str(row[selected[0]])) for row in rows),
             row_count=len(rows),
         )
+
+    async def mutate(self, request: Mapping[str, Any]) -> Mapping[str, Any]:
+        """Conditionally update one service-order resolution.
+
+        The connector accepts no free-form SQL. Both forward and compensation
+        operations use an atomic record-version/value precondition, and the
+        source persists the idempotency binding so a new gateway process cannot
+        repeat the write.
+        """
+
+        if request.get("asset_id") != "service_orders":
+            raise PermissionError("PostgreSQL mutation is restricted to service_orders")
+        operation = request.get("operation")
+        if operation not in {"resolve-service-order", "restore-service-order"}:
+            raise PermissionError("PostgreSQL mutation operation is not allowlisted")
+        parameters = request.get("parameters")
+        preconditions = request.get("preconditions")
+        if not isinstance(parameters, Mapping) or set(parameters) != {
+            "serviceOrderId",
+            "resolution",
+        }:
+            raise ValueError("mutation parameters must identify one order and resolution")
+        if not isinstance(preconditions, Mapping) or set(preconditions) != {
+            "recordVersion",
+            "expectedResolution",
+        }:
+            raise ValueError("mutation requires exact version and value preconditions")
+        action_id = str(request.get("action_id", ""))
+        idempotency_key = str(request.get("idempotency_key", ""))
+        if not action_id or not idempotency_key:
+            raise ValueError("mutation action and idempotency identities are required")
+
+        canonical = json.dumps(request, sort_keys=True, separators=(",", ":"), default=str)
+        request_digest = f"sha256:{hashlib.sha256(canonical.encode()).hexdigest()}"
+        service_order_id = str(parameters["serviceOrderId"])
+        requested_resolution = parameters["resolution"]
+        expected_resolution = preconditions["expectedResolution"]
+        expected_version = int(preconditions["recordVersion"])
+
+        with self._connect(read_only=False) as connection, connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT request_digest, source_version FROM harness_action_idempotency "
+                "WHERE idempotency_key=%s FOR UPDATE",
+                (idempotency_key,),
+            )
+            existing = cursor.fetchone()
+            if existing is not None:
+                if existing[0] != request_digest:
+                    raise ValueError("source idempotency key is bound to another request")
+                return {
+                    "success": True,
+                    "postconditions_met": True,
+                    "source_version": str(existing[1]),
+                    "replayed": True,
+                }
+
+            cursor.execute(
+                "UPDATE service_orders SET resolution=%s, record_version=record_version+1 "
+                "WHERE service_order_id=%s AND record_version=%s "
+                "AND resolution IS NOT DISTINCT FROM %s RETURNING record_version,resolution",
+                (
+                    requested_resolution,
+                    service_order_id,
+                    expected_version,
+                    expected_resolution,
+                ),
+            )
+            updated = cursor.fetchone()
+            if updated is None:
+                cursor.execute(
+                    "SELECT record_version FROM service_orders WHERE service_order_id=%s",
+                    (service_order_id,),
+                )
+                current = cursor.fetchone()
+                return {
+                    "success": False,
+                    "postconditions_met": False,
+                    "source_version": str(current[0]) if current else "missing",
+                    "replayed": False,
+                }
+            source_version, observed_resolution = updated
+            cursor.execute(
+                "INSERT INTO harness_action_idempotency "
+                "(idempotency_key,action_id,request_digest,source_version) VALUES (%s,%s,%s,%s)",
+                (idempotency_key, action_id, request_digest, source_version),
+            )
+            return {
+                "success": True,
+                "postconditions_met": observed_resolution == requested_resolution,
+                "source_version": str(source_version),
+                "replayed": False,
+            }
+
+    def read_mutation_state(self, service_order_id: str) -> dict[str, Any]:
+        """Return bounded state used only by the disposable lab verifier."""
+
+        with self._connect() as connection, connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT resolution,record_version FROM service_orders WHERE service_order_id=%s",
+                (service_order_id,),
+            )
+            row = cursor.fetchone()
+            if row is None:
+                raise KeyError(f"unknown service order: {service_order_id}")
+            cursor.execute("SELECT COUNT(*) FROM harness_action_idempotency")
+            idempotency_records = int(cursor.fetchone()[0])
+        return {
+            "resolution": row[0],
+            "recordVersion": int(row[1]),
+            "idempotencyRecords": idempotency_records,
+        }
 
 
 class S3LiveConnector:
