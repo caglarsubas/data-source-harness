@@ -207,7 +207,28 @@ fault drills, production generalization, or stakeholder acceptance.
 
 ## Phase 7 — live combined-platform and disconnected-runtime acceptance
 
-**Status:** planned; no completion claim.
+**Status:** readiness ledger implemented in core version `0.9.0`; live campaign
+not complete and no completion claim.
+
+Implemented readiness foundation:
+
+- define a `LiveAcceptanceCampaign` over the harness, ADLC, Python-SDK,
+  OCP-reference-lab and model-plane with exact source revisions and nullable
+  artifact digests;
+- require four unique credential-reference-only targets for PostgreSQL,
+  S3-compatible storage, Kafka-compatible streaming and REST;
+- preserve an independent source, PR-CI, exact-main-CI, publication, mirror,
+  deployment, runtime, fault, soak, protocol-conformance and stakeholder state
+  for each platform component;
+- recompute the release-set digest, blockers and final acceptance so forged
+  derived fields fail closed;
+- record the initial read-only evidence snapshot: exact source identity for all
+  five components and exact-main CI for the harness, ADLC, OCP reference lab and
+  model plane; Python-SDK CI and all later lifecycle stages remain missing;
+- record `provisioningAuthorized: false`, zero resources created and zero
+  external mutations, keeping readiness work non-billable.
+
+Remaining live campaign:
 
 - replace each fixture transport with a digest-pinned connector image against
   live PostgreSQL, S3-compatible object storage, Kafka-compatible streaming and

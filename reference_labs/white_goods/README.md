@@ -22,7 +22,7 @@ The mock corpus includes repeat visits, product/serial/customer relationships, m
 ## Run
 
 ```bash
-make phase6.5
+make phase7-readiness
 ```
 
 `phase1-report.json` retains the source and zero-egress certificate. `phase2-report.json` adds ten GQM metrics for approved/fresh routing, exact provenance, ambiguity and stale refusal, drift quarantine, bounded planning, monotonic checkpoints, compatibility pins and promotion evidence separation.
@@ -40,3 +40,9 @@ gateway/coordinator paths, exercises the canonical connector ABI through the
 subprocess worker, and adds the pinned wheelhouse and OpenShift runtime handoff.
 The certificate still treats every live-source, image, mirror, cluster and
 stakeholder state as separate evidence.
+
+Phase 7 readiness adds `live/compose.template.yaml`, which covers PostgreSQL,
+S3-compatible storage, Kafka-compatible streaming and REST without mutable
+image defaults, embedded secrets, published host ports or implicit startup.
+The acceptance ledger remains false until an authorized operator supplies
+approved digests and produces live evidence.

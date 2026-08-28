@@ -2,7 +2,8 @@
 
 This directory is an air-gap transfer scaffold, not deployed-runtime evidence.
 It binds the harness wheel, worker/protocol contracts, cross-plane revision set,
-and OpenShift templates into a deterministic signed archive.
+the inert Phase 7 live-service handoff and OpenShift templates into a
+deterministic signed archive.
 
 Before deployment, an operator must:
 

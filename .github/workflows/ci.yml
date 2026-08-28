@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   certification:
-    name: Phase 0+1+2+3+4+5+6+6.5 / Python ${{ matrix.python-version }}
+    name: Phase 0+1+2+3+4+5+6+6.5 + Phase 7 readiness / Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -48,16 +48,16 @@ jobs:
       - name: Verify isolated wheel and embedded offline resources
         run: >-
           uv run --no-project --isolated
-          --with ./dist/orchestra_data_source_harness-0.8.0-py3-none-any.whl
+          --with ./dist/orchestra_data_source_harness-0.9.0-py3-none-any.whl
           python -c 'from importlib.resources import files; import data_source_harness as h;
           root = files("data_source_harness");
-          assert h.__version__ == "0.8.0";
+          assert h.__version__ == "0.9.0";
           assert (root / "resources/schemas/v1/data-batch.schema.json").is_file();
           assert (root / "resources/schemas/v1/connector-worker-profile.schema.json").is_file();
-          assert (root / "resources/schemas/v1/cross-plane-evidence-set.schema.json").is_file()'
+          assert (root / "resources/schemas/v1/live-acceptance-campaign.schema.json").is_file()'
       - run: >-
           uv run --no-project --isolated
-          --with ./dist/orchestra_data_source_harness-0.8.0-py3-none-any.whl
+          --with ./dist/orchestra_data_source_harness-0.9.0-py3-none-any.whl
           harness-contracts validate
       - run: uv run python -m reference_labs.white_goods.certify --output phase1-report.json
       - run: uv run python -m reference_labs.white_goods.certify_phase2 --output phase2-report.json
@@ -71,10 +71,11 @@ jobs:
       - run: uv run python -m reference_labs.certify_phase6 --output phase6-report.json
       - run: bash scripts/build-airgap-wheelhouse.sh
       - run: uv run python -m reference_labs.certify_phase6_5 --output phase6.5-report.json
+      - run: uv run python -m reference_labs.certify_phase7_readiness --output phase7-readiness-report.json
       - run: uv run python -m reference_labs.white_goods.runtime_bundle verify
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: phase0-through-phase6-5-python-${{ matrix.python-version }}
+          name: phase0-through-phase7-readiness-python-${{ matrix.python-version }}
           path: |
             phase0-report.json
             phase1-report.json
@@ -84,4 +85,5 @@ jobs:
             phase5-report.json
             phase6-report.json
             phase6.5-report.json
+            phase7-readiness-report.json
             dist/*

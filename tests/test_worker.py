@@ -106,7 +106,7 @@ def test_process_worker_cannot_self_attest_as_an_image_pinned_container() -> Non
 async def test_gateway_executes_canonical_query_through_worker_boundary() -> None:
     profile = ConnectorProfile(
         "whitegoods.reference-worker",
-        "0.8.0",
+        "0.9.0",
         "harness.connector/v1",
         RuntimeMode.PROCESS,
         frozenset({DataModel.TABULAR}),

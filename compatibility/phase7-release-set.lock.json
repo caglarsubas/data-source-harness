@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "data.harness.acceptance-release-set/v1",
+  "campaignId": "phase7-white-goods-live-acceptance",
+  "releaseSet": "phase-6.5-integration-spine-2026-08-27",
+  "generatedAt": "2026-08-28T00:00:00Z",
+  "artifacts": [
+    {"component": "data-source-harness", "repository": "https://github.com/caglarsubas/data-source-harness", "revision": "74cd16877253d7dbc0995063b8f611be767376f8", "artifactDigest": null},
+    {"component": "ADLC", "repository": "https://github.com/caglarsubas/agent-hook-v2", "revision": "9bf6c11028a70944fda3f5e7ef315915768b9be7", "artifactDigest": null},
+    {"component": "Python-SDK", "repository": "https://github.com/caglarsubas/planeon-orchestra-python-sdk", "revision": "3a4012d809e6ed00a3f05be940c5278eac20a166", "artifactDigest": null},
+    {"component": "OCP-reference-lab", "repository": "https://github.com/caglarsubas/orchestra-openshift-reference-lab", "revision": "37480c11a5f3c06bf257e494c974b879b223733c", "artifactDigest": null},
+    {"component": "model-plane", "repository": "https://github.com/caglarsubas/llm_inference_engine", "revision": "e820728e14a6121c0549f4ef6d51baacd1fec573", "artifactDigest": null}
+  ],
+  "notes": "This is the last certified Phase 6.5 source release set used to seed the Phase 7 campaign. Null artifact digests are deliberate blockers; source revisions and CI observations are not publication evidence."
+}

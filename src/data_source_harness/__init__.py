@@ -1,5 +1,15 @@
 """Tenant-local data context and execution contracts."""
 
+from .acceptance import (
+    REQUIRED_ACCEPTANCE_COMPONENTS,
+    AcceptanceStage,
+    CostBoundary,
+    LiveAcceptanceCampaign,
+    LiveSourceShape,
+    LiveSourceTarget,
+    ReleaseArtifact,
+    StageEvidence,
+)
 from .actions import (
     ActionApproval,
     ActionAuditLedger,
@@ -137,6 +147,7 @@ __all__ = [
     "ActionSagaOutcome",
     "ActionSagaStep",
     "ActionState",
+    "AcceptanceStage",
     "ADLCEvidenceSink",
     "ApprovalMode",
     "ApprovalVerifier",
@@ -156,6 +167,7 @@ __all__ = [
     "CompensationSpec",
     "CoverageStatement",
     "CoordinationResult",
+    "CostBoundary",
     "CrossSourceCoordinator",
     "CrossPlaneEvidenceSet",
     "CrossPlaneEvidenceBridge",
@@ -187,6 +199,9 @@ __all__ = [
     "HmacApprovalAuthority",
     "HttpDispatchResult",
     "IndustryPackDefinition",
+    "LiveAcceptanceCampaign",
+    "LiveSourceShape",
+    "LiveSourceTarget",
     "MemoryCandidateStatus",
     "MemoryScope",
     "MCP_PROTOCOL_VERSION",
@@ -201,6 +216,8 @@ __all__ = [
     "ProtocolProfileRejected",
     "ProtocolRequestRejected",
     "QueryStep",
+    "REQUIRED_ACCEPTANCE_COMPONENTS",
+    "ReleaseArtifact",
     "PromotedSemanticMemory",
     "SagaState",
     "SDKExecutionEvidenceSink",
@@ -213,6 +230,7 @@ __all__ = [
     "SQLiteActionJournal",
     "StepResult",
     "StandardDecoder",
+    "StageEvidence",
     "UnsupportedCapability",
     "WorkerCrashed",
     "WorkerError",
@@ -225,4 +243,4 @@ __all__ = [
     "verify_signed_package",
 ]
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"

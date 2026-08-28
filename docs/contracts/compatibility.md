@@ -25,4 +25,12 @@ evidence revisions equal the current release-set lock. Harness-side seam tests
 can pass only the `contract` claim; they cannot infer upstream CI, publication,
 deployment, runtime, fault or stakeholder states.
 
+Phase 7 readiness adds `LiveAcceptanceCampaign`. It includes the harness beside
+the four platform planes and requires an independent observation for every
+component/stage pair. Derived `accepted`, blocker and release-set-digest fields
+are recomputed when a contract is read. Source or CI evidence may bind a source
+revision before publication; publication and every later stage must bind the
+same non-null artifact digest. A partial matrix remains a failed campaign even
+when some upstream CI is green.
+
 Public SDK telemetry remains tenant-neutral. Industry and product names belong in caller-supplied values or lab manifests, not generic API field names.
