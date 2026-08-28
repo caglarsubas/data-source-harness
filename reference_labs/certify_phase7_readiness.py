@@ -299,6 +299,15 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
     }
     expected_harness_runtime_checks = {
         "runtime.connectors-healthy",
+        "mutation.preview-policy-bound",
+        "mutation.human-approval-required",
+        "mutation.postgresql-executed",
+        "mutation.gateway-replay-idempotent",
+        "mutation.source-replay-after-gateway-restart",
+        "mutation.stale-precondition-denied",
+        "mutation.compensated",
+        "mutation.audit-chain-payload-free",
+        "mutation.telemetry-tenant-bound-payload-free",
         "harness.discovery-four-shapes",
         "harness.bounded-postgresql-query",
         "harness.s3-decode-untrusted",
@@ -497,6 +506,17 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
             float(len(local_harness_runtime_evidence["externalResourcesCreated"])),
             "local harness runtime lab",
         ),
+        _metric(
+            definitions,
+            "P7R-M14",
+            float(
+                sum(
+                    item["checkId"].startswith("mutation.")
+                    for item in local_harness_runtime_evidence["checks"]
+                )
+            ),
+            "governed PostgreSQL mutation lifecycle",
+        ),
     )
     return Phase7ReadinessReport(
         "phase-7-readiness",
@@ -509,7 +529,8 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         "This readiness certificate validates the fail-closed laptop-local Phase 7 campaign "
         "ledger, verifies four digest-bound source services, runs the revision-bound SDK receipt, "
         "ADLC and model-plane contract seams, and executes the digest-bound harness image through "
-        "four real connector paths locally. GCP, OpenShift and remote-cluster provisioning are "
+        "four real connector paths plus one governed PostgreSQL mutation lifecycle locally. "
+        "GCP, OpenShift and remote-cluster provisioning are "
         "prohibited. "
         "It does not claim harness publication or exact-main CI for this candidate, other "
         "platform images/startup, protocol conformance, fault, soak or stakeholder acceptance.",
@@ -519,7 +540,13 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="phase7-readiness-certify")
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--campaign-output", type=Path)
     args = parser.parse_args(argv)
+    if args.campaign_output:
+        contract = build_readiness_campaign().to_contract()
+        args.campaign_output.write_text(
+            json.dumps(contract, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
     report = asyncio.run(certify_phase7_readiness())
     rendered = json.dumps(report.to_dict(), indent=2, sort_keys=True)
     if args.output:

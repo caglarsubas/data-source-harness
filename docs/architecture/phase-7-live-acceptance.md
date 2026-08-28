@@ -49,8 +49,11 @@ image and pinned 18-wheel dependency set. The image starts as a one-shot
 acceptance workload on the internal network and executes real PostgreSQL, S3,
 Kafka and REST connectors through `HarnessGateway`. Discovery, bounded query
 planning, untrusted decoding, semantic resolution, exact provenance,
-tenant-bound telemetry and read-only action denial pass. This closes only the
-harness artifact-identity, local-image-load, local-startup and runtime gates;
+tenant-bound telemetry and read-only action denial pass. The same image also
+executes one allowlisted PostgreSQL mutation with preview, signed approval,
+source-persisted idempotency, restart-safe replay, stale-write denial and
+compensation to the seeded value. This closes only the harness artifact-identity,
+local-image-load, local-startup and runtime gates;
 publication, exact-main CI, fault, soak, protocol and stakeholder gates remain.
 
 Phase 7 completes only when the same digest-pinned release set passes the four

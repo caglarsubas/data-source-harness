@@ -1,13 +1,13 @@
 {
   "schemaVersion": "data.harness.acceptance-release-set/v1",
   "campaignId": "phase7-white-goods-local-laptop-acceptance",
-  "releaseSet": "phase-7-local-harness-runtime-2026-08-28",
-  "generatedAt": "2026-08-28T11:23:53Z",
+  "releaseSet": "phase-7-local-mutation-runtime-2026-08-28",
+  "generatedAt": "2026-08-28T11:58:54Z",
   "artifacts": [
-    {"component": "data-source-harness", "repository": "https://github.com/caglarsubas/data-source-harness", "revision": "0d76362b6cb260377a267a0a99f67466ca456892", "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110"},
+    {"component": "data-source-harness", "repository": "https://github.com/caglarsubas/data-source-harness", "revision": "81283bbd35b18b7d705ad0963ba63e6f1f4f3b6f", "artifactDigest": "sha256:88e9791e4e49d9421065ccfca9b6b5a3f9755bc52645d06317dfde905037ce5b"},
     {"component": "ADLC", "repository": "https://github.com/caglarsubas/agent-hook-v2", "revision": "9bf6c11028a70944fda3f5e7ef315915768b9be7", "artifactDigest": null},
     {"component": "Python-SDK", "repository": "https://github.com/caglarsubas/planeon-orchestra-python-sdk", "revision": "3a4012d809e6ed00a3f05be940c5278eac20a166", "artifactDigest": null},
     {"component": "model-plane", "repository": "https://github.com/caglarsubas/llm_inference_engine", "revision": "e820728e14a6121c0549f4ef6d51baacd1fec573", "artifactDigest": null}
   ],
-  "notes": "This laptop-local Phase 7 candidate binds the harness runtime to its locally built ARM64 image while reusing the last certified Phase 6.5 source pins for the other components. The OCP reference lab is outside the runtime release set. Remaining null artifact digests are deliberate blockers; a local image digest is not publication or exact-main CI evidence."
+  "notes": "This laptop-local Phase 7 candidate binds the harness runtime and governed PostgreSQL mutation lifecycle to its locally built ARM64 image while reusing the last certified Phase 6.5 source pins for the other components. The OCP reference lab is outside the runtime release set. Remaining null artifact digests are deliberate blockers; a local image digest is not publication or exact-main CI evidence."
 }

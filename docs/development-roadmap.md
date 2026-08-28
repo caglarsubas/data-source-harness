@@ -251,13 +251,15 @@ Implemented readiness foundation:
 - prove bounded query planning, untrusted document decoding, governed semantic
   resolution, exact lineage, tenant-neutral telemetry and read-only action
   denial without published ports or external resources.
+- execute one allowlisted PostgreSQL mutation through preview and signed human
+  approval; persist the idempotency binding in the source, prove replay safety
+  after a gateway restart, deny a stale write and compensate to the seeded
+  value before teardown.
 
 Remaining laptop campaign:
 
 - build digest-pinned laptop-compatible images for ADLC and model-plane without
   contacting a registry during acceptance;
-- extend the harness proof from governed read-only denial to a deliberately
-  mutable mock source with preview, approval, idempotency and compensation;
 - run MCP/A2A conformance tools against the local runtime host and preserve the
   exact suite versions/results;
 - extend the proven Python-SDK receipt/ADLC parser seam into live ADLC evidence
