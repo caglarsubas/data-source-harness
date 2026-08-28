@@ -207,8 +207,9 @@ generalization, or stakeholder acceptance.
 
 ## Phase 7 — laptop-local combined-platform acceptance
 
-**Status:** local-only readiness ledger and four-source laptop runtime implemented
-in core version `0.11.0`; combined-platform campaign not complete.
+**Status:** local-only readiness ledger, four-source runtime and revision-bound
+cross-plane contract lab implemented in core version `0.12.0`; combined-platform
+campaign not complete.
 
 Implemented readiness foundation:
 
@@ -234,6 +235,15 @@ Implemented readiness foundation:
   verify query/list/consume/pagination behavior;
 - verify the Compose network is internal-only, has zero published ports and
   denies a public-egress connection; record zero external resources created.
+- execute the Python-SDK runtime-receipt builder from an exact local
+  `origin/main` revision, then validate the same bytes with exact ADLC source
+  inside a no-network, digest-bound local probe container;
+- prove ADLC denies a forged receipt transition and exercise model-plane's real
+  `/v1/health` and `/v1/rerank` routes with tenant attribution and a
+  deterministic local adapter;
+- feed model-plane scores through the harness candidate bound and ranking
+  validation, with all three mature component surfaces hashed into a
+  schema-bound evidence packet and zero external resources.
 
 Remaining laptop campaign:
 
@@ -244,8 +254,9 @@ Remaining laptop campaign:
   governed actions end to end;
 - run MCP/A2A conformance tools against the local runtime host and preserve the
   exact suite versions/results;
-- verify Python-SDK receipts/telemetry, ADLC evidence ingestion/promotion inputs
-  and model-plane embedding/reranking at one pinned local release set;
+- extend the proven Python-SDK receipt/ADLC parser seam into live ADLC evidence
+  ingestion and promotion inputs; replace the deterministic model adapter with
+  a pinned local embedding model at one release set;
 - deny non-loopback/non-Compose egress and execute dependency failure, process
   restart, laptop reboot/recovery and local resource-pressure drills;
 - capture soak/SLO results and named stakeholder acceptance separately.

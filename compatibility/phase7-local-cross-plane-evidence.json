@@ -1,0 +1,121 @@
+{
+  "campaignId": "phase7-white-goods-local-cross-plane-contracts",
+  "checks": [
+    {
+      "checkId": "repositories.revision-bound",
+      "passed": true
+    },
+    {
+      "checkId": "sdk.runtime-receipt-built",
+      "passed": true
+    },
+    {
+      "checkId": "adlc.runtime-receipt-accepted",
+      "passed": true
+    },
+    {
+      "checkId": "adlc.forged-receipt-denied",
+      "passed": true
+    },
+    {
+      "checkId": "model-plane.health-route",
+      "passed": true
+    },
+    {
+      "checkId": "model-plane.tenant-bound-rerank",
+      "passed": true
+    },
+    {
+      "checkId": "harness.governed-ranking",
+      "passed": true
+    },
+    {
+      "checkId": "boundary.zero-external-resources",
+      "passed": true
+    }
+  ],
+  "components": [
+    {
+      "component": "ADLC",
+      "files": [
+        {
+          "digest": "sha256:1861b734633ead102fbdc420c70aa534eb7c8d13628fcca83be8edb575d7c8fa",
+          "path": "prometa-platform/src/lib/release/receipt.ts"
+        },
+        {
+          "digest": "sha256:6f0966e9832836de7841252e607f93a6fd64c077622dd7728b99dc88e499f90d",
+          "path": "prometa-platform/src/lib/release/canonical-json.ts"
+        },
+        {
+          "digest": "sha256:9386732196c9269b179b9162ec081382af91742eaa34168baae981c4c191147d",
+          "path": "prometa-platform/tsconfig.json"
+        }
+      ],
+      "repository": "https://github.com/caglarsubas/agent-hook-v2",
+      "revision": "3406c3248434afd00e665601b489fe3f7293c1ba",
+      "surfaceDigest": "sha256:c15c90258ed62f4e3a9376ce1dd54c0de53e737f709b61d98dd7152a38977161"
+    },
+    {
+      "component": "Python-SDK",
+      "files": [
+        {
+          "digest": "sha256:64053b2060ddf61c7cfe975880eafc65929be0d4d05462daf36ac51592dfbf24",
+          "path": "prometa/runtime/receipts.py"
+        }
+      ],
+      "repository": "https://github.com/caglarsubas/planeon-orchestra-python-sdk",
+      "revision": "f45ba94f9e075179a5a0a15a6212fc9bb2470ece",
+      "surfaceDigest": "sha256:8c02f7cc4f968898a07439335504c4182bdda40b28a05ddfe6caf45ee43c75f9"
+    },
+    {
+      "component": "model-plane",
+      "files": [
+        {
+          "digest": "sha256:2e643af0aaccec79e121651a2bc8ee566485d96a0b6094a300ec2b4b5f1e8892",
+          "path": "src/inference_engine/api/rerank.py"
+        },
+        {
+          "digest": "sha256:40a8c887777293d3ed51240ce21163ca8a41a104855eb4c74af303ff927d8ec2",
+          "path": "src/inference_engine/auth.py"
+        },
+        {
+          "digest": "sha256:e7e4f65883f7a351b572d23d8a8d0cc95a8bb01c13a71e88311b93d4f4264c12",
+          "path": "src/inference_engine/main.py"
+        }
+      ],
+      "repository": "https://github.com/caglarsubas/llm_inference_engine",
+      "revision": "e820728e14a6121c0549f4ef6d51baacd1fec573",
+      "surfaceDigest": "sha256:e215f9f42dedf48f898f0b5f1c1e3414d9751757c9dbd47f58bf71d43e309758"
+    }
+  ],
+  "externalResourcesCreated": [],
+  "generatedAt": "2026-08-28T08:24:13+00:00",
+  "passed": true,
+  "rerank": {
+    "endpoint": "/v1/rerank",
+    "harnessRanking": [
+      1,
+      2,
+      0
+    ],
+    "model": "phase7:deterministic",
+    "resultOrder": [
+      1,
+      2,
+      0
+    ],
+    "tenant": {
+      "orgId": "org-lab",
+      "tenant": "whitegoods-lab"
+    }
+  },
+  "runtimeReceipt": {
+    "adlcPayloadDigest": "sha256:e0bd3863af2eae4e85e1e1bcf9a6c5134964ddcb08038e5443236b05ed463d54",
+    "adlcProbeImageDigest": "sha256:7e66ff01f1f202ebbcb6e4d6206869071e9886369d36cbfd8901ee9b8c195950",
+    "artifactDigest": "sha256:6de81ef8c7787cccdb9e98a6b17a8a3a170d81319bdf2e6c400f8c29269af47e",
+    "configurationDigest": "sha256:45b0234e1867e5c514372231ad277ce2549d5c43086f680b10675f445d5106cf",
+    "policyDigest": "sha256:705c91a0d0288f2ee022fda9e6ba2f0833ec141d23caace6df13d85df415f7a8",
+    "receiptId": "phase7-local-runtime-receipt"
+  },
+  "schemaVersion": "data.harness.local-cross-plane-evidence/v1"
+}

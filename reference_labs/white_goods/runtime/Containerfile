@@ -5,7 +5,7 @@ WORKDIR /opt/data-source-harness
 COPY wheels/ /opt/data-source-harness/wheels/
 RUN python -m pip install --no-cache-dir --no-index \
       --find-links=/opt/data-source-harness/wheels \
-      orchestra-data-source-harness==0.11.0 \
+      orchestra-data-source-harness==0.12.0 \
     && rm -rf /opt/data-source-harness/wheels
 
 USER 1001

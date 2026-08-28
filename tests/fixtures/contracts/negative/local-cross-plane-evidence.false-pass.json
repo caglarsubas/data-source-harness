@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "data.harness.local-cross-plane-evidence/v1",
+  "campaignId": "fixture-local-cross-plane",
+  "generatedAt": "2026-08-28T08:00:00Z",
+  "externalResourcesCreated": [],
+  "components": [
+    {
+      "component": "ADLC",
+      "repository": "https://github.com/example/adlc",
+      "revision": "1111111111111111111111111111111111111111",
+      "surfaceDigest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "files": [{"path": "src/receipt.ts", "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}]
+    },
+    {
+      "component": "Python-SDK",
+      "repository": "https://github.com/example/sdk",
+      "revision": "2222222222222222222222222222222222222222",
+      "surfaceDigest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "files": [{"path": "src/receipt.py", "digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"}]
+    },
+    {
+      "component": "model-plane",
+      "repository": "https://github.com/example/model-plane",
+      "revision": "3333333333333333333333333333333333333333",
+      "surfaceDigest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "files": [{"path": "src/rerank.py", "digest": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"}]
+    }
+  ],
+  "runtimeReceipt": {
+    "receiptId": "receipt-1",
+    "artifactDigest": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "policyDigest": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "configurationDigest": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "adlcPayloadDigest": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+    "adlcProbeImageDigest": "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0"
+  },
+  "rerank": {
+    "endpoint": "/v1/rerank",
+    "model": "fixture:1",
+    "tenant": {"tenant": "lab", "orgId": "org"},
+    "resultOrder": [1, 2, 0],
+    "harnessRanking": [1, 2, 0]
+  },
+  "checks": [
+    {"checkId": "one", "passed": false},
+    {"checkId": "two", "passed": true},
+    {"checkId": "three", "passed": true},
+    {"checkId": "four", "passed": true},
+    {"checkId": "five", "passed": true},
+    {"checkId": "six", "passed": true},
+    {"checkId": "seven", "passed": true},
+    {"checkId": "eight", "passed": true}
+  ],
+  "passed": true
+}

@@ -36,6 +36,12 @@ LOCAL_IMAGE_LOCK_PATH = REPOSITORY_ROOT / "compatibility/phase7-local-images.loc
 LOCAL_IMAGE_LOCK_SCHEMA_PATH = REPOSITORY_ROOT / "schemas/v1/local-image-lock.schema.json"
 LOCAL_SOURCE_EVIDENCE_PATH = REPOSITORY_ROOT / "compatibility/phase7-local-source-evidence.json"
 LOCAL_SOURCE_EVIDENCE_SCHEMA_PATH = REPOSITORY_ROOT / "schemas/v1/local-source-evidence.schema.json"
+LOCAL_CROSS_PLANE_EVIDENCE_PATH = (
+    REPOSITORY_ROOT / "compatibility/phase7-local-cross-plane-evidence.json"
+)
+LOCAL_CROSS_PLANE_EVIDENCE_SCHEMA_PATH = (
+    REPOSITORY_ROOT / "schemas/v1/local-cross-plane-evidence.schema.json"
+)
 GQM_PATH = Path(__file__).resolve().with_name("phase7_gqm_plan.json")
 OBSERVED_AT = datetime(2026, 8, 28, tzinfo=UTC)
 
@@ -168,6 +174,12 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
     local_source_evidence_schema = json.loads(
         LOCAL_SOURCE_EVIDENCE_SCHEMA_PATH.read_text(encoding="utf-8")
     )
+    local_cross_plane_evidence = json.loads(
+        LOCAL_CROSS_PLANE_EVIDENCE_PATH.read_text(encoding="utf-8")
+    )
+    local_cross_plane_evidence_schema = json.loads(
+        LOCAL_CROSS_PLANE_EVIDENCE_SCHEMA_PATH.read_text(encoding="utf-8")
+    )
     schema_errors = list(
         jsonschema.Draft202012Validator(
             schema, format_checker=jsonschema.FormatChecker()
@@ -180,6 +192,12 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         jsonschema.Draft202012Validator(
             local_source_evidence_schema, format_checker=jsonschema.FormatChecker()
         ).iter_errors(local_source_evidence)
+    )
+    local_cross_plane_evidence_errors = list(
+        jsonschema.Draft202012Validator(
+            local_cross_plane_evidence_schema,
+            format_checker=jsonschema.FormatChecker(),
+        ).iter_errors(local_cross_plane_evidence)
     )
     try:
         parsed = LocalLaptopAcceptanceCampaign.from_contract(committed_contract)
@@ -228,6 +246,23 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
     }
     locked_platforms = {
         f"{item['os']}/{item['architecture']}" for item in local_image_lock["images"]
+    }
+    expected_cross_plane_checks = {
+        "repositories.revision-bound",
+        "sdk.runtime-receipt-built",
+        "adlc.runtime-receipt-accepted",
+        "adlc.forged-receipt-denied",
+        "model-plane.health-route",
+        "model-plane.tenant-bound-rerank",
+        "harness.governed-ranking",
+        "boundary.zero-external-resources",
+    }
+    observed_cross_plane_checks = {item["checkId"] for item in local_cross_plane_evidence["checks"]}
+    cross_plane_components = {
+        item["component"] for item in local_cross_plane_evidence["components"]
+    }
+    cross_plane_surface_digests = {
+        item["surfaceDigest"] for item in local_cross_plane_evidence["components"]
     }
     local_only_compose = (
         set(services) == expected_services
@@ -304,6 +339,23 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
             "pullPolicy=never; publishedPorts=0",
         ),
         CertificationCheck(
+            "campaign.local-cross-plane-evidence",
+            not local_cross_plane_evidence_errors
+            and local_cross_plane_evidence["passed"] is True
+            and local_cross_plane_evidence["externalResourcesCreated"] == []
+            and observed_cross_plane_checks == expected_cross_plane_checks
+            and len(local_cross_plane_evidence["checks"]) == len(expected_cross_plane_checks)
+            and cross_plane_components == {"ADLC", "Python-SDK", "model-plane"}
+            and len(cross_plane_surface_digests) == 3
+            and local_cross_plane_evidence["rerank"]["resultOrder"] == [1, 2, 0]
+            and local_cross_plane_evidence["rerank"]["harnessRanking"] == [1, 2, 0]
+            and local_cross_plane_evidence["rerank"]["tenant"]
+            == {"tenant": "whitegoods-lab", "orgId": "org-lab"},
+            f"components={','.join(sorted(cross_plane_components))}; "
+            f"checks={len(local_cross_plane_evidence['checks'])}; "
+            f"externalResources={len(local_cross_plane_evidence['externalResourcesCreated'])}",
+        ),
+        CertificationCheck(
             "campaign.no-cloud-or-cluster-mutation",
             not parsed.cost_boundary.provisioning_authorized
             and not parsed.cost_boundary.resources_created
@@ -351,6 +403,18 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
             float(len(local_source_evidence["externalResourcesCreated"])),
             "local source lab",
         ),
+        _metric(
+            definitions,
+            "P7R-M10",
+            float(len(cross_plane_components)),
+            "revision-bound SDK, ADLC and model-plane contract surfaces",
+        ),
+        _metric(
+            definitions,
+            "P7R-M11",
+            float(len(local_cross_plane_evidence["externalResourcesCreated"])),
+            "local cross-plane contract lab",
+        ),
     )
     return Phase7ReadinessReport(
         "phase-7-readiness",
@@ -361,10 +425,11 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         metrics,
         parsed.blockers,
         "This readiness certificate validates the fail-closed laptop-local Phase 7 campaign "
-        "ledger, records source/CI observations and verifies four digest-bound source services "
-        "on a local Docker engine. GCP, OpenShift and remote-cluster provisioning are prohibited. "
+        "ledger, records source/CI observations, verifies four digest-bound source services and "
+        "runs revision-bound SDK receipt, ADLC validation and tenant-bound model-plane reranking "
+        "contract seams locally. GCP, OpenShift and remote-cluster provisioning are prohibited. "
         "It does not claim platform artifact publication, combined-platform image load/startup, "
-        "runtime, protocol conformance, fault, soak or stakeholder acceptance.",
+        "full runtime, protocol conformance, fault, soak or stakeholder acceptance.",
     )
 
 

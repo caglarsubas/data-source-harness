@@ -49,18 +49,19 @@ jobs:
       - name: Verify isolated wheel and embedded offline resources
         run: >-
           uv run --no-project --isolated
-          --with ./dist/orchestra_data_source_harness-0.11.0-py3-none-any.whl
+          --with ./dist/orchestra_data_source_harness-0.12.0-py3-none-any.whl
           python -c 'from importlib.resources import files; import data_source_harness as h;
           root = files("data_source_harness");
-          assert h.__version__ == "0.11.0";
+          assert h.__version__ == "0.12.0";
           assert (root / "resources/schemas/v1/data-batch.schema.json").is_file();
           assert (root / "resources/schemas/v1/connector-worker-profile.schema.json").is_file();
           assert (root / "resources/schemas/v1/live-acceptance-campaign.schema.json").is_file();
           assert (root / "resources/schemas/v1/local-source-evidence.schema.json").is_file();
+          assert (root / "resources/schemas/v1/local-cross-plane-evidence.schema.json").is_file();
           assert (root / "resources/deployment/profiles/local-laptop.json").is_file()'
       - run: >-
           uv run --no-project --isolated
-          --with ./dist/orchestra_data_source_harness-0.11.0-py3-none-any.whl
+          --with ./dist/orchestra_data_source_harness-0.12.0-py3-none-any.whl
           harness-contracts validate
       - run: uv run python -m reference_labs.white_goods.certify --output phase1-report.json
       - run: uv run python -m reference_labs.white_goods.certify_phase2 --output phase2-report.json

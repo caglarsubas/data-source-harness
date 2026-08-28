@@ -3,7 +3,7 @@
   "policy": "Resolve tags to approved digests and mirror them before deployment; mutable defaults are development-only.",
   "images": [
     {"component": "python-base", "environmentVariable": "PYTHON_BASE_IMAGE", "developmentDefault": "python:3.11-slim", "airgapDigest": null},
-    {"component": "harness-runtime", "environmentVariable": "HARNESS_IMAGE", "developmentDefault": "data-source-harness:0.11.0", "airgapDigest": null},
+    {"component": "harness-runtime", "environmentVariable": "HARNESS_IMAGE", "developmentDefault": "data-source-harness:0.12.0", "airgapDigest": null},
     {"component": "postgresql", "environmentVariable": "POSTGRES_IMAGE", "developmentDefault": "postgres:16", "airgapDigest": null},
     {"component": "object-store", "environmentVariable": "MINIO_IMAGE", "developmentDefault": "quay.io/minio/minio:latest", "airgapDigest": null},
     {"component": "event-stream", "environmentVariable": "REDPANDA_IMAGE", "developmentDefault": "docker.redpanda.com/redpandadata/redpanda:latest", "airgapDigest": null},

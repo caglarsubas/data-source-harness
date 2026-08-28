@@ -84,7 +84,7 @@ air-gap packet includes a pinned dependency wheelhouse and runtime container
 recipe. Previously produced OCP assets remain immutable historical artifacts;
 none is a current execution requirement.
 
-Phase 7 readiness is laptop-local in core version `0.11.0`. Its fail-closed
+Phase 7 readiness is laptop-local in core version `0.12.0`. Its fail-closed
 campaign covers the harness, ADLC, Python-SDK and model-plane plus local
 PostgreSQL, S3-compatible, Kafka-compatible and REST services. Mirror and cluster
 deployment gates are replaced by local image-load and local-startup gates.
@@ -100,6 +100,14 @@ confirms zero published ports and proves public egress is denied. Its immutable
 ARM64 image lock and schema-validated evidence remove all source-service
 verification blockers while leaving combined-platform blockers explicit.
 
+The Phase 7 local cross-plane contract lab executes mature component code from
+exact local `origin/main` revisions. Python-SDK constructs a runtime receipt,
+ADLC validates the same bytes and rejects a forged lifecycle transition in a
+no-network container, and model-plane serves its real health and rerank routes
+under a tenant identity. The harness applies its bounded ranking guard and
+records one schema-validated packet. This proves contract interoperability,
+not full production images, ADLC ingestion, model loading or platform startup.
+
 ## Developer quick start
 
 ```bash
@@ -109,6 +117,9 @@ uv run pytest
 uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
 make phase7-local-readiness
+# Explicit laptop-only evidence refreshes (not run by hosted CI):
+make phase7-local-sources
+make phase7-local-cross-plane
 ```
 
 To refresh the source-service evidence on a laptop where the locked images are
