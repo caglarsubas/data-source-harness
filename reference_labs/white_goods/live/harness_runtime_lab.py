@@ -7,7 +7,6 @@ import hashlib
 import json
 import shutil
 import subprocess
-import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -44,11 +43,12 @@ def _prepare_wheelhouse() -> dict[str, Any]:
             path.unlink()
         elif path.is_dir():
             shutil.rmtree(path)
+    pip = shutil.which("pip3") or shutil.which("pip")
+    if pip is None:
+        raise RuntimeError("a standalone pip executable is required to prepare the wheelhouse")
     subprocess.run(
         [
-            sys.executable,
-            "-m",
-            "pip",
+            pip,
             "download",
             "--dest",
             str(WHEELHOUSE_ROOT),
