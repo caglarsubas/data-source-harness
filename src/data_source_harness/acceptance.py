@@ -1,4 +1,4 @@
-"""Fail-closed evidence ledger for a live, cross-plane acceptance campaign."""
+"""Fail-closed evidence ledger for a laptop-local acceptance campaign."""
 
 from __future__ import annotations
 
@@ -18,7 +18,6 @@ REQUIRED_ACCEPTANCE_COMPONENTS = frozenset(
         "data-source-harness",
         "ADLC",
         "Python-SDK",
-        "OCP-reference-lab",
         "model-plane",
     }
 )
@@ -29,8 +28,8 @@ class AcceptanceStage(StrEnum):
     PR_CI = "pr-ci"
     EXACT_MAIN_CI = "exact-main-ci"
     PUBLICATION = "publication"
-    MIRROR = "mirror"
-    DEPLOYMENT = "deployment"
+    LOCAL_IMAGE_LOAD = "local-image-load"
+    LOCAL_STARTUP = "local-startup"
     RUNTIME = "runtime"
     FAULT = "fault"
     SOAK = "soak"
@@ -41,8 +40,8 @@ class AcceptanceStage(StrEnum):
 ARTIFACT_REQUIRED_STAGES = frozenset(
     {
         AcceptanceStage.PUBLICATION,
-        AcceptanceStage.MIRROR,
-        AcceptanceStage.DEPLOYMENT,
+        AcceptanceStage.LOCAL_IMAGE_LOAD,
+        AcceptanceStage.LOCAL_STARTUP,
         AcceptanceStage.RUNTIME,
         AcceptanceStage.FAULT,
         AcceptanceStage.SOAK,
@@ -188,8 +187,10 @@ class CostBoundary:
     external_mutations: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
-        if not self.provisioning_authorized and (self.resources_created or self.external_mutations):
-            raise ValueError("unauthorized campaign cannot record external mutations")
+        if self.provisioning_authorized:
+            raise ValueError("cloud or cluster provisioning is prohibited for local-only campaigns")
+        if self.resources_created or self.external_mutations:
+            raise ValueError("local-only campaign cannot record external resource mutations")
         for values in (self.resources_created, self.external_mutations):
             if len(values) != len(set(values)) or any(not value for value in values):
                 raise ValueError("cost-boundary entries must be non-empty and unique")
@@ -222,7 +223,7 @@ class LiveAcceptanceCampaign:
             len(components) != len(set(components))
             or set(components) != REQUIRED_ACCEPTANCE_COMPONENTS
         ):
-            raise ValueError("campaign must contain exactly the five platform components")
+            raise ValueError("campaign must contain exactly the four laptop-local components")
         shapes = [source.shape for source in self.sources]
         source_ids = [source.source_id for source in self.sources]
         connector_ids = [source.connector_id for source in self.sources]
@@ -357,3 +358,7 @@ class LiveAcceptanceCampaign:
         if value.get("blockers") != list(campaign.blockers):
             raise ValueError("declared blockers do not match observed evidence")
         return campaign
+
+
+# Backward-compatible implementation name; new callers should use the local-only name.
+LocalLaptopAcceptanceCampaign = LiveAcceptanceCampaign

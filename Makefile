@@ -1,4 +1,4 @@
-.PHONY: lint test contracts phase0 phase1 phase2 phase3 phase4 phase5 phase6 phase6.5 phase7-readiness build wheelhouse
+.PHONY: lint test contracts local-only phase0 phase1 phase2 phase3 phase4 phase5 phase6 phase6.5 phase7-readiness phase7-local-readiness build wheelhouse
 
 lint:
 	uv run ruff check .
@@ -10,10 +10,13 @@ test:
 contracts:
 	uv run harness-contracts validate
 
+local-only:
+	uv run python scripts/check-local-only.py
+
 build:
 	uv build
-	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.9.0-py3-none-any.whl python -c 'from importlib.resources import files; import data_source_harness as h; root = files("data_source_harness"); assert h.__version__ == "0.9.0"; assert (root / "resources/schemas/v1/data-batch.schema.json").is_file(); assert (root / "resources/schemas/v1/connector-worker-profile.schema.json").is_file(); assert (root / "resources/schemas/v1/live-acceptance-campaign.schema.json").is_file()'
-	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.9.0-py3-none-any.whl harness-contracts validate
+	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.10.0-py3-none-any.whl python -c 'from importlib.resources import files; import data_source_harness as h; root = files("data_source_harness"); assert h.__version__ == "0.10.0"; assert (root / "resources/schemas/v1/data-batch.schema.json").is_file(); assert (root / "resources/schemas/v1/connector-worker-profile.schema.json").is_file(); assert (root / "resources/schemas/v1/live-acceptance-campaign.schema.json").is_file(); assert (root / "resources/deployment/profiles/local-laptop.json").is_file()'
+	uv run --no-project --isolated --with ./dist/orchestra_data_source_harness-0.10.0-py3-none-any.whl harness-contracts validate
 
 wheelhouse: build
 	bash scripts/build-airgap-wheelhouse.sh
@@ -62,5 +65,7 @@ phase6.5: phase6 wheelhouse
 	uv run python -m reference_labs.white_goods.runtime_bundle verify
 	uv run python -m reference_labs.white_goods.runtime_bundle readiness
 
-phase7-readiness: phase6.5
+phase7-local-readiness: phase6.5 local-only
 	uv run python -m reference_labs.certify_phase7_readiness --output phase7-readiness-report.json
+
+phase7-readiness: phase7-local-readiness

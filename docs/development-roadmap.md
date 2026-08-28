@@ -147,11 +147,11 @@ combined-platform/live-source campaign is not complete and remains Phase 7.
 - the northbound adapter is exposed through version-pinned MCP `2026-07-28`
   tools and A2A `1.0` SendMessage profiles without leaking either protocol into
   the connector core;
-- integrate SDK telemetry/receipts, ADLC evidence and promotion inputs,
-  model-plane embedding/reranking and OCP deployment ownership through a
-  revision-pinned cross-plane evidence set;
-- produce a signed deterministic air-gap transfer packet with OpenShift
-  deployment/security templates and an explicit readiness record.
+- integrate SDK telemetry/receipts, ADLC evidence and promotion inputs, and
+  model-plane embedding/reranking through a revision-pinned cross-plane evidence
+  set; the OCP entry records only the historical Phase 6 ownership boundary;
+- preserve the signed air-gap packet and its OpenShift templates as historical
+  artifacts; current and future acceptance does not execute them.
 
 **Repository exit:** four representative source shapes run through the worker
 boundary; timeout, crash, oversize-response and cancellation faults fail closed;
@@ -188,62 +188,64 @@ Phase 7.
   CycloneDX dependency graph for all pinned runtime wheels;
 - publish redacted, tenant-neutral execution evidence through Python-SDK and
   ADLC ownership seams, and validate bounded tenant-bound model-plane reranking;
-- package an offline wheelhouse recipe, runtime container, lifecycle endpoint,
-  OpenShift configuration/service/probes/network policies and `oc-mirror` v2
-  input while leaving unresolved image and live-cluster gates false.
+- package an offline wheelhouse recipe, runtime container and lifecycle endpoint;
+  the OpenShift configuration and `oc-mirror` input produced by this historical
+  phase remain inert and outside the current execution plan.
 
 **Repository exit:** the planner, four-source pilot and subprocess worker path
 all execute; forged approvals, malformed delegations and spoofed container
 claims fail closed; the evidence schema requires exactly ADLC, Python-SDK,
 OCP-reference-lab and model-plane; the current evidence revisions equal the
 release-set lock; the signed transfer packet contains the declared offline and
-OpenShift assets; and the Phase 0–6 regression chain remains green.
+historical OpenShift assets; and the Phase 0–6 regression chain remains green.
 
 **Evidence boundary:** this phase proves deterministic fixtures, local process
 execution and interface seams. It does not run upstream repository CI or
 protocol suites, real PostgreSQL/S3/Kafka/REST services, an approved image build
-and scan, registry mirroring, live OpenShift deployment, runtime zero-egress or
-fault drills, production generalization, or stakeholder acceptance.
+and scan, laptop-container runtime zero-egress or fault drills, production
+generalization, or stakeholder acceptance.
 
-## Phase 7 — live combined-platform and disconnected-runtime acceptance
+## Phase 7 — laptop-local combined-platform acceptance
 
-**Status:** readiness ledger implemented in core version `0.9.0`; live campaign
-not complete and no completion claim.
+**Status:** local-only readiness ledger implemented in core version `0.10.0`;
+execution campaign not complete and no completion claim.
 
 Implemented readiness foundation:
 
-- define a `LiveAcceptanceCampaign` over the harness, ADLC, Python-SDK,
-  OCP-reference-lab and model-plane with exact source revisions and nullable
-  artifact digests;
-- require four unique credential-reference-only targets for PostgreSQL,
+- define a fail-closed campaign over the harness, ADLC, Python-SDK and
+  model-plane with exact source revisions and nullable artifact digests;
+- require four unique credential-reference-only local targets for PostgreSQL,
   S3-compatible storage, Kafka-compatible streaming and REST;
-- preserve an independent source, PR-CI, exact-main-CI, publication, mirror,
-  deployment, runtime, fault, soak, protocol-conformance and stakeholder state
-  for each platform component;
-- recompute the release-set digest, blockers and final acceptance so forged
-  derived fields fail closed;
-- record the initial read-only evidence snapshot: exact source identity for all
-  five components and exact-main CI for the harness, ADLC, OCP reference lab and
-  model plane; Python-SDK CI and all later lifecycle stages remain missing;
-- record `provisioningAuthorized: false`, zero resources created and zero
-  external mutations, keeping readiness work non-billable.
+- preserve independent source, PR-CI, exact-main-CI, publication,
+  local-image-load, local-startup, runtime, fault, soak, protocol-conformance
+  and stakeholder state for each component;
+- add `DeploymentMode.LOCAL_LAPTOP` with allowlisted Compose aliases/loopback,
+  no external telemetry and no registry mirror;
+- require `pull_policy: never`, no host-published ports and an internal-only
+  Compose network so startup cannot pull images or expose services;
+- reject provisioning authorization and all external resource mutations in the
+  campaign contract;
+- scan executable automation for GCP, cluster and infrastructure-provisioning
+  commands;
+- remove OCP-reference-lab from the Phase 7 release set. Its Phase 6/6.5 files
+  remain historical evidence and are not executed.
 
-Remaining live campaign:
+Remaining laptop campaign:
 
-- replace each fixture transport with a digest-pinned connector image against
-  live PostgreSQL, S3-compatible object storage, Kafka-compatible streaming and
-  REST services;
-- run upstream MCP/A2A conformance tools against the tenant runtime host and
-  preserve exact suite versions/results;
-- verify Python-SDK receipts/telemetry, ADLC evidence ingestion and promotion
-  inputs, model-plane embedding/reranking and OCP deployment overlays at one
-  pinned cross-plane release set;
-- mirror images and signatures with the supported disconnected OpenShift flow,
-  deploy to a live cluster, deny public egress and execute dependency, restart,
-  node-loss and recovery drills;
+- build or import digest-pinned laptop-compatible images for the four source
+  services, harness runtime, ADLC and model-plane without contacting a registry
+  during acceptance;
+- start the local topology and verify connector discovery, decoding, semantic
+  resolution, bounded queries, provenance and governed actions end to end;
+- run MCP/A2A conformance tools against the local runtime host and preserve the
+  exact suite versions/results;
+- verify Python-SDK receipts/telemetry, ADLC evidence ingestion/promotion inputs
+  and model-plane embedding/reranking at one pinned local release set;
+- deny non-loopback/non-Compose egress and execute dependency failure, process
+  restart, laptop reboot/recovery and local resource-pressure drills;
 - capture soak/SLO results and named stakeholder acceptance separately.
 
-**Exit:** source, PR CI, exact-main CI, publication, mirror, deployment,
-runtime, fault, soak, protocol-conformance and stakeholder states all pass for
-the same revisions and artifact digests. Local process/container evidence cannot
-substitute for this campaign.
+**Exit:** source, PR CI, exact-main CI, publication, local image load, local
+startup, runtime, fault, soak, protocol-conformance and stakeholder states all
+pass for the same revisions and artifact digests. No GCP, OpenShift, registry
+mirror or remote-cluster evidence is required or permitted.

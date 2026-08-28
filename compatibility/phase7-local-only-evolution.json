@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "data.harness.contract-evolution/v1",
+  "fromCoreVersion": "0.9.0",
+  "toCoreVersion": "0.10.0",
+  "decision": "replace Phase 7 remote-cluster acceptance with laptop-local acceptance",
+  "changes": [
+    "OCP-reference-lab removed from the Phase 7 runtime release set",
+    "mirror and deployment stages replaced by local-image-load and local-startup",
+    "provisioningAuthorized is permanently false and resource mutation lists are empty",
+    "Compose images use pull_policy never and must already exist on the laptop",
+    "local-laptop deployment mode permits only allowlisted service aliases and loopback"
+  ],
+  "historicalEvidence": "Phase 6 and 6.5 OpenShift packaging evidence remains immutable historical evidence and is not a current execution target."
+}

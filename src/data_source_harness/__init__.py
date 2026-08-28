@@ -7,6 +7,7 @@ from .acceptance import (
     LiveAcceptanceCampaign,
     LiveSourceShape,
     LiveSourceTarget,
+    LocalLaptopAcceptanceCampaign,
     ReleaseArtifact,
     StageEvidence,
 )
@@ -78,6 +79,7 @@ from .evidence import (
     EvidenceStatus,
     PlaneEvidence,
 )
+from .local_only import assert_local_only_automation, audit_local_only_automation
 from .models import CheckpointToken
 from .pack_factory import (
     DatasetBlueprint,
@@ -199,7 +201,10 @@ __all__ = [
     "HmacApprovalAuthority",
     "HttpDispatchResult",
     "IndustryPackDefinition",
+    "assert_local_only_automation",
+    "audit_local_only_automation",
     "LiveAcceptanceCampaign",
+    "LocalLaptopAcceptanceCampaign",
     "LiveSourceShape",
     "LiveSourceTarget",
     "MemoryCandidateStatus",
@@ -243,4 +248,4 @@ __all__ = [
     "verify_signed_package",
 ]
 
-__version__ = "0.9.0"
+__version__ = "0.10.0"

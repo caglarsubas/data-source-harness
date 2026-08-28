@@ -18,6 +18,13 @@
       "reason": "Adds optional expectedSources universe; all Phase-2 instances remain valid."
     },
     {
+      "schema": "deployment-profile.schema.json",
+      "baselineSha256": "94047eddb4d24285decbea9df0293ec41cd7612b87ed48fa28ec5638d7b939d3",
+      "currentSha256": "0ce0977f5df23bf1d07a96b3fecff2e276826ce43a69097f947864bd56b1b54b",
+      "backwardCompatible": true,
+      "reason": "Adds a constrained local-laptop mode; existing connected, self-hosted and air-gapped profiles remain valid."
+    },
+    {
       "schema": "freshness-observation.schema.json",
       "baselineSha256": "788282fcb2eeda3a6a31e8fb524cdeac634bfea4acb7d153924ed7f8133e94fa",
       "currentSha256": "3852082f9370193a74ff557b5cccb53d151e84ec3901ca5d51b8346590496bb5",
