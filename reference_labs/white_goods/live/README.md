@@ -17,5 +17,12 @@ provision GCP, OpenShift or any remote cluster. A successful Compose start is
 still only local-source evidence; it is not combined-platform publication,
 startup, runtime, fault, soak or stakeholder evidence.
 
+`make phase7-local-cross-plane` separately exercises mature neighboring
+repositories. It reads exact local `origin/main` source without modifying those
+checkouts, uses the preloaded ADLC builder image only as an offline TypeScript
+execution tool, and invokes the model-plane's local virtual environment. The
+result proves SDK receipt, ADLC validation and tenant-bound rerank contracts;
+it is not a production-image or full-platform startup claim.
+
 The existing `docker-compose.yml` remains a development topology for synthetic
 fixtures. It must not be cited as Phase 7 evidence.

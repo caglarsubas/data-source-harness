@@ -12,6 +12,8 @@ async def test_phase7_readiness_passes_without_claiming_live_acceptance() -> Non
     assert all(metric.passed for metric in report.metrics)
     assert "Python-SDK:exact-main-ci:missing" in report.blockers
     assert "four digest-bound source services" in report.evidence_boundary
+    assert "revision-bound SDK receipt" in report.evidence_boundary
+    assert any(check.check_id == "campaign.local-cross-plane-evidence" for check in report.checks)
     assert not any("live-verification-missing" in blocker for blocker in report.blockers)
 
 

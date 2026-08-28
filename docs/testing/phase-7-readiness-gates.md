@@ -20,6 +20,10 @@ certifies that:
   observed local runtime packet;
 - seeded PostgreSQL query, MinIO listing, Redpanda consumption and REST
   authentication/pagination checks pass;
+- exact local Python-SDK, ADLC and model-plane contract surfaces are
+  revision/digest bound; SDK receipt bytes pass ADLC validation, a forged
+  transition is denied, and tenant-bound model-plane reranking passes the
+  harness candidate/ranking guard;
 - Python-SDK CI, platform artifact publication, combined-platform image load
   and startup, protocol, runtime, fault, soak and stakeholder evidence
   remain blockers;
@@ -37,3 +41,10 @@ campaign closes every gate for one digest-pinned release set.
 requires the three upstream source images to be present locally, builds the REST
 mock with `--pull=false`, creates no host ports or external resources, and tears
 down its containers and volumes after verification.
+
+`make phase7-local-cross-plane` is a separate explicit laptop-only refresh. It
+requires sibling local checkouts of ADLC, Python-SDK and model-plane, the
+model-plane local virtual environment, and a preloaded ADLC builder/probe image.
+It archives exact `origin/main` seam files, runs the ADLC probe with
+`--network none`, and creates no external resources. Hosted CI validates the
+committed packet and never attempts to access those sibling checkouts.

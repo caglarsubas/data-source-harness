@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "data.harness.contract-evolution/v1",
+  "fromCoreVersion": "0.11.0",
+  "toCoreVersion": "0.12.0",
+  "decision": "add revision-bound local cross-plane contract evidence",
+  "changes": [
+    "execute the Python-SDK runtime receipt implementation from an exact local origin/main revision",
+    "validate the same receipt and a forged transition with exact ADLC source in a no-network local container",
+    "exercise the model-plane health and rerank routes with tenant attribution and harness ranking governance",
+    "retain production artifact, full startup, runtime, fault, soak, protocol and stakeholder blockers"
+  ]
+}

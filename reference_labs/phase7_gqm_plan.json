@@ -4,8 +4,9 @@
     {"goalId": "G1", "goal": "Prevent partial evidence from becoming a local-laptop acceptance claim", "metricIds": ["P7R-M1", "P7R-M2"]},
     {"goalId": "G2", "goal": "Bind every acceptance stage to exact platform revisions and artifact identities", "metricIds": ["P7R-M3", "P7R-M4"]},
     {"goalId": "G3", "goal": "Represent four laptop-local source shapes without embedding endpoints or credentials", "metricIds": ["P7R-M5"]},
-    {"goalId": "G4", "goal": "Prohibit GCP, OpenShift and remote-cluster resource mutations", "metricIds": ["P7R-M6", "P7R-M7", "P7R-M9"]},
-    {"goalId": "G5", "goal": "Verify four representative source services on the laptop", "metricIds": ["P7R-M8"]}
+    {"goalId": "G4", "goal": "Prohibit GCP, OpenShift and remote-cluster resource mutations", "metricIds": ["P7R-M6", "P7R-M7", "P7R-M9", "P7R-M11"]},
+    {"goalId": "G5", "goal": "Verify four representative source services on the laptop", "metricIds": ["P7R-M8"]},
+    {"goalId": "G6", "goal": "Exercise mature SDK, ADLC and model-plane contracts from revision-bound local sources", "metricIds": ["P7R-M10"]}
   ],
   "metrics": [
     {"metricId": "P7R-M1", "name": "campaign schema and derived-field integrity", "operator": "==", "threshold": 1.0},
@@ -16,6 +17,8 @@
     {"metricId": "P7R-M6", "name": "resources created by readiness certification", "operator": "==", "threshold": 0.0},
     {"metricId": "P7R-M7", "name": "external mutations by readiness certification", "operator": "==", "threshold": 0.0},
     {"metricId": "P7R-M8", "name": "digest-bound laptop source services verified", "operator": "==", "threshold": 4.0},
-    {"metricId": "P7R-M9", "name": "external resources created by local source lab", "operator": "==", "threshold": 0.0}
+    {"metricId": "P7R-M9", "name": "external resources created by local source lab", "operator": "==", "threshold": 0.0},
+    {"metricId": "P7R-M10", "name": "revision-bound mature component contract surfaces verified", "operator": "==", "threshold": 3.0},
+    {"metricId": "P7R-M11", "name": "external resources created by local cross-plane contract lab", "operator": "==", "threshold": 0.0}
   ]
 }

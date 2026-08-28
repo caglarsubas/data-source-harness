@@ -34,6 +34,7 @@
     {"name": "DisconnectedRuntimeReadiness", "schema": "schemas/v1/disconnected-runtime-readiness.schema.json"},
     {"name": "LocalImageLock", "schema": "schemas/v1/local-image-lock.schema.json"},
     {"name": "LocalSourceEvidence", "schema": "schemas/v1/local-source-evidence.schema.json"},
+    {"name": "LocalCrossPlaneEvidence", "schema": "schemas/v1/local-cross-plane-evidence.schema.json"},
     {"name": "LocalLaptopAcceptanceCampaign", "schema": "schemas/v1/live-acceptance-campaign.schema.json"}
   ]
 }
