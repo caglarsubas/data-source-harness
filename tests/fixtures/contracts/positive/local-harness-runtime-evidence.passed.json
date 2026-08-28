@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "data.harness.local-harness-runtime-evidence/v1",
+  "campaignId": "phase7-white-goods-local-harness-runtime",
+  "generatedAt": "2026-08-28T12:00:00Z",
+  "revision": "1111111111111111111111111111111111111111",
+  "artifactDigest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+  "baseImageDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+  "wheelhouseDigest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+  "harnessVersion": "0.13.0",
+  "networkMode": "compose-internal",
+  "externalResourcesCreated": [],
+  "sourceRecordCounts": {
+    "whitegoods.postgresql": 2,
+    "whitegoods.object-store": 4,
+    "whitegoods.event-stream": 9,
+    "whitegoods.service-api": 3
+  },
+  "checks": [
+    {"checkId": "c01", "passed": true, "observed": 1},
+    {"checkId": "c02", "passed": true, "observed": 1},
+    {"checkId": "c03", "passed": true, "observed": 1},
+    {"checkId": "c04", "passed": true, "observed": 1},
+    {"checkId": "c05", "passed": true, "observed": 1},
+    {"checkId": "c06", "passed": true, "observed": 1},
+    {"checkId": "c07", "passed": true, "observed": 1},
+    {"checkId": "c08", "passed": true, "observed": 1},
+    {"checkId": "c09", "passed": true, "observed": 1},
+    {"checkId": "c10", "passed": true, "observed": 1},
+    {"checkId": "c11", "passed": true, "observed": 1},
+    {"checkId": "c12", "passed": true, "observed": 1},
+    {"checkId": "c13", "passed": true, "observed": 1}
+  ],
+  "passed": true
+}

@@ -84,7 +84,7 @@ air-gap packet includes a pinned dependency wheelhouse and runtime container
 recipe. Previously produced OCP assets remain immutable historical artifacts;
 none is a current execution requirement.
 
-Phase 7 readiness is laptop-local in core version `0.12.0`. Its fail-closed
+Phase 7 readiness is laptop-local in core version `0.13.0`. Its fail-closed
 campaign covers the harness, ADLC, Python-SDK and model-plane plus local
 PostgreSQL, S3-compatible, Kafka-compatible and REST services. Mirror and cluster
 deployment gates are replaced by local image-load and local-startup gates.
@@ -108,6 +108,13 @@ under a tenant identity. The harness applies its bounded ranking guard and
 records one schema-validated packet. This proves contract interoperability,
 not full production images, ADLC ingestion, model loading or platform startup.
 
+The local harness-runtime lab builds an ARM64 acceptance image from the
+preloaded Python base, the harness wheel and a pinned wheelhouse. On the same
+internal network, real PostgreSQL, S3-compatible, Kafka-compatible and REST
+connectors run through `HarnessGateway`. The evidence covers discovery, bounded
+queries, untrusted decoding, semantic resolution, exact provenance and
+read-only action denial without published ports or external resources.
+
 ## Developer quick start
 
 ```bash
@@ -120,6 +127,7 @@ make phase7-local-readiness
 # Explicit laptop-only evidence refreshes (not run by hosted CI):
 make phase7-local-sources
 make phase7-local-cross-plane
+make phase7-local-harness
 ```
 
 To refresh the source-service evidence on a laptop where the locked images are

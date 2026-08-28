@@ -85,6 +85,22 @@ services:
       timeout: 3s
       retries: 20
 
+  harness-acceptance:
+    image: ${PHASE7_HARNESS_IMAGE:?set the locally built harness image by digest}
+    pull_policy: never
+    profiles: [phase7-harness]
+    environment:
+      HARNESS_SOURCE_REVISION: ${PHASE7_HARNESS_SOURCE_REVISION:?set the exact source revision}
+      HARNESS_ARTIFACT_DIGEST: ${PHASE7_HARNESS_IMAGE:?set the harness artifact digest}
+      HARNESS_VERSION: ${PHASE7_HARNESS_VERSION:?set the harness version}
+    secrets:
+      - postgres-user
+      - postgres-password
+      - object-store-user
+      - object-store-password
+      - service-api-credential
+    networks: [lab-internal]
+
 networks:
   lab-internal:
     internal: true

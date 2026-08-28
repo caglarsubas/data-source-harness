@@ -2,10 +2,10 @@
   "accepted": false,
   "artifacts": [
     {
-      "artifactDigest": null,
+      "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
       "component": "data-source-harness",
       "repository": "https://github.com/caglarsubas/data-source-harness",
-      "revision": "74cd16877253d7dbc0995063b8f611be767376f8"
+      "revision": "0d76362b6cb260377a267a0a99f67466ca456892"
     },
     {
       "artifactDigest": null,
@@ -29,7 +29,6 @@
   "blockers": [
     "ADLC:artifact-digest-missing",
     "Python-SDK:artifact-digest-missing",
-    "data-source-harness:artifact-digest-missing",
     "model-plane:artifact-digest-missing",
     "ADLC:pr-ci:missing",
     "ADLC:publication:missing",
@@ -51,10 +50,8 @@
     "Python-SDK:protocol-conformance:missing",
     "Python-SDK:stakeholder:missing",
     "data-source-harness:pr-ci:missing",
+    "data-source-harness:exact-main-ci:missing",
     "data-source-harness:publication:missing",
-    "data-source-harness:local-image-load:missing",
-    "data-source-harness:local-startup:missing",
-    "data-source-harness:runtime:missing",
     "data-source-harness:fault:missing",
     "data-source-harness:soak:missing",
     "data-source-harness:protocol-conformance:missing",
@@ -77,13 +74,13 @@
   },
   "evidence": [
     {
-      "artifactDigest": null,
+      "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
       "component": "data-source-harness",
       "observedAt": "2026-08-28T00:00:00+00:00",
       "references": [
-        "https://github.com/caglarsubas/data-source-harness/commit/74cd16877253d7dbc0995063b8f611be767376f8"
+        "https://github.com/caglarsubas/data-source-harness/commit/0d76362b6cb260377a267a0a99f67466ca456892"
       ],
-      "revision": "74cd16877253d7dbc0995063b8f611be767376f8",
+      "revision": "0d76362b6cb260377a267a0a99f67466ca456892",
       "stage": "source",
       "status": "passed"
     },
@@ -122,18 +119,6 @@
     },
     {
       "artifactDigest": null,
-      "component": "data-source-harness",
-      "observedAt": "2026-08-28T00:00:00+00:00",
-      "references": [
-        "https://github.com/caglarsubas/data-source-harness/actions/runs/33092591951",
-        "https://github.com/caglarsubas/data-source-harness/actions/runs/33092592077"
-      ],
-      "revision": "74cd16877253d7dbc0995063b8f611be767376f8",
-      "stage": "exact-main-ci",
-      "status": "passed"
-    },
-    {
-      "artifactDigest": null,
       "component": "ADLC",
       "observedAt": "2026-08-28T00:00:00+00:00",
       "references": [
@@ -154,11 +139,44 @@
       "revision": "e820728e14a6121c0549f4ef6d51baacd1fec573",
       "stage": "exact-main-ci",
       "status": "passed"
+    },
+    {
+      "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
+      "component": "data-source-harness",
+      "observedAt": "2026-08-28T11:23:53+00:00",
+      "references": [
+        "local-evidence://phase7/data-source-harness/local-image-load"
+      ],
+      "revision": "0d76362b6cb260377a267a0a99f67466ca456892",
+      "stage": "local-image-load",
+      "status": "passed"
+    },
+    {
+      "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
+      "component": "data-source-harness",
+      "observedAt": "2026-08-28T11:23:53+00:00",
+      "references": [
+        "local-evidence://phase7/data-source-harness/local-startup"
+      ],
+      "revision": "0d76362b6cb260377a267a0a99f67466ca456892",
+      "stage": "local-startup",
+      "status": "passed"
+    },
+    {
+      "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
+      "component": "data-source-harness",
+      "observedAt": "2026-08-28T11:23:53+00:00",
+      "references": [
+        "local-evidence://phase7/data-source-harness/runtime"
+      ],
+      "revision": "0d76362b6cb260377a267a0a99f67466ca456892",
+      "stage": "runtime",
+      "status": "passed"
     }
   ],
-  "generatedAt": "2026-08-28T00:00:00+00:00",
-  "releaseSet": "phase-6.5-integration-spine-2026-08-27",
-  "releaseSetDigest": "sha256:24ba4d423b613abb5ae576a8aed049b94bd4fdb1361d2f0171f23c61962fb83a",
+  "generatedAt": "2026-08-28T11:23:53+00:00",
+  "releaseSet": "phase-7-local-harness-runtime-2026-08-28",
+  "releaseSetDigest": "sha256:bdb7b30b20bf8c35f3ced2dd8258754c7fe34017dd7a07da686cc5e3dd9c0460",
   "schemaVersion": "data.harness/v1",
   "sources": [
     {

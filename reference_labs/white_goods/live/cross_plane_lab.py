@@ -166,7 +166,7 @@ def _sdk_receipt(repository: Path, revision: str) -> dict[str, Any]:
         target_environment="test",
         runtime_target="data-source-harness",
         runtime_id="white-goods-reference-lab",
-        runtime_version="0.12.0",
+        runtime_version="0.13.0",
         transition="active",
         outcome="succeeded",
         receipt_id="phase7-local-runtime-receipt",
