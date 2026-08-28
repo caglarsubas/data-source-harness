@@ -5,7 +5,7 @@ local source shapes. Every service is behind the explicit `phase7-local` profile
 has no host-published port, and joins an internal-only network. Images have no
 defaults: an operator must preload and supply an approved digest reference for PostgreSQL,
 MinIO, Redpanda and the contract-backed service API. Credentials enter through
-local secret files and are not committed.
+ephemeral environment-backed Compose secrets and are not committed or written by the harness.
 
 The template is packaged and statically checked by `make phase7-readiness` but
 is not started by CI. `make phase7-local-sources` is the explicit laptop-only

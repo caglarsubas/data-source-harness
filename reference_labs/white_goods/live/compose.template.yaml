@@ -91,12 +91,12 @@ networks:
 
 secrets:
   postgres-user:
-    file: ${PHASE7_POSTGRES_USER_FILE:?set a local secret-file path}
+    environment: PHASE7_POSTGRES_USER
   postgres-password:
-    file: ${PHASE7_POSTGRES_PASSWORD_FILE:?set a local secret-file path}
+    environment: PHASE7_POSTGRES_PASSWORD
   object-store-user:
-    file: ${PHASE7_OBJECT_STORE_USER_FILE:?set a local secret-file path}
+    environment: PHASE7_OBJECT_STORE_USER
   object-store-password:
-    file: ${PHASE7_OBJECT_STORE_PASSWORD_FILE:?set a local secret-file path}
+    environment: PHASE7_OBJECT_STORE_PASSWORD
   service-api-credential:
-    file: ${PHASE7_SERVICE_API_CREDENTIAL_FILE:?set a local secret-file path}
+    environment: PHASE7_SERVICE_API_CREDENTIAL

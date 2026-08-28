@@ -166,7 +166,7 @@
       "endpointReference": "credential-ref://phase7/postgresql",
       "imageDigest": "sha256:95206741a5b214807675e14165369d05b93a9cf692223b616d07cca227e74b0b",
       "liveVerified": true,
-      "observedAt": "2026-08-28T07:40:37+00:00",
+      "observedAt": "2026-08-28T07:46:12+00:00",
       "references": [
         "local-evidence://phase7/whitegoods.postgresql"
       ],
@@ -178,7 +178,7 @@
       "endpointReference": "credential-ref://phase7/object-store",
       "imageDigest": "sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e",
       "liveVerified": true,
-      "observedAt": "2026-08-28T07:40:37+00:00",
+      "observedAt": "2026-08-28T07:46:12+00:00",
       "references": [
         "local-evidence://phase7/whitegoods.object-store"
       ],
@@ -190,7 +190,7 @@
       "endpointReference": "credential-ref://phase7/event-stream",
       "imageDigest": "sha256:468bd13a9f2bd24794cb7fddc867c767fb1008b9a07b297b89fde48c564d7d96",
       "liveVerified": true,
-      "observedAt": "2026-08-28T07:40:37+00:00",
+      "observedAt": "2026-08-28T07:46:12+00:00",
       "references": [
         "local-evidence://phase7/whitegoods.event-stream"
       ],
@@ -202,7 +202,7 @@
       "endpointReference": "credential-ref://phase7/service-api",
       "imageDigest": "sha256:4526bbf5bac4f1f73a7807070064d014e2b65b4a1be90739b1043416bf61ce7f",
       "liveVerified": true,
-      "observedAt": "2026-08-28T07:40:37+00:00",
+      "observedAt": "2026-08-28T07:46:12+00:00",
       "references": [
         "local-evidence://phase7/whitegoods.service-api"
       ],

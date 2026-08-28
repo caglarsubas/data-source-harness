@@ -9,7 +9,6 @@ import os
 import re
 import secrets
 import subprocess
-import tempfile
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -170,22 +169,8 @@ def build_image_lock() -> dict[str, Any]:
     }
 
 
-def _write_secret(path: Path, value: str) -> None:
-    path.write_text(value + "\n", encoding="utf-8")
-    path.chmod(0o600)
-
-
-def _compose_environment(lock: dict[str, Any], secret_dir: Path) -> dict[str, str]:
+def _compose_environment(lock: dict[str, Any]) -> dict[str, str]:
     by_source = {item["sourceId"]: item for item in lock["images"]}
-    secret_values = {
-        "postgres-user": "lab",
-        "postgres-password": secrets.token_urlsafe(24),
-        "object-store-user": "labadmin",
-        "object-store-password": secrets.token_urlsafe(24),
-        "service-api-credential": secrets.token_urlsafe(24),
-    }
-    for name, value in secret_values.items():
-        _write_secret(secret_dir / name, value)
     env = os.environ.copy()
     env.update(
         {
@@ -193,11 +178,11 @@ def _compose_environment(lock: dict[str, Any], secret_dir: Path) -> dict[str, st
             "PHASE7_MINIO_IMAGE": by_source["whitegoods.object-store"]["imageDigest"],
             "PHASE7_REDPANDA_IMAGE": by_source["whitegoods.event-stream"]["imageDigest"],
             "PHASE7_SERVICE_API_IMAGE": by_source["whitegoods.service-api"]["imageDigest"],
-            "PHASE7_POSTGRES_USER_FILE": str(secret_dir / "postgres-user"),
-            "PHASE7_POSTGRES_PASSWORD_FILE": str(secret_dir / "postgres-password"),
-            "PHASE7_OBJECT_STORE_USER_FILE": str(secret_dir / "object-store-user"),
-            "PHASE7_OBJECT_STORE_PASSWORD_FILE": str(secret_dir / "object-store-password"),
-            "PHASE7_SERVICE_API_CREDENTIAL_FILE": str(secret_dir / "service-api-credential"),
+            "PHASE7_POSTGRES_USER": "lab",
+            "PHASE7_POSTGRES_PASSWORD": secrets.token_urlsafe(24),
+            "PHASE7_OBJECT_STORE_USER": "labadmin",
+            "PHASE7_OBJECT_STORE_PASSWORD": secrets.token_urlsafe(24),
+            "PHASE7_SERVICE_API_CREDENTIAL": secrets.token_urlsafe(24),
         }
     )
     return env
@@ -397,24 +382,23 @@ def _verify(env: dict[str, str], lock: dict[str, Any]) -> dict[str, Any]:
 
 def run_local_lab(*, keep_running: bool = False) -> tuple[dict[str, Any], dict[str, Any]]:
     lock = build_image_lock()
-    with tempfile.TemporaryDirectory(prefix="phase7-local-secrets-") as directory:
-        env = _compose_environment(lock, Path(directory))
-        _run(_compose_args("down", "--volumes", "--remove-orphans"), env=env, check=False)
-        try:
-            _run(_compose_args("up", "-d", "--wait", "--wait-timeout", "180"), env=env)
-            _seed(env)
-            report = _verify(env, lock)
-            if not report["passed"]:
-                failed = [check["checkId"] for check in report["checks"] if not check["passed"]]
-                raise RuntimeError("local source verification failed: " + ", ".join(failed))
-            return lock, report
-        finally:
-            if not keep_running:
-                _run(
-                    _compose_args("down", "--volumes", "--remove-orphans"),
-                    env=env,
-                    check=False,
-                )
+    env = _compose_environment(lock)
+    _run(_compose_args("down", "--volumes", "--remove-orphans"), env=env, check=False)
+    try:
+        _run(_compose_args("up", "-d", "--wait", "--wait-timeout", "180"), env=env)
+        _seed(env)
+        report = _verify(env, lock)
+        if not report["passed"]:
+            failed = [check["checkId"] for check in report["checks"] if not check["passed"]]
+            raise RuntimeError("local source verification failed: " + ", ".join(failed))
+        return lock, report
+    finally:
+        if not keep_running:
+            _run(
+                _compose_args("down", "--volumes", "--remove-orphans"),
+                env=env,
+                check=False,
+            )
 
 
 def main(argv: list[str] | None = None) -> int:
