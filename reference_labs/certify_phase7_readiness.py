@@ -42,6 +42,12 @@ LOCAL_CROSS_PLANE_EVIDENCE_PATH = (
 LOCAL_CROSS_PLANE_EVIDENCE_SCHEMA_PATH = (
     REPOSITORY_ROOT / "schemas/v1/local-cross-plane-evidence.schema.json"
 )
+LOCAL_HARNESS_RUNTIME_EVIDENCE_PATH = (
+    REPOSITORY_ROOT / "compatibility/phase7-local-harness-runtime-evidence.json"
+)
+LOCAL_HARNESS_RUNTIME_EVIDENCE_SCHEMA_PATH = (
+    REPOSITORY_ROOT / "schemas/v1/local-harness-runtime-evidence.schema.json"
+)
 GQM_PATH = Path(__file__).resolve().with_name("phase7_gqm_plan.json")
 OBSERVED_AT = datetime(2026, 8, 28, tzinfo=UTC)
 
@@ -91,10 +97,6 @@ def _observed_evidence(artifacts: tuple[ReleaseArtifact, ...]) -> tuple[StageEvi
         for component, artifact in by_component.items()
     }
     exact_main_references = {
-        "data-source-harness": (
-            "https://github.com/caglarsubas/data-source-harness/actions/runs/33092591951",
-            "https://github.com/caglarsubas/data-source-harness/actions/runs/33092592077",
-        ),
         "ADLC": (
             "https://github.com/caglarsubas/agent-hook-v2/actions/runs/33087853316",
             "https://github.com/caglarsubas/agent-hook-v2/actions/runs/33087853263",
@@ -126,6 +128,24 @@ def _observed_evidence(artifacts: tuple[ReleaseArtifact, ...]) -> tuple[StageEvi
             references,
         )
         for component, references in exact_main_references.items()
+    )
+    harness_runtime = json.loads(LOCAL_HARNESS_RUNTIME_EVIDENCE_PATH.read_text(encoding="utf-8"))
+    harness = by_component["data-source-harness"]
+    observations.extend(
+        StageEvidence(
+            "data-source-harness",
+            stage,
+            EvidenceStatus.PASSED,
+            harness.revision,
+            harness.artifact_digest,
+            datetime.fromisoformat(harness_runtime["generatedAt"]),
+            (f"local-evidence://phase7/data-source-harness/{stage.value}",),
+        )
+        for stage in (
+            AcceptanceStage.LOCAL_IMAGE_LOAD,
+            AcceptanceStage.LOCAL_STARTUP,
+            AcceptanceStage.RUNTIME,
+        )
     )
     return tuple(observations)
 
@@ -180,6 +200,12 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
     local_cross_plane_evidence_schema = json.loads(
         LOCAL_CROSS_PLANE_EVIDENCE_SCHEMA_PATH.read_text(encoding="utf-8")
     )
+    local_harness_runtime_evidence = json.loads(
+        LOCAL_HARNESS_RUNTIME_EVIDENCE_PATH.read_text(encoding="utf-8")
+    )
+    local_harness_runtime_evidence_schema = json.loads(
+        LOCAL_HARNESS_RUNTIME_EVIDENCE_SCHEMA_PATH.read_text(encoding="utf-8")
+    )
     schema_errors = list(
         jsonschema.Draft202012Validator(
             schema, format_checker=jsonschema.FormatChecker()
@@ -198,6 +224,12 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
             local_cross_plane_evidence_schema,
             format_checker=jsonschema.FormatChecker(),
         ).iter_errors(local_cross_plane_evidence)
+    )
+    local_harness_runtime_evidence_errors = list(
+        jsonschema.Draft202012Validator(
+            local_harness_runtime_evidence_schema,
+            format_checker=jsonschema.FormatChecker(),
+        ).iter_errors(local_harness_runtime_evidence)
     )
     try:
         parsed = LocalLaptopAcceptanceCampaign.from_contract(committed_contract)
@@ -265,6 +297,27 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
     cross_plane_surface_digests = {
         item["surfaceDigest"] for item in local_cross_plane_evidence["components"]
     }
+    expected_harness_runtime_checks = {
+        "runtime.connectors-healthy",
+        "harness.discovery-four-shapes",
+        "harness.bounded-postgresql-query",
+        "harness.s3-decode-untrusted",
+        "harness.kafka-bounded-snapshot",
+        "harness.rest-auth-pagination",
+        "harness.exact-provenance",
+        "harness.semantic-resolution",
+        "governance.read-only-action-denied",
+        "runtime.gateway-telemetry",
+        "artifact.local-image-loaded",
+        "artifact.offline-wheelhouse-bound",
+        "runtime.internal-network-only",
+    }
+    observed_harness_runtime_checks = {
+        item["checkId"] for item in local_harness_runtime_evidence["checks"]
+    }
+    harness_artifact = next(
+        item for item in expected.artifacts if item.component == "data-source-harness"
+    )
     local_only_compose = (
         set(services) == expected_services
         and compose.get("networks", {}).get("lab-internal", {}).get("internal") is True
@@ -307,8 +360,9 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         ),
         CertificationCheck(
             "campaign.exact-main-observations",
-            exact_main_components == {"data-source-harness", "ADLC", "model-plane"},
-            f"observed={','.join(sorted(exact_main_components))}; Python-SDK=missing",
+            exact_main_components == {"ADLC", "model-plane"},
+            f"observed={','.join(sorted(exact_main_components))}; "
+            "data-source-harness,Python-SDK=missing",
         ),
         CertificationCheck(
             "campaign.local-source-boundary",
@@ -358,6 +412,18 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
             f"components={','.join(sorted(cross_plane_components))}; "
             f"checks={len(local_cross_plane_evidence['checks'])}; "
             f"externalResources={len(local_cross_plane_evidence['externalResourcesCreated'])}",
+        ),
+        CertificationCheck(
+            "campaign.local-harness-runtime-evidence",
+            not local_harness_runtime_evidence_errors
+            and local_harness_runtime_evidence["passed"] is True
+            and local_harness_runtime_evidence["externalResourcesCreated"] == []
+            and observed_harness_runtime_checks == expected_harness_runtime_checks
+            and local_harness_runtime_evidence["revision"] == harness_artifact.revision
+            and local_harness_runtime_evidence["artifactDigest"] == harness_artifact.artifact_digest
+            and local_harness_runtime_evidence["networkMode"] == "compose-internal",
+            f"checks={len(observed_harness_runtime_checks)}; "
+            f"externalResources={len(local_harness_runtime_evidence['externalResourcesCreated'])}",
         ),
         CertificationCheck(
             "campaign.no-cloud-or-cluster-mutation",
@@ -419,6 +485,18 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
             float(len(local_cross_plane_evidence["externalResourcesCreated"])),
             "local cross-plane contract lab",
         ),
+        _metric(
+            definitions,
+            "P7R-M12",
+            float(len(local_harness_runtime_evidence["sourceRecordCounts"])),
+            "real harness connector paths",
+        ),
+        _metric(
+            definitions,
+            "P7R-M13",
+            float(len(local_harness_runtime_evidence["externalResourcesCreated"])),
+            "local harness runtime lab",
+        ),
     )
     return Phase7ReadinessReport(
         "phase-7-readiness",
@@ -429,11 +507,12 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         metrics,
         parsed.blockers,
         "This readiness certificate validates the fail-closed laptop-local Phase 7 campaign "
-        "ledger, records source/CI observations, verifies four digest-bound source services and "
-        "runs revision-bound SDK receipt, ADLC validation and tenant-bound model-plane reranking "
-        "contract seams locally. GCP, OpenShift and remote-cluster provisioning are prohibited. "
-        "It does not claim platform artifact publication, combined-platform image load/startup, "
-        "full runtime, protocol conformance, fault, soak or stakeholder acceptance.",
+        "ledger, verifies four digest-bound source services, runs the revision-bound SDK receipt, "
+        "ADLC and model-plane contract seams, and executes the digest-bound harness image through "
+        "four real connector paths locally. GCP, OpenShift and remote-cluster provisioning are "
+        "prohibited. "
+        "It does not claim harness publication or exact-main CI for this candidate, other "
+        "platform images/startup, protocol conformance, fault, soak or stakeholder acceptance.",
     )
 
 

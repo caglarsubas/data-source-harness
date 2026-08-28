@@ -1,0 +1,86 @@
+{
+  "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
+  "baseImageDigest": "sha256:c3d81d25b3154142b0b42eb1e61300024426268edeb5b5a26dd7ddf64d9daf28",
+  "campaignId": "phase7-white-goods-local-harness-runtime",
+  "checks": [
+    {
+      "checkId": "runtime.connectors-healthy",
+      "observed": 4,
+      "passed": true
+    },
+    {
+      "checkId": "harness.discovery-four-shapes",
+      "observed": 8,
+      "passed": true
+    },
+    {
+      "checkId": "harness.bounded-postgresql-query",
+      "observed": 2,
+      "passed": true
+    },
+    {
+      "checkId": "harness.s3-decode-untrusted",
+      "observed": 390,
+      "passed": true
+    },
+    {
+      "checkId": "harness.kafka-bounded-snapshot",
+      "observed": 9,
+      "passed": true
+    },
+    {
+      "checkId": "harness.rest-auth-pagination",
+      "observed": 3,
+      "passed": true
+    },
+    {
+      "checkId": "harness.exact-provenance",
+      "observed": 18,
+      "passed": true
+    },
+    {
+      "checkId": "harness.semantic-resolution",
+      "observed": 2,
+      "passed": true
+    },
+    {
+      "checkId": "governance.read-only-action-denied",
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "checkId": "runtime.gateway-telemetry",
+      "observed": 16,
+      "passed": true
+    },
+    {
+      "checkId": "artifact.local-image-loaded",
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "checkId": "artifact.offline-wheelhouse-bound",
+      "observed": 18,
+      "passed": true
+    },
+    {
+      "checkId": "runtime.internal-network-only",
+      "observed": 1,
+      "passed": true
+    }
+  ],
+  "externalResourcesCreated": [],
+  "generatedAt": "2026-08-28T11:23:53+00:00",
+  "harnessVersion": "0.13.0",
+  "networkMode": "compose-internal",
+  "passed": true,
+  "revision": "0d76362b6cb260377a267a0a99f67466ca456892",
+  "schemaVersion": "data.harness.local-harness-runtime-evidence/v1",
+  "sourceRecordCounts": {
+    "whitegoods.event-stream": 9,
+    "whitegoods.object-store": 4,
+    "whitegoods.postgresql": 2,
+    "whitegoods.service-api": 3
+  },
+  "wheelhouseDigest": "sha256:54d10129dfb248b646a9ba04f237f99a8bd749a6ab2e32a53ce021475f972f4c"
+}
