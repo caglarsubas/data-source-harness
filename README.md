@@ -21,7 +21,7 @@ planes:
 The control plane is never required synchronously for a production source,
 retrieval, tool, or model request.
 
-## Implemented scope through Phase 6.5
+## Implemented scope through Phase 7 readiness
 
 Phase 0 establishes the reusable scaffold:
 
@@ -85,6 +85,15 @@ container recipe, health probes, service, configuration, network policies and
 an `oc-mirror` v2 image-set template. None of these local checks substitutes for
 live combined-platform acceptance.
 
+Phase 7 readiness adds a fail-closed live-acceptance campaign ledger. Every
+source, PR-CI, exact-main-CI, publication, mirror, deployment, runtime, fault,
+soak, protocol-conformance and stakeholder observation is bound independently
+to one of the five exact platform revisions and, once published, its artifact
+digest. The campaign also requires four credential-reference-only live source
+targets. The committed readiness snapshot records read-only source and CI
+observations, zero resource creation, and every remaining blocker; it is not a
+live Phase 7 acceptance claim.
+
 ## Developer quick start
 
 ```bash
@@ -93,7 +102,7 @@ uv run ruff check .
 uv run pytest
 uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
-make phase6.5
+make phase7-readiness
 ```
 
 The built wheel embeds the versioned schemas, contract catalog, deployment
@@ -111,9 +120,9 @@ profiles, and neutral reference-lab manifest under
 - Missing, partial, stale, ambiguous, and unauthorized evidence remain visible
   in coverage statements rather than being converted into success.
 
-See [Phase 6.5 architecture](docs/architecture/phase-6.5-integration-spine.md)
-for the execution spine, trust boundaries, cross-plane seams and air-gap
-handoff.
+See [Phase 7 readiness architecture](docs/architecture/phase-7-live-acceptance.md)
+for the evidence matrix, live-source identities, cost boundary and completion
+rules.
 
 The staged [development roadmap](docs/development-roadmap.md) defines the
 white-goods and cold-chain pilots without coupling the core to either industry.

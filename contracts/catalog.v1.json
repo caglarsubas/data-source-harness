@@ -1,6 +1,6 @@
 {
   "schemaVersion": "data.harness.catalog/v1",
-  "scope": "phase-6",
+  "scope": "phase-7-readiness",
   "ownershipRule": "reuse upstream contracts; introduce only data-plane-specific contracts here",
   "reusedContracts": [
     {"owner": "ADLC", "names": ["IntegrationManifest", "CredentialReference", "EgressPolicy", "CapabilityProfile", "HealthObservation", "ConformanceResult", "SupportProfile", "RetrievalRequest", "ProvenancePackage", "MemoryCandidate", "MemoryRecord", "PromotionDecision"]},
@@ -32,6 +32,7 @@
     {"name": "ConnectorWorkerProfile", "schema": "schemas/v1/connector-worker-profile.schema.json"},
     {"name": "CrossPlaneEvidenceSet", "schema": "schemas/v1/cross-plane-evidence-set.schema.json"},
     {"name": "ProtocolProfileConformance", "schema": "schemas/v1/protocol-profile-conformance.schema.json"},
-    {"name": "DisconnectedRuntimeReadiness", "schema": "schemas/v1/disconnected-runtime-readiness.schema.json"}
+    {"name": "DisconnectedRuntimeReadiness", "schema": "schemas/v1/disconnected-runtime-readiness.schema.json"},
+    {"name": "LiveAcceptanceCampaign", "schema": "schemas/v1/live-acceptance-campaign.schema.json"}
   ]
 }

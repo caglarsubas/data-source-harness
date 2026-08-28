@@ -110,6 +110,7 @@ def _files(wheel: Path | None = None) -> dict[str, bytes]:
         files["wheels/wheelhouse-manifest.json"] = wheelhouse_manifest.read_bytes()
     roots = (
         ("runtime", RUNTIME_ROOT),
+        ("live", LAB_ROOT / "live"),
         ("schemas/v1", REPOSITORY_ROOT / "schemas/v1"),
         ("compatibility", REPOSITORY_ROOT / "compatibility"),
         ("deployment/profiles", REPOSITORY_ROOT / "deployment/profiles"),

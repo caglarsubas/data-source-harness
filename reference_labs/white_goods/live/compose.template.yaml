@@ -1,0 +1,62 @@
+name: white-goods-phase7-live
+
+services:
+  postgresql:
+    image: ${PHASE7_POSTGRES_IMAGE:?set an approved image by digest}
+    profiles: [phase7-live]
+    environment:
+      POSTGRES_DB: whitegoods
+      POSTGRES_USER_FILE: /run/secrets/postgres-user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-password
+    secrets: [postgres-user, postgres-password]
+    volumes:
+      - ../technology/postgresql/schema.sql:/docker-entrypoint-initdb.d/00-schema.sql:ro
+    networks: [lab-internal]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -d whitegoods]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  object-store:
+    image: ${PHASE7_MINIO_IMAGE:?set an approved image by digest}
+    profiles: [phase7-live]
+    command: server /data
+    environment:
+      MINIO_ROOT_USER_FILE: /run/secrets/object-store-user
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/object-store-password
+    secrets: [object-store-user, object-store-password]
+    networks: [lab-internal]
+
+  event-stream:
+    image: ${PHASE7_REDPANDA_IMAGE:?set an approved image by digest}
+    profiles: [phase7-live]
+    command: redpanda start --smp 1 --memory 1G --overprovisioned --check=false
+    networks: [lab-internal]
+
+  service-api:
+    image: ${PHASE7_SERVICE_API_IMAGE:?set an approved image by digest}
+    profiles: [phase7-live]
+    environment:
+      SERVICE_API_CREDENTIAL_FILE: /run/secrets/service-api-credential
+      SERVICE_API_CONTRACT: /contracts/openapi.yaml
+    secrets: [service-api-credential]
+    volumes:
+      - ../technology/service-api/openapi.yaml:/contracts/openapi.yaml:ro
+    networks: [lab-internal]
+
+networks:
+  lab-internal:
+    internal: true
+
+secrets:
+  postgres-user:
+    file: ${PHASE7_POSTGRES_USER_FILE:?set a local secret-file path}
+  postgres-password:
+    file: ${PHASE7_POSTGRES_PASSWORD_FILE:?set a local secret-file path}
+  object-store-user:
+    file: ${PHASE7_OBJECT_STORE_USER_FILE:?set a local secret-file path}
+  object-store-password:
+    file: ${PHASE7_OBJECT_STORE_PASSWORD_FILE:?set a local secret-file path}
+  service-api-credential:
+    file: ${PHASE7_SERVICE_API_CREDENTIAL_FILE:?set a local secret-file path}

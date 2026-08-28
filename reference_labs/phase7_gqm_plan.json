@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "data.harness.phase7-readiness.gqm/v1",
+  "goals": [
+    {"goalId": "G1", "goal": "Prevent partial evidence from becoming a live acceptance claim", "metricIds": ["P7R-M1", "P7R-M2"]},
+    {"goalId": "G2", "goal": "Bind every acceptance stage to exact platform revisions and artifact identities", "metricIds": ["P7R-M3", "P7R-M4"]},
+    {"goalId": "G3", "goal": "Represent four live source shapes without embedding endpoints or credentials", "metricIds": ["P7R-M5"]},
+    {"goalId": "G4", "goal": "Preserve the no-provisioning cost boundary until authorized", "metricIds": ["P7R-M6", "P7R-M7"]}
+  ],
+  "metrics": [
+    {"metricId": "P7R-M1", "name": "campaign schema and derived-field integrity", "operator": "==", "threshold": 1.0},
+    {"metricId": "P7R-M2", "name": "false acceptance count", "operator": "==", "threshold": 0.0},
+    {"metricId": "P7R-M3", "name": "exact source revisions represented", "operator": "==", "threshold": 5.0},
+    {"metricId": "P7R-M4", "name": "components with observed exact-main CI", "operator": "==", "threshold": 4.0},
+    {"metricId": "P7R-M5", "name": "representative credential-reference source shapes", "operator": "==", "threshold": 4.0},
+    {"metricId": "P7R-M6", "name": "resources created by readiness certification", "operator": "==", "threshold": 0.0},
+    {"metricId": "P7R-M7", "name": "external mutations by readiness certification", "operator": "==", "threshold": 0.0}
+  ]
+}

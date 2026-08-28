@@ -44,3 +44,9 @@ tamper detection, planner-to-connector integration, silent expected-source
 omission and unbounded decoder/archive gaps in the local implementation. It
 does not close production key custody, container isolation, real service
 connectivity, external-plane authentication or any live deployment gate.
+
+Phase 7 readiness closes the evidence-ledger ambiguity around the live campaign:
+five exact component revisions, four live source shapes, artifact digests and
+all eleven lifecycle stages have machine-checkable identities and derived
+blockers. It creates no infrastructure and therefore does not close image,
+service, protocol, deployment, runtime, fault, soak or stakeholder gates.

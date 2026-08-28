@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://prometa.ai/schemas/data-source-harness/v1/live-acceptance-campaign.schema.json",
+  "title": "LiveAcceptanceCampaign",
+  "description": "Revision- and digest-bound evidence ledger for Phase 7; partial observations cannot imply acceptance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "campaignId", "releaseSet", "releaseSetDigest", "generatedAt", "artifacts", "sources", "evidence", "costBoundary", "accepted", "blockers"],
+  "properties": {
+    "schemaVersion": {"const": "data.harness/v1"},
+    "campaignId": {"type": "string", "minLength": 1},
+    "releaseSet": {"type": "string", "minLength": 1},
+    "releaseSetDigest": {"$ref": "#/$defs/digest"},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "artifacts": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "allOf": [
+        {"contains": {"properties": {"component": {"const": "data-source-harness"}}, "required": ["component"]}},
+        {"contains": {"properties": {"component": {"const": "ADLC"}}, "required": ["component"]}},
+        {"contains": {"properties": {"component": {"const": "Python-SDK"}}, "required": ["component"]}},
+        {"contains": {"properties": {"component": {"const": "OCP-reference-lab"}}, "required": ["component"]}},
+        {"contains": {"properties": {"component": {"const": "model-plane"}}, "required": ["component"]}}
+      ],
+      "items": {"$ref": "#/$defs/artifact"}
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "allOf": [
+        {"contains": {"properties": {"shape": {"const": "postgresql"}}, "required": ["shape"]}},
+        {"contains": {"properties": {"shape": {"const": "s3-compatible"}}, "required": ["shape"]}},
+        {"contains": {"properties": {"shape": {"const": "kafka-compatible"}}, "required": ["shape"]}},
+        {"contains": {"properties": {"shape": {"const": "rest"}}, "required": ["shape"]}}
+      ],
+      "items": {"$ref": "#/$defs/source"}
+    },
+    "evidence": {
+      "type": "array",
+      "maxItems": 55,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/evidence"}
+    },
+    "costBoundary": {"$ref": "#/$defs/costBoundary"},
+    "accepted": {"type": "boolean"},
+    "blockers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "digestOrNull": {"oneOf": [{"$ref": "#/$defs/digest"}, {"type": "null"}]},
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "repository", "revision", "artifactDigest"],
+      "properties": {
+        "component": {"enum": ["data-source-harness", "ADLC", "Python-SDK", "OCP-reference-lab", "model-plane"]},
+        "repository": {"type": "string", "format": "uri", "pattern": "^https://"},
+        "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "artifactDigest": {"$ref": "#/$defs/digestOrNull"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "shape", "connectorId", "endpointReference", "imageDigest", "liveVerified", "observedAt", "references"],
+      "properties": {
+        "sourceId": {"type": "string", "minLength": 1},
+        "shape": {"enum": ["postgresql", "s3-compatible", "kafka-compatible", "rest"]},
+        "connectorId": {"type": "string", "minLength": 1},
+        "endpointReference": {"type": "string", "pattern": "^credential-ref://[^/].*$"},
+        "imageDigest": {"$ref": "#/$defs/digestOrNull"},
+        "liveVerified": {"type": "boolean"},
+        "observedAt": {"type": ["string", "null"], "format": "date-time"},
+        "references": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"liveVerified": {"const": true}}},
+          "then": {"properties": {"imageDigest": {"$ref": "#/$defs/digest"}, "observedAt": {"type": "string"}, "references": {"minItems": 1}}},
+          "else": {"properties": {"observedAt": {"type": "null"}, "references": {"maxItems": 0}}}
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "stage", "status", "revision", "artifactDigest", "observedAt", "references"],
+      "properties": {
+        "component": {"enum": ["data-source-harness", "ADLC", "Python-SDK", "OCP-reference-lab", "model-plane"]},
+        "stage": {"enum": ["source", "pr-ci", "exact-main-ci", "publication", "mirror", "deployment", "runtime", "fault", "soak", "protocol-conformance", "stakeholder"]},
+        "status": {"enum": ["passed", "failed"]},
+        "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "artifactDigest": {"$ref": "#/$defs/digestOrNull"},
+        "observedAt": {"type": "string", "format": "date-time"},
+        "references": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"stage": {"enum": ["publication", "mirror", "deployment", "runtime", "fault", "soak", "protocol-conformance", "stakeholder"]}}},
+          "then": {"properties": {"artifactDigest": {"$ref": "#/$defs/digest"}}}
+        }
+      ]
+    },
+    "costBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provisioningAuthorized", "resourcesCreated", "externalMutations"],
+      "properties": {
+        "provisioningAuthorized": {"type": "boolean"},
+        "resourcesCreated": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "externalMutations": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      },
+      "allOf": [
+        {"if": {"properties": {"provisioningAuthorized": {"const": false}}}, "then": {"properties": {"resourcesCreated": {"maxItems": 0}, "externalMutations": {"maxItems": 0}}}}
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"accepted": {"const": true}}},
+      "then": {
+        "properties": {
+          "artifacts": {"items": {"properties": {"artifactDigest": {"$ref": "#/$defs/digest"}}}},
+          "sources": {"items": {"properties": {"imageDigest": {"$ref": "#/$defs/digest"}, "liveVerified": {"const": true}}}},
+          "evidence": {"minItems": 55, "items": {"properties": {"status": {"const": "passed"}, "artifactDigest": {"$ref": "#/$defs/digest"}}}},
+          "blockers": {"maxItems": 0}
+        }
+      }
+    }
+  ]
+}
