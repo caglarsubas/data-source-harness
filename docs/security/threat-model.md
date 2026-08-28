@@ -5,7 +5,7 @@
 | Cross-tenant or over-broad reads | required execution identity, local policy seam, capability check before invocation | row/field negative tests in a real connector |
 | Credential leakage | contracts accept credential references only; telemetry rejects credential-like fields | secret scanning and runtime log inspection |
 | Prompt injection in source content | decoder output is always labelled `untrusted-source` | adversarial document retrieval suite |
-| SSRF or accidental internet egress | explicit egress allow-list; air-gap profile disables DNS/external telemetry | network-denied OCP execution evidence |
+| SSRF or accidental internet egress | explicit egress allow-list; laptop-local profile permits only service aliases and loopback and disables external telemetry | laptop container-network denial evidence |
 | Unbounded query/resource use | positive query limit/deadline and connector result/parallelism limits | cancellation, timeout and saturation tests |
 | Unsupported or unsafe mutation | read/mutation capabilities are separate; preview, execute-time policy, cryptographically verified human approval, conditional writes, idempotency, compensation and local durable reconciliation are certified in two synthetic labs | production ADLC approval authority, source action and multi-replica runtime certification |
 | Unknown mutation outcome | keyed-integrity write-ahead durable state; automatic replay is forbidden; source idempotency/postcondition reconciliation is mandatory | external key custody, abrupt power-loss and production-source reconciliation campaign |
@@ -45,8 +45,8 @@ omission and unbounded decoder/archive gaps in the local implementation. It
 does not close production key custody, container isolation, real service
 connectivity, external-plane authentication or any live deployment gate.
 
-Phase 7 readiness closes the evidence-ledger ambiguity around the live campaign:
-five exact component revisions, four live source shapes, artifact digests and
+Phase 7 readiness closes the evidence-ledger ambiguity around the local campaign:
+four exact component revisions, four local source shapes, artifact digests and
 all eleven lifecycle stages have machine-checkable identities and derived
-blockers. It creates no infrastructure and therefore does not close image,
-service, protocol, deployment, runtime, fault, soak or stakeholder gates.
+blockers. It prohibits cloud and cluster infrastructure and therefore does not
+close local image, service, protocol, runtime, fault, soak or stakeholder gates.

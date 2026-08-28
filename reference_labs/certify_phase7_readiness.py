@@ -1,4 +1,4 @@
-"""Phase-7 acceptance-ledger readiness certification without live provisioning."""
+"""Phase-7 laptop-local acceptance readiness without cloud or cluster provisioning."""
 
 from __future__ import annotations
 
@@ -16,13 +16,14 @@ import yaml
 from data_source_harness.acceptance import (
     AcceptanceStage,
     CostBoundary,
-    LiveAcceptanceCampaign,
     LiveSourceShape,
     LiveSourceTarget,
+    LocalLaptopAcceptanceCampaign,
     ReleaseArtifact,
     StageEvidence,
 )
 from data_source_harness.evidence import EvidenceStatus
+from data_source_harness.local_only import audit_local_only_automation
 from reference_labs.white_goods.certify import CertificationCheck, MetricResult, _metric
 
 from .certify_phase6_5 import certify_phase6_5
@@ -94,9 +95,6 @@ def _observed_evidence(artifacts: tuple[ReleaseArtifact, ...]) -> tuple[StageEvi
             "https://github.com/caglarsubas/agent-hook-v2/actions/runs/33087853316",
             "https://github.com/caglarsubas/agent-hook-v2/actions/runs/33087853263",
         ),
-        "OCP-reference-lab": (
-            "https://github.com/caglarsubas/orchestra-openshift-reference-lab/actions/runs/33076929017",
-        ),
         "model-plane": (
             "https://github.com/caglarsubas/llm_inference_engine/actions/runs/32734407866",
         ),
@@ -128,7 +126,7 @@ def _observed_evidence(artifacts: tuple[ReleaseArtifact, ...]) -> tuple[StageEvi
     return tuple(observations)
 
 
-def build_readiness_campaign() -> LiveAcceptanceCampaign:
+def build_readiness_campaign() -> LocalLaptopAcceptanceCampaign:
     lock = json.loads(LOCK_PATH.read_text(encoding="utf-8"))
     artifacts = tuple(
         ReleaseArtifact(
@@ -139,7 +137,7 @@ def build_readiness_campaign() -> LiveAcceptanceCampaign:
         )
         for item in lock["artifacts"]
     )
-    return LiveAcceptanceCampaign(
+    return LocalLaptopAcceptanceCampaign(
         lock["campaignId"],
         lock["releaseSet"],
         datetime.fromisoformat(lock["generatedAt"]),
@@ -155,7 +153,7 @@ def _false_acceptance_count(contract: dict[str, Any]) -> int:
     forged["accepted"] = True
     forged["blockers"] = []
     try:
-        LiveAcceptanceCampaign.from_contract(forged)
+        LocalLaptopAcceptanceCampaign.from_contract(forged)
     except ValueError:
         return 0
     return 1
@@ -172,7 +170,7 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         ).iter_errors(committed_contract)
     )
     try:
-        parsed = LiveAcceptanceCampaign.from_contract(committed_contract)
+        parsed = LocalLaptopAcceptanceCampaign.from_contract(committed_contract)
         parse_error = ""
     except (KeyError, TypeError, ValueError) as exc:
         parsed = expected
@@ -185,6 +183,7 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         if item.stage is AcceptanceStage.EXACT_MAIN_CI and item.status is EvidenceStatus.PASSED
     }
     false_accepts = _false_acceptance_count(committed_contract)
+    automation_violations = audit_local_only_automation(REPOSITORY_ROOT)
     compose = yaml.safe_load(
         (REPOSITORY_ROOT / "reference_labs/white_goods/live/compose.template.yaml").read_text(
             encoding="utf-8"
@@ -192,10 +191,11 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
     )
     services = compose.get("services", {})
     expected_services = {"postgresql", "object-store", "event-stream", "service-api"}
-    inert_compose = (
+    local_only_compose = (
         set(services) == expected_services
         and compose.get("networks", {}).get("lab-internal", {}).get("internal") is True
-        and all(service.get("profiles") == ["phase7-live"] for service in services.values())
+        and all(service.get("profiles") == ["phase7-local"] for service in services.values())
+        and all(service.get("pull_policy") == "never" for service in services.values())
         and all("ports" not in service for service in services.values())
         and all(
             isinstance(service.get("image"), str)
@@ -230,12 +230,11 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
         ),
         CertificationCheck(
             "campaign.exact-main-observations",
-            exact_main_components
-            == {"data-source-harness", "ADLC", "OCP-reference-lab", "model-plane"},
+            exact_main_components == {"data-source-harness", "ADLC", "model-plane"},
             f"observed={','.join(sorted(exact_main_components))}; Python-SDK=missing",
         ),
         CertificationCheck(
-            "campaign.live-source-boundary",
+            "campaign.local-source-boundary",
             {item.shape for item in parsed.sources} == set(LiveSourceShape)
             and all(
                 item.endpoint_reference.startswith("credential-ref://") for item in parsed.sources
@@ -244,16 +243,22 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
             f"targets={len(parsed.sources)}; verified=0",
         ),
         CertificationCheck(
-            "campaign.inert-live-compose-handoff",
-            inert_compose,
-            f"services={','.join(sorted(services))}; profile=phase7-live; publishedPorts=0",
+            "campaign.local-only-compose-handoff",
+            local_only_compose,
+            f"services={','.join(sorted(services))}; profile=phase7-local; "
+            "pullPolicy=never; publishedPorts=0",
         ),
         CertificationCheck(
-            "campaign.no-cost-mutation",
+            "campaign.no-cloud-or-cluster-mutation",
             not parsed.cost_boundary.provisioning_authorized
             and not parsed.cost_boundary.resources_created
             and not parsed.cost_boundary.external_mutations,
             "provisioningAuthorized=false; resourcesCreated=0; externalMutations=0",
+        ),
+        CertificationCheck(
+            "campaign.local-only-automation",
+            not automation_violations,
+            "violations=" + (",".join(automation_violations) or "none"),
         ),
     )
 
@@ -282,16 +287,16 @@ async def certify_phase7_readiness() -> Phase7ReadinessReport:
     )
     return Phase7ReadinessReport(
         "phase-7-readiness",
-        "white-goods-live-acceptance",
+        "white-goods-local-laptop-acceptance",
         all(check.passed for check in checks) and all(metric.passed for metric in metrics),
         parsed.accepted,
         checks,
         metrics,
         parsed.blockers,
-        "This readiness certificate validates the fail-closed Phase 7 campaign ledger and "
-        "records read-only source/CI observations. It creates no cloud resources and does "
-        "not claim artifact publication, live services, protocol conformance, mirroring, "
-        "deployment, runtime, fault, soak or stakeholder acceptance.",
+        "This readiness certificate validates the fail-closed laptop-local Phase 7 campaign "
+        "ledger and records read-only source/CI observations. GCP, OpenShift and remote-cluster "
+        "provisioning are prohibited. It does not claim artifact publication, local image load, "
+        "local startup, runtime, protocol conformance, fault, soak or stakeholder acceptance.",
     )
 
 

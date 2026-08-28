@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://prometa.ai/schemas/data-source-harness/v1/live-acceptance-campaign.schema.json",
-  "title": "LiveAcceptanceCampaign",
-  "description": "Revision- and digest-bound evidence ledger for Phase 7; partial observations cannot imply acceptance.",
+  "title": "LocalLaptopAcceptanceCampaign",
+  "description": "Revision- and digest-bound evidence ledger for laptop-local Phase 7; partial observations cannot imply acceptance and cloud or cluster provisioning is prohibited.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "campaignId", "releaseSet", "releaseSetDigest", "generatedAt", "artifacts", "sources", "evidence", "costBoundary", "accepted", "blockers"],
@@ -14,14 +14,13 @@
     "generatedAt": {"type": "string", "format": "date-time"},
     "artifacts": {
       "type": "array",
-      "minItems": 5,
-      "maxItems": 5,
+      "minItems": 4,
+      "maxItems": 4,
       "uniqueItems": true,
       "allOf": [
         {"contains": {"properties": {"component": {"const": "data-source-harness"}}, "required": ["component"]}},
         {"contains": {"properties": {"component": {"const": "ADLC"}}, "required": ["component"]}},
         {"contains": {"properties": {"component": {"const": "Python-SDK"}}, "required": ["component"]}},
-        {"contains": {"properties": {"component": {"const": "OCP-reference-lab"}}, "required": ["component"]}},
         {"contains": {"properties": {"component": {"const": "model-plane"}}, "required": ["component"]}}
       ],
       "items": {"$ref": "#/$defs/artifact"}
@@ -41,7 +40,7 @@
     },
     "evidence": {
       "type": "array",
-      "maxItems": 55,
+      "maxItems": 44,
       "uniqueItems": true,
       "items": {"$ref": "#/$defs/evidence"}
     },
@@ -57,7 +56,7 @@
       "additionalProperties": false,
       "required": ["component", "repository", "revision", "artifactDigest"],
       "properties": {
-        "component": {"enum": ["data-source-harness", "ADLC", "Python-SDK", "OCP-reference-lab", "model-plane"]},
+        "component": {"enum": ["data-source-harness", "ADLC", "Python-SDK", "model-plane"]},
         "repository": {"type": "string", "format": "uri", "pattern": "^https://"},
         "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
         "artifactDigest": {"$ref": "#/$defs/digestOrNull"}
@@ -90,8 +89,8 @@
       "additionalProperties": false,
       "required": ["component", "stage", "status", "revision", "artifactDigest", "observedAt", "references"],
       "properties": {
-        "component": {"enum": ["data-source-harness", "ADLC", "Python-SDK", "OCP-reference-lab", "model-plane"]},
-        "stage": {"enum": ["source", "pr-ci", "exact-main-ci", "publication", "mirror", "deployment", "runtime", "fault", "soak", "protocol-conformance", "stakeholder"]},
+        "component": {"enum": ["data-source-harness", "ADLC", "Python-SDK", "model-plane"]},
+        "stage": {"enum": ["source", "pr-ci", "exact-main-ci", "publication", "local-image-load", "local-startup", "runtime", "fault", "soak", "protocol-conformance", "stakeholder"]},
         "status": {"enum": ["passed", "failed"]},
         "revision": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
         "artifactDigest": {"$ref": "#/$defs/digestOrNull"},
@@ -100,7 +99,7 @@
       },
       "allOf": [
         {
-          "if": {"properties": {"stage": {"enum": ["publication", "mirror", "deployment", "runtime", "fault", "soak", "protocol-conformance", "stakeholder"]}}},
+          "if": {"properties": {"stage": {"enum": ["publication", "local-image-load", "local-startup", "runtime", "fault", "soak", "protocol-conformance", "stakeholder"]}}},
           "then": {"properties": {"artifactDigest": {"$ref": "#/$defs/digest"}}}
         }
       ]
@@ -110,13 +109,10 @@
       "additionalProperties": false,
       "required": ["provisioningAuthorized", "resourcesCreated", "externalMutations"],
       "properties": {
-        "provisioningAuthorized": {"type": "boolean"},
-        "resourcesCreated": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-        "externalMutations": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
-      },
-      "allOf": [
-        {"if": {"properties": {"provisioningAuthorized": {"const": false}}}, "then": {"properties": {"resourcesCreated": {"maxItems": 0}, "externalMutations": {"maxItems": 0}}}}
-      ]
+        "provisioningAuthorized": {"const": false},
+        "resourcesCreated": {"type": "array", "maxItems": 0},
+        "externalMutations": {"type": "array", "maxItems": 0}
+      }
     }
   },
   "allOf": [
@@ -126,7 +122,7 @@
         "properties": {
           "artifacts": {"items": {"properties": {"artifactDigest": {"$ref": "#/$defs/digest"}}}},
           "sources": {"items": {"properties": {"imageDigest": {"$ref": "#/$defs/digest"}, "liveVerified": {"const": true}}}},
-          "evidence": {"minItems": 55, "items": {"properties": {"status": {"const": "passed"}, "artifactDigest": {"$ref": "#/$defs/digest"}}}},
+          "evidence": {"minItems": 44, "items": {"properties": {"status": {"const": "passed"}, "artifactDigest": {"$ref": "#/$defs/digest"}}}},
           "blockers": {"maxItems": 0}
         }
       }

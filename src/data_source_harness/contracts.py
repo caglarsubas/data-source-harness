@@ -138,6 +138,10 @@ def validate_repository_artifacts() -> tuple[GateCheck, ...]:
             "deployment-profile.schema.json",
             ROOT / "deployment/profiles/self-hosted.json",
         ),
+        "deployment.local-laptop": (
+            "deployment-profile.schema.json",
+            ROOT / "deployment/profiles/local-laptop.json",
+        ),
         "reference-lab.example": (
             "reference-lab-manifest.schema.json",
             ROOT / "reference-labs/reference-lab-manifest.example.json",
@@ -213,6 +217,7 @@ def run_phase0_gate() -> GateReport:
         "contracts/catalog.v1.json",
         "compatibility/cross-plane-release-set.lock.json",
         "deployment/profiles/air-gapped.json",
+        "deployment/profiles/local-laptop.json",
         "docs/architecture/phase-0.md",
         "docs/development-roadmap.md",
         "docs/security/threat-model.md",

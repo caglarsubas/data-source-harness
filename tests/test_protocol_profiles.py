@@ -148,7 +148,7 @@ def test_a2a_profile_advertises_v1_and_maps_one_data_part_without_execution() ->
         "Harness actions",
         "Governed source action delegation",
         "https://harness.internal/a2a",
-        "0.9.0",
+        "0.10.0",
         (A2AAgentSkill("source-action", "Source action", "Delegate a bounded action", ("data",)),),
     )
     assert card.to_contract()["supportedInterfaces"][0]["protocolVersion"] == A2A_PROTOCOL_VERSION

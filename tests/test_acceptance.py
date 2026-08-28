@@ -23,8 +23,7 @@ REVISIONS = {
     "data-source-harness": "1" * 40,
     "ADLC": "2" * 40,
     "Python-SDK": "3" * 40,
-    "OCP-reference-lab": "4" * 40,
-    "model-plane": "5" * 40,
+    "model-plane": "4" * 40,
 }
 
 
@@ -85,7 +84,7 @@ def test_complete_campaign_requires_every_bound_stage_and_live_source() -> None:
     assert campaign.accepted
     assert campaign.blockers == ()
     assert contract["accepted"] is True
-    assert len(contract["evidence"]) == 55
+    assert len(contract["evidence"]) == 44
     assert contract["releaseSetDigest"].startswith("sha256:")
 
 
@@ -115,16 +114,16 @@ def test_partial_campaign_preserves_every_missing_gate_as_a_blocker() -> None:
     assert campaign.to_contract()["costBoundary"]["resourcesCreated"] == []
 
 
-def test_deployment_evidence_cannot_omit_or_change_artifact_identity() -> None:
+def test_local_startup_evidence_cannot_omit_or_change_artifact_identity() -> None:
     with pytest.raises(ValueError, match="must bind an artifact digest"):
         StageEvidence(
             "ADLC",
-            AcceptanceStage.DEPLOYMENT,
+            AcceptanceStage.LOCAL_STARTUP,
             EvidenceStatus.PASSED,
             REVISIONS["ADLC"],
             None,
             NOW,
-            ("evidence://deployment",),
+            ("evidence://local-startup",),
         )
 
     evidence = StageEvidence(
@@ -172,8 +171,10 @@ def test_live_sources_and_cost_boundary_fail_closed() -> None:
             observed_at=NOW,
             references=("evidence://postgres",),
         )
-    with pytest.raises(ValueError, match="unauthorized campaign"):
+    with pytest.raises(ValueError, match="local-only campaign"):
         CostBoundary(False, ("gcp://new-cluster",), ())
+    with pytest.raises(ValueError, match="provisioning is prohibited"):
+        CostBoundary(True, (), ())
 
 
 def test_release_set_digest_is_order_independent() -> None:
@@ -287,7 +288,7 @@ def test_campaign_identity_and_matrix_guards() -> None:
         LiveAcceptanceCampaign(
             "campaign", "release", datetime(2026, 8, 28), base_artifacts, base_sources, ()
         )
-    with pytest.raises(ValueError, match="five platform"):
+    with pytest.raises(ValueError, match="four laptop-local"):
         LiveAcceptanceCampaign("campaign", "release", NOW, base_artifacts[:-1], base_sources, ())
     with pytest.raises(ValueError, match="four unique"):
         LiveAcceptanceCampaign(
@@ -343,7 +344,8 @@ def test_failed_observation_and_contract_tampering_remain_visible() -> None:
             LiveAcceptanceCampaign.from_contract(contract)
 
 
-def test_authorized_cost_boundary_still_rejects_duplicate_entries() -> None:
-    assert CostBoundary(True, ("gcp://cluster",), ("deploy://runtime",)).provisioning_authorized
-    with pytest.raises(ValueError, match="non-empty and unique"):
-        CostBoundary(True, ("gcp://cluster", "gcp://cluster"), ())
+def test_cost_boundary_never_allows_authorization_or_mutations() -> None:
+    with pytest.raises(ValueError, match="provisioning is prohibited"):
+        CostBoundary(True, ("gcp://cluster",), ("deploy://runtime",))
+    with pytest.raises(ValueError, match="local-only campaign"):
+        CostBoundary(False, ("gcp://cluster", "gcp://cluster"), ())

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "kind": "DeploymentProfile",
+  "profileId": "bad-local-laptop",
+  "mode": "local-laptop",
+  "allowedHosts": [],
+  "dnsEnabled": true,
+  "externalTelemetry": false,
+  "artifactMirrorRequired": true
+}

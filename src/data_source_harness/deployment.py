@@ -12,6 +12,7 @@ class DeploymentMode(StrEnum):
     CONNECTED = "connected"
     SELF_HOSTED = "self-hosted"
     AIR_GAPPED = "air-gapped"
+    LOCAL_LAPTOP = "local-laptop"
 
 
 @dataclass(frozen=True)
@@ -31,6 +32,33 @@ class DeploymentProfile:
                 raise ValueError("air-gapped profiles cannot enable DNS or external telemetry")
             if not self.artifact_mirror_required:
                 raise ValueError("air-gapped profiles require an internal artifact mirror")
+        if self.mode is DeploymentMode.LOCAL_LAPTOP:
+            if self.external_telemetry:
+                raise ValueError("local-laptop profiles cannot enable external telemetry")
+            if self.artifact_mirror_required:
+                raise ValueError(
+                    "local-laptop profiles use preloaded images, not a registry mirror"
+                )
+            invalid_hosts = sorted(host for host in self.allowed_hosts if not self._is_local(host))
+            if invalid_hosts:
+                raise ValueError(
+                    "local-laptop profiles allow only loopback or single-label service hosts: "
+                    + ", ".join(invalid_hosts)
+                )
+
+    @staticmethod
+    def _is_local(host: str) -> bool:
+        lowered = host.lower()
+        if lowered == "localhost":
+            return True
+        try:
+            return ip_address(lowered).is_loopback
+        except ValueError:
+            return (
+                bool(lowered)
+                and "." not in lowered
+                and all(character.isalnum() or character == "-" for character in lowered)
+            )
 
 
 class EgressDenied(PermissionError):

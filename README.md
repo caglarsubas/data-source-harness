@@ -15,8 +15,8 @@ planes:
   signed tenant-runtime/MCP execution plane.
 - `llm_inference_engine` remains the tenant model plane for chat, embeddings,
   reranking, structured output, and guardrails.
-- `orchestra-openshift-reference-lab` remains the deployment, supply-chain, and
-  bounded certification-evidence plane.
+- `orchestra-openshift-reference-lab` is retained only as historical Phase 6/6.5
+  packaging evidence. It is not part of the supported runtime or Phase 7 release set.
 
 The control plane is never required synchronously for a production source,
 retrieval, tool, or model request.
@@ -29,7 +29,7 @@ Phase 0 establishes the reusable scaffold:
 - an untrusted-content decoding boundary;
 - append-only, bitemporal semantic assertions;
 - default-deny tenant-local authorization seams;
-- explicit connected, self-hosted, and air-gapped deployment profiles;
+- explicit connected, self-hosted, air-gapped, and laptop-local deployment profiles;
 - bounded coverage and provenance outputs;
 - a connector conformance runner;
 - JSON Schemas, positive/negative fixtures, and a cross-plane compatibility
@@ -65,13 +65,13 @@ description change cannot silently alter a previously inspected tool. This is
 an adapter boundary for later MCP/A2A hosting, not a claim of official protocol
 conformance.
 
-Phase 6 moves connector calls behind replaceable operating-system process
+Phase 6 moved connector calls behind replaceable operating-system process
 workers with bounded request/response sizes, deadlines, cancellation,
 parallelism and a sanitized environment. It adds MCP `2026-07-28` and A2A `1.0`
 profile adapters, a cross-plane evidence ledger that cannot collapse CI into
-runtime acceptance, and a signed disconnected-transfer packet with OpenShift
-security templates. The certificate deliberately records upstream protocol
-suites, image mirroring, live deployment and stakeholder acceptance as missing.
+runtime acceptance, and produced a signed disconnected-transfer packet with
+OpenShift security templates. Those templates now remain historical and are not
+executed by the roadmap.
 
 Phase 6.5 closes the repository-level integration spine: bounded planner output
 executes through the canonical gateway, the same connector ABI crosses a
@@ -80,19 +80,18 @@ expected-source coverage and deduplicated lineage. Human approvals require a
 cryptographically verified authority, decoders and archives are resource
 bounded, and tenant-neutral seams publish redacted execution evidence to the
 Python SDK/ADLC while keeping model-plane reranking locally governed. The
-air-gap packet now includes a pinned dependency wheelhouse recipe, runtime
-container recipe, health probes, service, configuration, network policies and
-an `oc-mirror` v2 image-set template. None of these local checks substitutes for
-live combined-platform acceptance.
+air-gap packet includes a pinned dependency wheelhouse and runtime container
+recipe. Previously produced OCP assets remain immutable historical artifacts;
+none is a current execution requirement.
 
-Phase 7 readiness adds a fail-closed live-acceptance campaign ledger. Every
-source, PR-CI, exact-main-CI, publication, mirror, deployment, runtime, fault,
-soak, protocol-conformance and stakeholder observation is bound independently
-to one of the five exact platform revisions and, once published, its artifact
-digest. The campaign also requires four credential-reference-only live source
-targets. The committed readiness snapshot records read-only source and CI
-observations, zero resource creation, and every remaining blocker; it is not a
-live Phase 7 acceptance claim.
+Phase 7 readiness is laptop-local in core version `0.10.0`. Its fail-closed
+campaign covers the harness, ADLC, Python-SDK and model-plane plus local
+PostgreSQL, S3-compatible, Kafka-compatible and REST services. Mirror and cluster
+deployment gates are replaced by local image-load and local-startup gates.
+Images must already exist on the laptop (`pull_policy: never`), services expose
+no host ports, and the internal network has no external route. GCP, OpenShift
+and remote-cluster provisioning are prohibited by contract and an automation
+scan. The readiness snapshot is not a completed acceptance claim.
 
 ## Developer quick start
 
@@ -102,7 +101,7 @@ uv run ruff check .
 uv run pytest
 uv run harness-contracts validate
 uv run harness-contracts phase0-gate --output phase0-report.json
-make phase7-readiness
+make phase7-local-readiness
 ```
 
 The built wheel embeds the versioned schemas, contract catalog, deployment
@@ -115,13 +114,14 @@ profiles, and neutral reference-lab manifest under
   connector and policy both declare it.
 - Credentials are references resolved inside the tenant perimeter and never
   enter manifests, telemetry, or evidence.
-- `air-gapped` mode denies every undeclared or non-perimeter route.
+- `local-laptop` mode allows only declared service aliases and loopback;
+  external telemetry and registry mirrors are disabled.
 - Retrieved content is untrusted data, not executable instruction.
 - Missing, partial, stale, ambiguous, and unauthorized evidence remain visible
   in coverage statements rather than being converted into success.
 
-See [Phase 7 readiness architecture](docs/architecture/phase-7-live-acceptance.md)
-for the evidence matrix, live-source identities, cost boundary and completion
+See [Phase 7 local-laptop architecture](docs/architecture/phase-7-live-acceptance.md)
+for the evidence matrix, local-source identities, cost boundary and completion
 rules.
 
 The staged [development roadmap](docs/development-roadmap.md) defines the

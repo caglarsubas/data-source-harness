@@ -11,7 +11,9 @@ async def test_phase7_readiness_passes_without_claiming_live_acceptance() -> Non
     assert all(check.passed for check in report.checks)
     assert all(metric.passed for metric in report.metrics)
     assert "Python-SDK:exact-main-ci:missing" in report.blockers
-    assert "creates no cloud resources" in report.evidence_boundary
+    assert (
+        "GCP, OpenShift and remote-cluster provisioning are prohibited" in report.evidence_boundary
+    )
 
 
 def test_phase7_snapshot_records_read_only_observations() -> None:
@@ -19,5 +21,5 @@ def test_phase7_snapshot_records_read_only_observations() -> None:
     assert campaign.cost_boundary.provisioning_authorized is False
     assert campaign.cost_boundary.resources_created == ()
     assert campaign.cost_boundary.external_mutations == ()
-    assert len(campaign.evidence) == 9
+    assert len(campaign.evidence) == 7
     assert not campaign.accepted

@@ -1,9 +1,10 @@
-name: white-goods-phase7-live
+name: white-goods-phase7-local
 
 services:
   postgresql:
     image: ${PHASE7_POSTGRES_IMAGE:?set an approved image by digest}
-    profiles: [phase7-live]
+    pull_policy: never
+    profiles: [phase7-local]
     environment:
       POSTGRES_DB: whitegoods
       POSTGRES_USER_FILE: /run/secrets/postgres-user
@@ -20,7 +21,8 @@ services:
 
   object-store:
     image: ${PHASE7_MINIO_IMAGE:?set an approved image by digest}
-    profiles: [phase7-live]
+    pull_policy: never
+    profiles: [phase7-local]
     command: server /data
     environment:
       MINIO_ROOT_USER_FILE: /run/secrets/object-store-user
@@ -30,13 +32,15 @@ services:
 
   event-stream:
     image: ${PHASE7_REDPANDA_IMAGE:?set an approved image by digest}
-    profiles: [phase7-live]
+    pull_policy: never
+    profiles: [phase7-local]
     command: redpanda start --smp 1 --memory 1G --overprovisioned --check=false
     networks: [lab-internal]
 
   service-api:
     image: ${PHASE7_SERVICE_API_IMAGE:?set an approved image by digest}
-    profiles: [phase7-live]
+    pull_policy: never
+    profiles: [phase7-local]
     environment:
       SERVICE_API_CREDENTIAL_FILE: /run/secrets/service-api-credential
       SERVICE_API_CONTRACT: /contracts/openapi.yaml

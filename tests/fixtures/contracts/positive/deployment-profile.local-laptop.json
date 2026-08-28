@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "data.harness/v1",
+  "kind": "DeploymentProfile",
+  "profileId": "local-laptop-default",
+  "mode": "local-laptop",
+  "allowedHosts": ["postgresql", "model-plane"],
+  "dnsEnabled": true,
+  "externalTelemetry": false,
+  "artifactMirrorRequired": false
+}
