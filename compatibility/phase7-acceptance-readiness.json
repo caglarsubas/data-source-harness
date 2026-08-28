@@ -2,10 +2,10 @@
   "accepted": false,
   "artifacts": [
     {
-      "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
+      "artifactDigest": "sha256:88e9791e4e49d9421065ccfca9b6b5a3f9755bc52645d06317dfde905037ce5b",
       "component": "data-source-harness",
       "repository": "https://github.com/caglarsubas/data-source-harness",
-      "revision": "0d76362b6cb260377a267a0a99f67466ca456892"
+      "revision": "81283bbd35b18b7d705ad0963ba63e6f1f4f3b6f"
     },
     {
       "artifactDigest": null,
@@ -74,13 +74,13 @@
   },
   "evidence": [
     {
-      "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
+      "artifactDigest": "sha256:88e9791e4e49d9421065ccfca9b6b5a3f9755bc52645d06317dfde905037ce5b",
       "component": "data-source-harness",
       "observedAt": "2026-08-28T00:00:00+00:00",
       "references": [
-        "https://github.com/caglarsubas/data-source-harness/commit/0d76362b6cb260377a267a0a99f67466ca456892"
+        "https://github.com/caglarsubas/data-source-harness/commit/81283bbd35b18b7d705ad0963ba63e6f1f4f3b6f"
       ],
-      "revision": "0d76362b6cb260377a267a0a99f67466ca456892",
+      "revision": "81283bbd35b18b7d705ad0963ba63e6f1f4f3b6f",
       "stage": "source",
       "status": "passed"
     },
@@ -141,42 +141,42 @@
       "status": "passed"
     },
     {
-      "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
+      "artifactDigest": "sha256:88e9791e4e49d9421065ccfca9b6b5a3f9755bc52645d06317dfde905037ce5b",
       "component": "data-source-harness",
-      "observedAt": "2026-08-28T11:23:53+00:00",
+      "observedAt": "2026-08-28T11:58:54+00:00",
       "references": [
         "local-evidence://phase7/data-source-harness/local-image-load"
       ],
-      "revision": "0d76362b6cb260377a267a0a99f67466ca456892",
+      "revision": "81283bbd35b18b7d705ad0963ba63e6f1f4f3b6f",
       "stage": "local-image-load",
       "status": "passed"
     },
     {
-      "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
+      "artifactDigest": "sha256:88e9791e4e49d9421065ccfca9b6b5a3f9755bc52645d06317dfde905037ce5b",
       "component": "data-source-harness",
-      "observedAt": "2026-08-28T11:23:53+00:00",
+      "observedAt": "2026-08-28T11:58:54+00:00",
       "references": [
         "local-evidence://phase7/data-source-harness/local-startup"
       ],
-      "revision": "0d76362b6cb260377a267a0a99f67466ca456892",
+      "revision": "81283bbd35b18b7d705ad0963ba63e6f1f4f3b6f",
       "stage": "local-startup",
       "status": "passed"
     },
     {
-      "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
+      "artifactDigest": "sha256:88e9791e4e49d9421065ccfca9b6b5a3f9755bc52645d06317dfde905037ce5b",
       "component": "data-source-harness",
-      "observedAt": "2026-08-28T11:23:53+00:00",
+      "observedAt": "2026-08-28T11:58:54+00:00",
       "references": [
         "local-evidence://phase7/data-source-harness/runtime"
       ],
-      "revision": "0d76362b6cb260377a267a0a99f67466ca456892",
+      "revision": "81283bbd35b18b7d705ad0963ba63e6f1f4f3b6f",
       "stage": "runtime",
       "status": "passed"
     }
   ],
-  "generatedAt": "2026-08-28T11:23:53+00:00",
-  "releaseSet": "phase-7-local-harness-runtime-2026-08-28",
-  "releaseSetDigest": "sha256:bdb7b30b20bf8c35f3ced2dd8258754c7fe34017dd7a07da686cc5e3dd9c0460",
+  "generatedAt": "2026-08-28T11:58:54+00:00",
+  "releaseSet": "phase-7-local-mutation-runtime-2026-08-28",
+  "releaseSetDigest": "sha256:ce48a09fbfee9ec578e28371790ff52189fcfa25d2fd695bf6828c4e988221f5",
   "schemaVersion": "data.harness/v1",
   "sources": [
     {

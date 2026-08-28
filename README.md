@@ -113,7 +113,11 @@ preloaded Python base, the harness wheel and a pinned wheelhouse. On the same
 internal network, real PostgreSQL, S3-compatible, Kafka-compatible and REST
 connectors run through `HarnessGateway`. The evidence covers discovery, bounded
 queries, untrusted decoding, semantic resolution, exact provenance and
-read-only action denial without published ports or external resources.
+read-only action denial without published ports or external resources. The
+same one-shot runtime now performs one allowlisted PostgreSQL mutation through
+preview, cryptographically bound human approval, optimistic concurrency and
+source-persisted idempotency; it proves replay safety across a fresh gateway,
+denies a stale write and compensates back to the seeded value before teardown.
 
 ## Developer quick start
 

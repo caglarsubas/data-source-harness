@@ -1,5 +1,5 @@
 {
-  "artifactDigest": "sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110",
+  "artifactDigest": "sha256:88e9791e4e49d9421065ccfca9b6b5a3f9755bc52645d06317dfde905037ce5b",
   "baseImageDigest": "sha256:c3d81d25b3154142b0b42eb1e61300024426268edeb5b5a26dd7ddf64d9daf28",
   "campaignId": "phase7-white-goods-local-harness-runtime",
   "checks": [
@@ -9,8 +9,53 @@
       "passed": true
     },
     {
+      "checkId": "mutation.preview-policy-bound",
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "checkId": "mutation.human-approval-required",
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "checkId": "mutation.postgresql-executed",
+      "observed": 2,
+      "passed": true
+    },
+    {
+      "checkId": "mutation.gateway-replay-idempotent",
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "checkId": "mutation.source-replay-after-gateway-restart",
+      "observed": 2,
+      "passed": true
+    },
+    {
+      "checkId": "mutation.stale-precondition-denied",
+      "observed": 1,
+      "passed": true
+    },
+    {
+      "checkId": "mutation.compensated",
+      "observed": 3,
+      "passed": true
+    },
+    {
+      "checkId": "mutation.audit-chain-payload-free",
+      "observed": 10,
+      "passed": true
+    },
+    {
+      "checkId": "mutation.telemetry-tenant-bound-payload-free",
+      "observed": 18,
+      "passed": true
+    },
+    {
       "checkId": "harness.discovery-four-shapes",
-      "observed": 8,
+      "observed": 9,
       "passed": true
     },
     {
@@ -70,11 +115,11 @@
     }
   ],
   "externalResourcesCreated": [],
-  "generatedAt": "2026-08-28T11:23:53+00:00",
+  "generatedAt": "2026-08-28T11:58:54+00:00",
   "harnessVersion": "0.13.0",
   "networkMode": "compose-internal",
   "passed": true,
-  "revision": "0d76362b6cb260377a267a0a99f67466ca456892",
+  "revision": "81283bbd35b18b7d705ad0963ba63e6f1f4f3b6f",
   "schemaVersion": "data.harness.local-harness-runtime-evidence/v1",
   "sourceRecordCounts": {
     "whitegoods.event-stream": 9,

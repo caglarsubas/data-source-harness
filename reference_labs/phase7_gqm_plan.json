@@ -7,7 +7,8 @@
     {"goalId": "G4", "goal": "Prohibit GCP, OpenShift and remote-cluster resource mutations", "metricIds": ["P7R-M6", "P7R-M7", "P7R-M9", "P7R-M11", "P7R-M13"]},
     {"goalId": "G5", "goal": "Verify four representative source services on the laptop", "metricIds": ["P7R-M8"]},
     {"goalId": "G6", "goal": "Exercise mature SDK, ADLC and model-plane contracts from revision-bound local sources", "metricIds": ["P7R-M10"]},
-    {"goalId": "G7", "goal": "Execute the digest-bound harness runtime against four real connector shapes", "metricIds": ["P7R-M12"]}
+    {"goalId": "G7", "goal": "Execute the digest-bound harness runtime against four real connector shapes", "metricIds": ["P7R-M12"]},
+    {"goalId": "G8", "goal": "Prove a governed mutation against a real disposable source", "metricIds": ["P7R-M14"]}
   ],
   "metrics": [
     {"metricId": "P7R-M1", "name": "campaign schema and derived-field integrity", "operator": "==", "threshold": 1.0},
@@ -22,6 +23,7 @@
     {"metricId": "P7R-M10", "name": "revision-bound mature component contract surfaces verified", "operator": "==", "threshold": 3.0},
     {"metricId": "P7R-M11", "name": "external resources created by local cross-plane contract lab", "operator": "==", "threshold": 0.0},
     {"metricId": "P7R-M12", "name": "real source shapes exercised through the harness runtime", "operator": "==", "threshold": 4.0},
-    {"metricId": "P7R-M13", "name": "external resources created by local harness runtime lab", "operator": "==", "threshold": 0.0}
+    {"metricId": "P7R-M13", "name": "external resources created by local harness runtime lab", "operator": "==", "threshold": 0.0},
+    {"metricId": "P7R-M14", "name": "governed real-source mutation checks passed", "operator": "==", "threshold": 9.0}
   ]
 }

@@ -26,6 +26,9 @@ certifies that:
   harness candidate/ranking guard;
 - the revision-bound harness ARM64 image installs only from the pinned local
   wheelhouse and exercises real PostgreSQL, S3, Kafka and REST connector paths;
+- the real PostgreSQL mutation requires preview and signed human approval,
+  survives a gateway restart without repeating the write, rejects a stale
+  version, emits payload-free audit/telemetry and compensates to baseline;
 - the harness local-image-load, local-startup and runtime stages bind the same
   artifact digest, while exact-main CI and publication remain blockers;
 - Python-SDK CI, the other platform images/startup/runtime, protocol, fault,

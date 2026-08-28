@@ -1,12 +1,14 @@
 {
   "schemaVersion": "data.harness.contract-evolution/v1",
-  "decision": "add digest-bound local harness runtime evidence",
+  "decision": "extend digest-bound local harness evidence with governed real-source mutation",
   "baselineVersion": "0.12.0",
   "currentVersion": "0.13.0",
   "compatibleChanges": [
     "add LocalHarnessRuntimeEvidence without changing existing wire contracts",
     "add an explicit phase7-harness Compose profile with pull_policy never",
-    "add read-only reference connectors for PostgreSQL, S3, Kafka and REST"
+    "add reference connectors for PostgreSQL, S3, Kafka and REST",
+    "add one allowlisted PostgreSQL mutation with source-persisted idempotency",
+    "certify preview, signed approval, replay, stale-write denial and compensation"
   ],
-  "evidenceBoundary": "The local image, startup and runtime stages apply only to data-source-harness revision 0d76362b6cb260377a267a0a99f67466ca456892 and artifact sha256:a31d06a8b5f6bc6ab88ea916976dc50f20f1d26976244a8bca72c5b62ad8a110. Publication, exact-main CI, mutation execution, protocol, fault, soak and stakeholder stages remain unobserved."
+  "evidenceBoundary": "The local image, startup, read runtime and governed mutation stages apply only to data-source-harness revision 81283bbd35b18b7d705ad0963ba63e6f1f4f3b6f and artifact sha256:88e9791e4e49d9421065ccfca9b6b5a3f9755bc52645d06317dfde905037ce5b. The mutation targets only the disposable white-goods PostgreSQL fixture and restores its baseline before teardown. Publication, exact-main CI, protocol, fault, soak and stakeholder stages remain unobserved."
 }

@@ -29,6 +29,10 @@ from the locally available Python base, harness wheel and pinned binary wheels.
 It joins the internal-only network and runs the actual connector gateway
 against PostgreSQL, MinIO, Redpanda and the authenticated service API. The
 acceptance image has no published port and Compose uses `pull_policy: never`.
+Its PostgreSQL scenario changes one disposable service-order resolution only
+after preview and signed approval, persists the idempotency binding in the
+source, proves replay safety after a fresh gateway, denies a stale write and
+compensates the record to its seeded value before the volume is removed.
 
 The existing `docker-compose.yml` remains a development topology for synthetic
 fixtures. It must not be cited as Phase 7 evidence.

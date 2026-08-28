@@ -170,9 +170,7 @@ async def _exercise_mutation(
 
     restarted_gateway = new_gateway()
     restarted_preview = await restarted_gateway.preview(action, identity)
-    source_replay = await restarted_gateway.execute(
-        action, restarted_preview, identity, approval
-    )
+    source_replay = await restarted_gateway.execute(action, restarted_preview, identity, approval)
     replayed = connector.read_mutation_state("SO1001")
 
     stale = SourceActionPlan(
@@ -233,8 +231,7 @@ async def _exercise_mutation(
         },
         {
             "checkId": "mutation.postgresql-executed",
-            "passed": receipt.state is ActionState.EXECUTED
-            and changed["recordVersion"] == 2,
+            "passed": receipt.state is ActionState.EXECUTED and changed["recordVersion"] == 2,
             "observed": changed["recordVersion"],
         },
         {
